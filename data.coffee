@@ -16,7 +16,7 @@ class DataModel extends Model
         @trigger 'willReload'
         @data = @parseString fs.readFileSync @filePath
         @root = @createItem -1, @data
-        @root.expand()
+        @root.fetch()
         @trigger 'didReload'
 
     parseString: (stringData) =>
@@ -53,7 +53,5 @@ class DataModel extends Model
                 for index in [0...item.data.length]
                     @createItem index, item.data[index], item
             delete item.unfetched
-
-
 
 module.exports = DataModel

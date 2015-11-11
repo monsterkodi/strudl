@@ -36,65 +36,7 @@ class Model
     onDidChange:    (item, oldValue) => log 'onDidChange ',   @, item, '<', oldValue
 
     inspect: (depth) => "[:#{@name}:]"
-        
-    ###
-    00000000  000   000  00000000    0000000   000   000  0000000  
-    000        000 000   000   000  000   000  0000  000  000   000
-    0000000     00000    00000000   000000000  000 0 000  000   000
-    000        000 000   000        000   000  000  0000  000   000
-    00000000  000   000  000        000   000  000   000  0000000  
-    ###
-    
-    expand: (item) =>
-        
-        if item.isExpandable()
-            if not item.expanded
-                @trigger 'willExpand', item
-                @fetchItem? item
-                item.expanded = true
-                @trigger 'didExpand', item
-                
-    collapse: (item, recursive=false) =>
-        
-        if item.isExpandable()
             
-            if recursive
-                for child in item.children()
-                    @collapse child, recursive
-                
-            if item != @root
-                @trigger 'willCollapse', item
-                item.expanded = false
-                @trigger 'didCollapse', item
-            else
-                for child in item.children()
-                    @trigger 'willCollapse', child
-                    child.expanded = false
-                    @trigger 'didCollapse', child
-
-    expandAll: =>
-        for leaf in @leafItems()
-            @expand leaf
-            
-    collapseAll: => 
-            for child in @root.children()
-                @collapse child, true
-    
-    isLeaf: (item) =>
-        if item.isExpandable() 
-            not item.expanded 
-        else 
-            true
-        
-    leafItems: (item=@root) =>
-        if @isLeaf item
-            [item]
-        else
-            leafs = []
-            for child in item.children()
-                leafs.push.apply(leafs, @leafItems child)
-            leafs
-    
     ###
     000  000000000  00000000  00     00
     000     000     000       000   000
@@ -102,8 +44,10 @@ class Model
     000     000     000       000 0 000
     000     000     00000000  000   000
     ###
+    
+    newItem: (key, value, parent) => new Item @ ,key, value, parent
     createItem: (key, value, parent) =>
-        item = new Item @, key, value, parent
+        item = @newItem key, value, parent
         @item[item.id] = item
         item
     
