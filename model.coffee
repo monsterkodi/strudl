@@ -6,9 +6,9 @@
 000   000   0000000   0000000    00000000  0000000
 ###
 
-log    = require './log'
 Events = require 'backbone-events-standalone'
 Item   = require './item'
+log    = require './log'
 
 class Model
     
@@ -20,14 +20,14 @@ class Model
     setBase: (@base) =>
         for action in ['Reload', 'Expand', 'Collapse', 'Remove', 'Insert', 'Change']
             @base.on "will#{action}", @["onWill#{action}"]
-            @base.on "did#{action}", @["onDid#{action}"]
+            @base.on "did#{action}",  @["onDid#{action}"]
         
-    onWillReload:   ()               => log 'onWillReload',   @
+    onWillReload:   ()               => #log 'onWillReload',   @
     onDidReload:    ()               => log 'onDidReload',    @
-    onWillExpand:   (item)           => log 'onWillExpand',   @, item
-    onDidExpand:    (item)           => log 'onDidExpand',    @, item
-    onWillCollapse: (item)           => log 'onWillCollapse', @, item
-    onDidCollapse:  (item)           => log 'onDidCollapse',  @, item
+    onWillExpand:   (item)           => #log 'onWillExpand',   @, item
+    onDidExpand:    (item)           => #log 'onDidExpand',    @, item
+    onWillCollapse: (item)           => #log 'onWillCollapse', @, item
+    onDidCollapse:  (item)           => #log 'onDidCollapse',  @, item
     onWillRemove:   (parent, items)  => log 'onWillRemove',   @, parent, items
     onDidRemove:    (parent)         => log 'onDidRemove',    @, parent
     onWillInsert:   (parent)         => log 'onWillInsert',   @, parent
@@ -36,16 +36,21 @@ class Model
     onDidChange:    (item, oldValue) => log 'onDidChange ',   @, item, '<', oldValue
 
     inspect: (depth) => "[:#{@name}:]"
-    get: (keyPath) => @root.get keyPath
-    
-    fecthItem: (item) =>
+        
+    ###
+    00000000  000   000  00000000    0000000   000   000  0000000  
+    000        000 000   000   000  000   000  0000  000  000   000
+    0000000     00000    00000000   000000000  000 0 000  000   000
+    000        000 000   000        000   000  000  0000  000   000
+    00000000  000   000  000        000   000  000   000  0000000  
+    ###
     
     expand: (item) =>
         
         if item.isExpandable()
             if not item.expanded
                 @trigger 'willExpand', item
-                @fetchItem item
+                @fetchItem? item
                 item.expanded = true
                 @trigger 'didExpand', item
                 
@@ -90,15 +95,32 @@ class Model
                 leafs.push.apply(leafs, @leafItems child)
             leafs
     
+    ###
+    000  000000000  00000000  00     00
+    000     000     000       000   000
+    000     000     0000000   000000000
+    000     000     000       000 0 000
+    000     000     00000000  000   000
+    ###
+    createItem: (key, value, parent) =>
+        item = new Item @, key, value, parent
+        @item[item.id] = item
+        item
+    
+    itemAt: (keyPath) => @root.childAt keyPath
+    
+    ###
+    000   000   0000000   000      000   000  00000000
+    000   000  000   000  000      000   000  000     
+     000 000   000000000  000      000   000  0000000 
+       000     000   000  000      000   000  000     
+        0      000   000  0000000   0000000   00000000
+    ###
+    
     setValue: (item, value) =>
         oldValue = item.value
         @trigger 'willChange', item, value
         item.value = value
         @trigger 'didChange', item, oldValue
-    
-    createItem: (key, value, parent) =>
-        item = new Item @, key, value, parent
-        @item[item.id] = item
-        item
-                
+                    
 module.exports = Model

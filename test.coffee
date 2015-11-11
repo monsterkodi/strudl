@@ -6,32 +6,44 @@
    000     00000000  0000000      000   
 ###
 
-Model     = require './model'
-JSONModel = require './json'
+DataModel = require './data'
 log       = require './log'
 
-json = new JSONModel()
-expd = new Model()
-expd.setBase json
-
-json.load "test.json"
-# json.load "data.json"
-# log json.root
+# json = new JSONModel()
+# new Model().setBase json
+# json.load "test.json"
+# 
 # json.expandAll()
-# # log json.root
-# json.collapseAll()
-# # log json.root
-json.expandAll()
-log json.root
+# log json.root
+# 
+# json.expandAll()
+# log json.root
+# 
+# json.expandAll()
+# log json.root
+# 
+# json.expandAll()
+# log json.root
+# 
+# json.expandAll()
+# log json.root
 
-json.expandAll()
-log json.root
-
-json.expandAll()
-log json.root
-
-json.expandAll()
-log json.root
-
-json.expandAll()
-log json.root
+for file in ["config.cson", "darwin.cson", "fish.cson", "swift.cson", "test.json"]
+    filePath = "data/#{file}"
+    log ''
+    log '--------------------------------', filePath
+    log ''
+    cson = new DataModel()
+    new Model().setBase cson
+    cson.load filePath
+    # log cson.root
+    cson.expandAll()
+    # log cson.root
+    cson.expandAll()
+    # log cson.root
+    cson.expandAll()
+    cson.expandAll()
+    cson.expandAll()
+    cson.expandAll()
+    cson.expandAll()
+    log cson.root

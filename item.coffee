@@ -22,22 +22,22 @@ class Item
             
     setValue: (value) => @model.setValue @, value
     
-    depth:       => @parent? and (@parent.depth() + 1) or 0
-    isArray:     => _.isArray @value
-    isObject:    => _.isObject @value
-    children:    => @hasChildren() and _.valuesIn @value
-    hasChildren: => @isExpandable() and not _.isEmpty @value
-    expand:      => @model.expand @
-    collapse:    => @model.collapse @
-    isExpanded:  => @expanded
-    isCollapsed: => not @isExpanded()
+    depth:        => @parent? and (@parent.depth() + 1) or 0
+    isArray:      => _.isArray @value
+    isObject:     => _.isObject @value
+    children:     => @hasChildren() and _.valuesIn @value
+    hasChildren:  => @isExpandable() and not _.isEmpty @value
+    expand:       => @model.expand @
+    collapse:     => @model.collapse @
+    isExpanded:   => @expanded
+    isCollapsed:  => not @isExpanded()
     isExpandable: => @isArray() or @isObject()
 
-    get: (keyPath) =>
+    childAt: (keyPath) =>
         split = keyPath.split '.'
         [key, rest] = [split.shift(), split]
         if rest?.length
-            @value[key].get rest.join('.')
+            @value[key].childForPath rest.join('.')
         else
             @value[key]
         
@@ -51,7 +51,7 @@ class Item
             ''
         
     inspect: (depth) =>
-        indent = S.repeat ' ', 9
+        indent = S.repeat ' ', 2 #9
         s = S.repeat indent, depth-2
         if not @value?
             v = 'null'
@@ -59,9 +59,10 @@ class Item
             v = @value.inspect depth+1
         else if @isExpandable()
             if @isCollapsed()
-                v = '▶'
+                v = '▶ '
             else
-                v = '▽'
+                # v = '▽ '
+                v = ''
             if @isArray()
                 if @hasChildren()
                     c = @children().map((i)-> i.inspect? and i.inspect(depth+1) or i).join(chalk.gray(',\n'))
@@ -79,8 +80,9 @@ class Item
 
         # id = chalk.gray(@id.substr(0,8))
         # id = chalk.gray(@id)
-        id = chalk.gray(@keyPath())
-        # id = ""
-        chalk.gray("#{s} #{id} #{chalk.yellow(@key)}: ") + chalk.white.bold(v)
+        # id = chalk.gray(@keyPath())
+        id = ""
+        key = @parent?.isArray() and chalk.blue.bold(@key) or chalk.yellow(@key)
+        chalk.gray("#{s} #{id} #{key}: ") + chalk.white.bold(v)
     
 module.exports = Item
