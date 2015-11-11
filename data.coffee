@@ -7,20 +7,20 @@
 ###
 
 Model = require './model'
-path = require 'path'
+path  = require 'path'
+fs    = require 'fs'
 
-DataModel extends Model
+class DataModel extends Model
 
     load: (@filePath) =>
-        
         @trigger 'willReload'
         @data = @parseString fs.readFileSync @filePath
         @root = @createItem -1, @data
         @root.expand()
         @trigger 'didReload'
 
-    parseString: (stringData) => 
-        if path.extname(filePath) == '.cson'
+    parseString: (stringData) =>
+        if path.extname(@filePath) == '.cson'
             require('CSON').parse stringData
         else
             JSON.parse stringData
