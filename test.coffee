@@ -14,11 +14,15 @@ json = new JSONModel()
 expd = new Model()
 expd.setBase json
 
-json.load "test.json"
-log json.json
-
-json.root.value[0].setValue 'fark'
-json.get('5.1').setValue 'fork'
-
+# json.load "test.json"
+json.load "data.json"
+# log json.root
+# json.expandAll()
+# # log json.root
+# json.collapseAll()
+# # log json.root
+json.expandAll()
+# log json.root
+json.root.collapse()
 log json.root
-log json.json
+# log json.json

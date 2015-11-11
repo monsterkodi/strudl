@@ -17,14 +17,21 @@ class Item
     constructor: (@model, @key, @value, @parent) -> 
         @id = uuid.v4()
         @parent?.value[@key] = @
+        if @isExpandable()
+            @expanded = false
             
     setValue: (value) => @model.setValue @, value
     
     depth:       => @parent? and (@parent.depth() + 1) or 0
     isArray:     => _.isArray @value
     isObject:    => _.isObject @value
-    children:    => _.valuesIn @value
-    hasChildren: => (@isArray() or @isObject()) and not _.isEmpty @value
+    children:    => @hasChildren() and _.valuesIn @value
+    hasChildren: => @isExpandable() and not _.isEmpty @value
+    expand:      => @model.expand @
+    collapse:    => @model.collapse @
+    isExpanded:  => @expanded
+    isCollapsed: => not @isExpanded()
+    isExpandable: => @isArray() or @isObject()
 
     get: (keyPath) =>
         split = keyPath.split '.'
@@ -50,18 +57,23 @@ class Item
             v = 'null'
         else if @value.inspect?
             v = @value.inspect depth+1
-        else if @isArray()
-            if @hasChildren()
-                c = @children().map((i)-> i.inspect? and i.inspect(depth+1) or i).join(chalk.gray(',\n'))
-                v = chalk.blue('[\n') + c + '\n' + s + indent + chalk.blue(' ]') 
+        else if @isExpandable()
+            if @isCollapsed()
+                v = '▶'
             else
-                v = chalk.blue('[]')
-        else if @isObject()
-            if @hasChildren()
-                c = @children().map((i)-> i.inspect? and i.inspect(depth+1) or i).join(chalk.gray(',\n'))
-                v = chalk.magenta('{\n') + c + '\n' + s + indent + chalk.magenta(' }') 
-            else
-                v = chalk.magenta('{}')
+                v = '▽'
+            if @isArray()
+                if @hasChildren()
+                    c = @children().map((i)-> i.inspect? and i.inspect(depth+1) or i).join(chalk.gray(',\n'))
+                    v += chalk.blue('[\n') + c + '\n' + s + indent + chalk.blue(' ]') 
+                else
+                    v += chalk.blue('[]')
+            else if @isObject()
+                if @hasChildren()
+                    c = @children().map((i)-> i.inspect? and i.inspect(depth+1) or i).join(chalk.gray(',\n'))
+                    v += chalk.magenta('{\n') + c + '\n' + s + indent + chalk.magenta(' }') 
+                else
+                    v += chalk.magenta('{}')
         else
             v = JSON.stringify @value
 

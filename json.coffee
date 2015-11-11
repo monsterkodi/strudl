@@ -15,10 +15,12 @@ class JSONModel extends Model
     constructor: (name='json') -> super
         
     load: (@filePath) =>
+        
         @trigger 'willReload'
         @json = JSON.parse fs.readFileSync @filePath
         @root = @createItem -1, @json
-        log @root
+        @root.expand()
+        # log @root
         @trigger 'didReload'
                             
     createItem: (key, json, parent) =>
@@ -27,20 +29,27 @@ class JSONModel extends Model
             when 'Array'
                 item = super key, [], parent
                 item.json = json
-                for index in [0...json.length]
-                    @createItem index, json[index], item
+                item.fetched = false
             when 'Object'
                 item = super key, {}, parent
                 item.json = json
-                for key in Object.keys(json)
-                    @createItem key, json[key], item
+                item.fetched = false
             else
                 item = super key, json, parent
         item
-                
+                        
     setValue: (item, value) =>
         item.parent.json[item.key] = value
         super
-        
+
+    fetchItem: (item) =>
+        if not item.fetched
+            if item.isObject()
+                for key in Object.keys(item.json)
+                    @createItem key, item.json[key], item
+            else if item.isArray()
+                for index in [0...item.json.length]
+                    @createItem index, item.json[index], item
+            item.fetched = true
         
 module.exports = JSONModel
