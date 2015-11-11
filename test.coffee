@@ -14,15 +14,24 @@ json = new JSONModel()
 expd = new Model()
 expd.setBase json
 
-# json.load "test.json"
-json.load "data.json"
+json.load "test.json"
+# json.load "data.json"
 # log json.root
 # json.expandAll()
 # # log json.root
 # json.collapseAll()
 # # log json.root
 json.expandAll()
-# log json.root
-json.root.collapse()
 log json.root
-# log json.json
+
+json.expandAll()
+log json.root
+
+json.expandAll()
+log json.root
+
+json.expandAll()
+log json.root
+
+json.expandAll()
+log json.root

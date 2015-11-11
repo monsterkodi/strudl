@@ -20,7 +20,6 @@ class JSONModel extends Model
         @json = JSON.parse fs.readFileSync @filePath
         @root = @createItem -1, @json
         @root.expand()
-        # log @root
         @trigger 'didReload'
                             
     createItem: (key, json, parent) =>

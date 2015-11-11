@@ -18,18 +18,9 @@ class Model
         @item = {}
         
     setBase: (@base) =>
-        @base.on 'willReload',   @onWillReload
-        @base.on 'didReload' ,   @onDidReload
-        @base.on 'willExpand',   @onWillExpand
-        @base.on 'didExpand' ,   @onDidExpand
-        @base.on 'willCollapse', @onWillCollapse
-        @base.on 'didCollapse' , @onDidCollapse
-        @base.on 'willRemove',   @onWillRemove
-        @base.on 'didRemove' ,   @onDidRemove
-        @base.on 'willInsert',   @onWillInsert
-        @base.on 'didInsert' ,   @onDidInsert
-        @base.on 'willChange',   @onWillChange
-        @base.on 'didChange' ,   @onDidChange
+        for action in ['Reload', 'Expand', 'Collapse', 'Remove', 'Insert', 'Change']
+            @base.on "will#{action}", @["onWill#{action}"]
+            @base.on "did#{action}", @["onDid#{action}"]
         
     onWillReload:   ()               => log 'onWillReload',   @
     onDidReload:    ()               => log 'onDidReload',    @
@@ -49,7 +40,7 @@ class Model
     
     fecthItem: (item) =>
     
-    expand: (item, recursive=false) =>
+    expand: (item) =>
         
         if item.isExpandable()
             if not item.expanded
@@ -57,33 +48,47 @@ class Model
                 @fetchItem item
                 item.expanded = true
                 @trigger 'didExpand', item
-            
-            if recursive
-                expandChildren = () =>
-                    for child in item.children()
-                        @expand child, recursive
-                    if item == @root
-                        log 'root expanded'
-                setTimeout expandChildren, 1
                 
     collapse: (item, recursive=false) =>
         
         if item.isExpandable()
+            
             if recursive
                 for child in item.children()
                     @collapse child, recursive
                 
             if item != @root
+                @trigger 'willCollapse', item
                 item.expanded = false
+                @trigger 'didCollapse', item
             else
                 for child in item.children()
+                    @trigger 'willCollapse', child
                     child.expanded = false
+                    @trigger 'didCollapse', child
 
-    expandAll: => @expand @root, true
+    expandAll: =>
+        for leaf in @leafItems()
+            @expand leaf
+            
     collapseAll: => 
             for child in @root.children()
                 @collapse child, true
     
+    isLeaf: (item) =>
+        if item.isExpandable() 
+            not item.expanded 
+        else 
+            true
+        
+    leafItems: (item=@root) =>
+        if @isLeaf item
+            [item]
+        else
+            leafs = []
+            for child in item.children()
+                leafs.push.apply(leafs, @leafItems child)
+            leafs
     
     setValue: (item, value) =>
         oldValue = item.value
@@ -95,5 +100,5 @@ class Model
         item = new Item @, key, value, parent
         @item[item.id] = item
         item
-            
+                
 module.exports = Model
