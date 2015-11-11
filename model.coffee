@@ -18,16 +18,12 @@ class Model
         @item = {}
         
     setBase: (@base) =>
-        for action in ['Reload', 'Expand', 'Collapse', 'Remove', 'Insert', 'Change']
+        for action in ['Reload', 'Remove', 'Insert', 'Change']
             @base.on "will#{action}", @["onWill#{action}"]
             @base.on "did#{action}",  @["onDid#{action}"]
         
-    onWillReload:   ()               => #log 'onWillReload',   @
+    onWillReload:   ()               => 
     onDidReload:    ()               => log 'onDidReload',    @
-    onWillExpand:   (item)           => #log 'onWillExpand',   @, item
-    onDidExpand:    (item)           => #log 'onDidExpand',    @, item
-    onWillCollapse: (item)           => #log 'onWillCollapse', @, item
-    onDidCollapse:  (item)           => #log 'onDidCollapse',  @, item
     onWillRemove:   (parent, items)  => log 'onWillRemove',   @, parent, items
     onDidRemove:    (parent)         => log 'onDidRemove',    @, parent
     onWillInsert:   (parent)         => log 'onWillInsert',   @, parent

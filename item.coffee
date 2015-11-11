@@ -35,21 +35,22 @@ class Item
     keys:         => @isObject() and Object.keys(@value) or [0...@value.length].map (v) -> new String(v)
     
     childAt: (keyPath) =>
-        split = keyPath.split '.'
-        [key, rest] = [split.shift(), split]
-        if rest?.length
-            @value[key].childAt rest.join('.')
+        keyPath = keyPath.split('.') if _.isString keyPath
+        [key, rest] = [_.first(keyPath), _.rest(keyPath)]
+        log 'childAt', keyPath, key, rest
+        if rest.length
+            @value[key].childAt rest
         else
             @value[key]
         
     keyPath: => 
         if @parent?
             if @parent.parent?
-                @parent.keyPath() + '.' + @key
+                @parent.keyPath().append @key
             else
-                @key
+                [@key]
         else
-            ''
+            []
         
     inspect: (depth) =>
         indent = S.repeat ' ', 2 #9

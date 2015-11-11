@@ -18,16 +18,12 @@ class ProxyModel extends Model
         super 'proxy' + (ID += 1)
         @setBase base if base?
         
-    onWillReload:   ()               => @root = null
-    onDidReload:    ()               => 
+    onWillReload:() => @root = null
+    onDidReload:() => 
         return if not @base?
         @root = @createItem -1, @base.root
         @expand @root
         
-    onWillExpand:   (item)           => #log 'onWillExpand',   @, item
-    onDidExpand:    (item)           => #log 'onDidExpand',    @, item
-    onWillCollapse: (item)           => #log 'onWillCollapse', @, item
-    onDidCollapse:  (item)           => #log 'onDidCollapse',  @, item
     onWillRemove:   (parent, items)  => log 'onWillRemove',   @, parent, items
     onDidRemove:    (parent)         => log 'onDidRemove',    @, parent
     onWillInsert:   (parent)         => log 'onWillInsert',   @, parent
@@ -56,7 +52,7 @@ class ProxyModel extends Model
             item.baseItem.fetch()
             if item.isParent()
                 for key in item.baseItem.keys()
-                    @createItem key, item.baseItem.childAt(key), item
+                    @createItem key, item.baseItem.childAt([key]), item
             delete item.unfetched
         
     ###
