@@ -9,6 +9,7 @@
 log       = require './log'
 Model     = require './model'
 ProxyItem = require './proxyitem'
+Item      = require './item'
 
 ID=0
 
@@ -16,12 +17,19 @@ class ProxyModel extends Model
         
     constructor: (base) -> 
         super 'proxy' + (ID += 1)
-        @setBase base if base?
+        if base instanceof Item
+            @baseItem = base
+            @name += ':' + @baseItem?.keyPath?().join?('.')
+            @setBase @baseItem.model()
+            @root = @createItem -1, @baseItem, @
+            @expand @root            
+        else
+            @setBase base if base?
         
     onWillReload:() => @root = null
     onDidReload:() => 
         return if not @base?
-        @root = @createItem -1, @base.root
+        @root = @createItem -1, @base.root, @
         @expand @root
         
     onWillRemove:   (parent, items)  => log 'onWillRemove',   @, parent, items
@@ -30,8 +38,8 @@ class ProxyModel extends Model
     onDidInsert:    (parent, items)  => log 'onDidInsert',    @, parent, items
     onWillChange:   (item, newValue) => log 'onWillChange',   @, item, '>', newValue
     onDidChange:    (item, oldValue) => log 'onDidChange ',   @, item, '<', oldValue
-        
-    newItem: (key, value, parent) => new ProxyItem @, key, value, parent
+                
+    newItem: (key, value, parent) => new ProxyItem key, value, parent
         
     createItem: (key, baseItem, parent) =>
         
@@ -54,7 +62,7 @@ class ProxyModel extends Model
                 for key in item.baseItem.keys()
                     @createItem key, item.baseItem.childAt([key]), item
             delete item.unfetched
-        
+                
     ###
     00000000  000   000  00000000    0000000   000   000  0000000  
     000        000 000   000   000  000   000  0000  000  000   000
@@ -89,9 +97,11 @@ class ProxyModel extends Model
                     child.expanded = false
                     @trigger 'didCollapse', child
 
-    expandLeaves: =>
-        for leaf in @leafItems()
-            @expand leaf
+    expandItems: (items) => 
+        for item in items
+            @expand item
+
+    expandLeaves: => @expandItems @leafItems()
 
     collapseLeaves: (recursive=false) => 
         for leaf in @leafItems()

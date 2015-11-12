@@ -21,7 +21,7 @@ class Model
         for action in ['Reload', 'Remove', 'Insert', 'Change']
             @base.on "will#{action}", @["onWill#{action}"]
             @base.on "did#{action}",  @["onDid#{action}"]
-        
+                    
     onWillReload:   ()               => 
     onDidReload:    ()               => log 'onDidReload',    @
     onWillRemove:   (parent, items)  => log 'onWillRemove',   @, parent, items
@@ -41,7 +41,7 @@ class Model
     000     000     00000000  000   000
     ###
     
-    newItem: (key, value, parent) => new Item @ ,key, value, parent
+    newItem: (key, value, parent) => new Item key, value, parent
     createItem: (key, value, parent) =>
         item = @newItem key, value, parent
         @item[item.id] = item

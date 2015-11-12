@@ -13,13 +13,13 @@ Item  = require './item'
 
 class ProxyItem extends Item
 
-    constructor: (@model, @key, @value, @parent) -> 
+    constructor: (@key, @value, parent) -> 
         super
         if @isExpandable()
             @expanded = false
 
-    expand:       => @model.expand @
-    collapse: (recursive=false) => @model.collapse @, recursive
+    expand:       => @model().expand @
+    collapse: (recursive=false) => @model().collapse @, recursive
     isExpanded:   => @expanded
     isCollapsed:  => not @isExpanded()
     isExpandable: => @isParent()
@@ -54,7 +54,7 @@ class ProxyItem extends Item
             v = JSON.stringify @getValue()
 
         id = ""
-        key = @parent?.isArray() and chalk.blue.bold(@key) or (@parent? and chalk.yellow(@key) or chalk.red.bold(@model.name))
+        key = @parent?.isArray() and chalk.blue.bold(@key) or (@parent? and chalk.yellow(@key) or chalk.red.bold(@model().name))
         chalk.gray("#{s} #{id} #{key}: ") + chalk.white.bold(v)
 
 module.exports = ProxyItem

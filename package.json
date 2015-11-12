@@ -11,6 +11,7 @@
     "chalk": "^1.1.1",
     "cson": "^3.0.2",
     "lodash": "^3.10.1",
+    "performance-now": "^0.2.0",
     "underscore": "^1.8.3",
     "underscore.string": "^3.2.2",
     "uuid": "^2.0.1"

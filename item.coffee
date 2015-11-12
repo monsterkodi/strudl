@@ -14,12 +14,18 @@ log   = require './log'
     
 class Item
 
-    constructor: (@model, @key, @value, @parent) -> 
+    constructor: (@key, @value, parent) -> 
         @id = uuid.v4()
-        @parent?.value[@key] = @
-            
-    fetch:    ()      => @model.fetchItem @
-    setValue: (value) => @model.setValue @, value
+        if @key == -1
+            @mdl = parent
+        else
+            @parent = parent
+            @parent?.value[@key] = @
+        
+    root:     ()      => @parent? and @parent.root() or @
+    model:    ()      => @root().mdl
+    fetch:    ()      => @model().fetchItem @
+    setValue: (value) => @model().setValue @, value
     getValue: ()      => @value
     
     depth:        => @parent? and (@parent.depth() + 1) or 0
@@ -31,24 +37,27 @@ class Item
         return 'Object' if @isObject()
         return 'Value'
     hasChildren:  => @isParent() and not _.isEmpty @value
-    children:     => @hasChildren() and _.valuesIn @value
+    children:     => @hasChildren() and _.valuesIn @value or []
     keys:         => @isObject() and Object.keys(@value) or [0...@value.length].map (v) -> new String(v)
     
     childAt: (keyPath) =>
+        @fetch()
         keyPath = keyPath.split('.') if _.isString keyPath
         [key, rest] = [_.first(keyPath), _.rest(keyPath)]
-        log 'childAt', keyPath, key, rest
+        # log 'childAt', keyPath, key, rest
         if rest.length
             @value[key].childAt rest
         else
             @value[key]
         
     keyPath: => 
-        if @parent?
+        if @parent?.keyPath?
             if @parent.parent?
-                @parent.keyPath().append @key
+                pp = @parent.keyPath()
+                pp.push @key
+                pp
             else
-                [@key]
+                return [ @key ]
         else
             []
         
@@ -80,7 +89,7 @@ class Item
         # id = chalk.gray(@id)
         # id = chalk.gray(@keyPath())
         id = ""
-        key = @parent?.isArray() and chalk.blue.bold(@key) or (@parent? and chalk.yellow(@key) or chalk.red.bold(@model.name))
+        key = @parent?.isArray() and chalk.blue.bold(@key) or (@parent? and chalk.yellow(@key) or chalk.red.bold(@model().name))
         fetched = @unfetched and " unfetched" or ""
         chalk.gray("#{s} #{id} #{key}: ") + chalk.white.bold(v) + chalk.gray(fetched) #+ ' ' + @type()
     
