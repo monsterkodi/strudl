@@ -29,7 +29,9 @@ dump = (msg) ->
 log process.argv[1], process.mainModule == module
 
 # for file in ["darwin.cson", "test.json", "config.cson", "fish.cson", "swift.cson"]
-# for file in ["test.cson"]
+
+# coffee find.coffee data/data.json -k name -f "#{v}" | sort | uniq -c | sort 
+
 if true
     for file in ["data.json"]
         filePath = "data/#{file}"

@@ -1,3 +1,4 @@
+#!/usr/bin/env coffee
 ###
 00000000  000  000   000  0000000  
 000       000  0000  000  000   000
@@ -6,9 +7,9 @@
 000       000  000   000  0000000  
 ###
 
-_     = require 'lodash'
-fs    = require 'fs'
-chalk = require 'chalk'
+_         = require 'lodash'
+fs        = require 'fs'
+chalk     = require 'chalk'
 
 class find
 
@@ -17,10 +18,13 @@ class find
             when "Array"
                 for i in [0...node.length]
                     v = node[i]
+                    keyPath.push i
+                    if func i,v
+                        result.push _.clone(keyPath, true)
+                        return result if count > 0 and result.length >= count                    
                     if v.constructor.name in ["Array", "Object"]
-                        keyPath.push i
                         @traverse v, func, count, keyPath, result
-                        keyPath.pop()
+                    keyPath.pop()
             when "Object"
                 for k,v of node
                     keyPath.push k
@@ -32,14 +36,23 @@ class find
                     keyPath.pop()
         return result
 
-    @keyValue: (node, key, value) => @traverse node, (k,v) => (k == key) and (v == value)
-    @key:      (node, key)        => @traverse node, (k,v) => (k == key)
-    @value:    (node, value)      => @traverse node, (k,v) => (v == value)
+    @keyValue: (node, key, value) => @traverse node, (k,v) => @match(k, key) and @match(v, value)
+    @key:      (node, key)        => @traverse node, (k,v) => @match(k, key)
+    @value:    (node, value)      => @traverse node, (k,v) => @match(v, value)
     @keyPath:  (node, keyPath)    =>
         kp = _.clone keyPath
         while kp.length
             node = node[kp.shift()]
         node
+        
+    @match: (a,b) =>
+        if _.isString(a) and _.isString(b) and b.indexOf('*') >= 0
+            p = _.clone(b)
+            p = p.replace /\*/g, '.*'
+            p = "^"+p+"$"
+            a.match(new RegExp(p))?.length
+        else
+            a == b
         
 module.exports = find
 
@@ -58,29 +71,47 @@ if process.mainModule == module
              required: false
           key:    { abbr: 'k', help: 'key to search' }
           value:  { abbr: 'v', help: 'value to search' }
-          format: { abbr: 'f', help: 'output format: #{k} for key, #{v} for value' }
+          path:   { abbr: 'p', help: 'path to search' }
+          format: { abbr: 'f', help: 'output format' }
           version:{ abbr: 'V', flag: true, help: "show version", hidden: true }
+       .help chalk.blue("Format:\n") + """
+        \   #k key
+        \   #v value
+        \   #o object
+        \   #p path
+       """
        .parse()
 
     if args.version
         log '0.1.0'
-    else if not args.file? or not args.key? and not args.value?
+    else if not args.file? or not args.key? and not args.value? and not args.path?
         log nomnom.getUsage()
     else
         data = JSON.parse fs.readFileSync args.file
         result = 
-            if args.key? and args.value?
+            if args.path?
+                [args.path.split '.']
+            else if args.key? and args.value?
                 find.keyValue data, args.key, args.value
             else if args.key?
                 find.key data, args.key
             else
                 find.value data, args.value
         for path in result
-            k = chalk.gray.bold(path.join('.'))  
-            v = chalk.yellow.bold(find.keyPath(data, path))
+            p = chalk.gray.bold(path.join('.'))  
+            k = chalk.magenta.bold(_.last path)
+            value = find.keyPath(data, path)
+            if value.constructor.name in ['Array', 'Object']
+                value = JSON.stringify value, null, '  '
+            v = chalk.yellow.bold(value)
             if args.format
-                s = args.format.replace '#{k}', k
-                s = s.replace '#{v}', v
+                s = args.format.replace '#k', k
+                s = s.replace '#v', v
+                s = s.replace '#p', p
+                if s.indexOf '#o' >= 0
+                    path.pop()
+                    o = JSON.stringify find.keyPath(data, path), null, '  '
+                    s = s.replace '#o', o
             else
-                s = "#{k}: #{v}"
+                s = "#{p}: #{v}"
             log chalk.gray s

@@ -6,7 +6,7 @@ module.exports = (grunt) ->
 
         salt:
             options:
-                textMarker : '#!'
+                textMarker : '#!!'
                 dryrun     : false
                 verbose    : false
                 refresh    : false
