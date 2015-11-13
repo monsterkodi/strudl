@@ -43,6 +43,7 @@ class find
         kp = _.clone keyPath
         while kp.length
             node = node[kp.shift()]
+            return if not node?
         node
         
     @match: (a,b) =>
@@ -84,13 +85,13 @@ if process.mainModule == module
 
     if args.version
         log '0.1.0'
-    else if not args.file? or not args.key? and not args.value? and not args.path?
-        log nomnom.getUsage()
     else
         data = JSON.parse fs.readFileSync args.file
         result = 
-            if args.path?
-                [args.path.split '.']
+            if not args.file? or not args.key? and not args.value? and not args.path?
+                _.keysIn(data).map (i) -> [i]
+            else if args.path?
+                [new String(args.path).split '.']
             else if args.key? and args.value?
                 find.keyValue data, args.key, args.value
             else if args.key?
@@ -101,14 +102,15 @@ if process.mainModule == module
             p = chalk.gray.bold(path.join('.'))  
             k = chalk.magenta.bold(_.last path)
             value = find.keyPath(data, path)
-            if value.constructor.name in ['Array', 'Object']
+            if value?.constructor.name in ['Array', 'Object']
                 value = JSON.stringify value, null, '  '
             v = chalk.yellow.bold(value)
             if args.format
-                s = args.format.replace '#k', k
-                s = s.replace '#v', v
+                s = args.format
+                s = s.replace '#k', k
                 s = s.replace '#p', p
-                if s.indexOf '#o' >= 0
+                s = s.replace '#v', v
+                if args.format.indexOf('#o') >= 0
                     path.pop()
                     o = JSON.stringify find.keyPath(data, path), null, '  '
                     s = s.replace '#o', o
