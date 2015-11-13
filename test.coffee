@@ -17,71 +17,53 @@ v.push new Proxy data
 # v.push new Proxy data
 
 dump = (msg) ->
+    profile "dump"
     log '-------------------------------- ' + msg
-    # log data.root
+    log data.root
     for vw in v
         log ''
         log vw.root
+    profile ""
 
 # for file in ["darwin.cson", "test.json", "config.cson", "fish.cson", "swift.cson"]
 # for file in ["test.cson"]
-# for file in ["data.json"]
-for file in ["cards.json"]
-    log "loading ..."
-    filePath = "data/#{file}"
-    profile "load"
-    data.load filePath
-    # dump filePath
+if true
+    for file in ["data.json"]
+        filePath = "data/#{file}"
+        log "loading #{filePath} ..."
+        profile "load"
+        data.load filePath
 
-    # node = v[0].itemAt 'Entity'
-    # v[0].expand node
-    # v[0].expandItems v[0].leafItems(node)
-    # v[0].expandItems v[0].leafItems(node)
-    # v[0].expandItems v[0].leafItems(node)
-    # log v[1].root
-    # v[1].expandLeaves()
-    # v[1].expandLeaves()
-    # log v[1].root
-    # log data.find 'objectType', 5667815
-    # data.find 'uid'
+        profile "find ref_uid"
+        found = data.findKey 'ref_uid'
+        log "#{found.length} items"
 
-    profile "find"
-    found = data.find 'rarity', 'Mythic Rare'
-    
-    profile "find"
-    found = data.find 'rarity'
+        profile "find uid"
+        found = data.findKey 'uid'
+        log "#{found.length} items"
 
-    profile "find"
-    found = data.find 'rarity', 'Mythic Rare'
-    
-    profile "find"
-    found = data.find 'rarity'
-    
-    # profile "log"
-    # for path in found
-    #     log path.join('.'), data.dataAt(path)['rarity']
-    profile ""
+        dump(filePath)
 
-    # p = ['view1', 'view2']
-    # for e in [1..4]
-    #     for i in [0...2]
-    #         v[i].expand v[i].itemAt p[i]
-    #         p[i] += '.' + e
-    #     dump 'expand ' + e
+if true
+    for file in ["cards.json"]
+        filePath = "data/#{file}"
+        log "loading #{filePath} ..."
+        profile "load"
+        data.load filePath
+
+        profile "find"
+        found = data.findKeyValue 'rarity', 'Mythic Rare'
+        # for path in found
+        #     log path.join('.'), data.dataAt(path)
         
-    # for e in [1..2]
-    #     log e
-    #     profile.start "expand"
-    #     v[0].expandLeaves()
-    #     # v[1].expandLeaves()
-    #     profile.end()
-    # v[0].expandLeaves()
-    # dump 'expanded'
+        profile "find"
+        found = data.findKey 'rarity'
 
-    # v[0].collapseTop()
-    # v[1].collapseTop()
-    # dump 'collapsed'
-    # 
-    # v[0].collapseTop(true)
-    # v[1].collapseTop(true)
-    # dump 'collapsed'
+        profile "find"
+        found = data.findKeyValue 'rarity', 'Rare'
+        
+        profile "find"
+        found = data.findValue 'Forest'
+
+        profile ""
+        dump(filePath)

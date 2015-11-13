@@ -7,6 +7,7 @@
 ###
 
 Model = require './model'
+find  = require './find'
 log   = require './log'
 path  = require 'path'
 fs    = require 'fs'
@@ -56,29 +57,9 @@ class DataModel extends Model
                     @createItem index, item.data[index], item
             delete item.unfetched
 
-    findData: (item, what, func, keyPath=[], result=[]) =>
-        switch item.constructor.name
-            when "Array"
-                for i in [0...item.length]
-                    v = item[i]
-                    if v.constructor.name in ["Array", "Object"]
-                        keyPath.push i
-                        @findData v, what, func, keyPath, result
-                        keyPath.pop()
-            when "Object"
-                for k,v of item
-                    if func k,v
-                        # log 'found', keyPath, item
-                        return keyPath if what == 'first'
-                        result.push _.clone(keyPath, true) if what == 'all'
-                    if v.constructor.name in ["Array", "Object"]
-                        keyPath.push k
-                        @findData v, what, func, keyPath, result
-                        keyPath.pop()
-        return result
-
-    find: (key, value, below=@root) =>
-        @findData below.data, 'all', (k,v) => (k == key) and (not value? or v == value)
+    findKeyValue: (key, value, item=@root) => find.keyValue item.data, key, value
+    findKey:      (key,        item=@root) => find.key      item.data, key
+    findValue:    (     value, item=@root) => find.value    item.data, value
 
     dataAt: (keyPath, item=@root) =>
         data = item.data
