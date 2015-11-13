@@ -60,11 +60,6 @@ class DataModel extends Model
     findKeyValue: (key, value, item=@root) => find.keyValue item.data, key, value
     findKey:      (key,        item=@root) => find.key      item.data, key
     findValue:    (     value, item=@root) => find.value    item.data, value
-
-    dataAt: (keyPath, item=@root) =>
-        data = item.data
-        while keyPath.length
-            data = data[keyPath.shift()]
-        data
+    dataAt:       (keyPath,    item=@root) => find.keyPath  item.data, keyPath
         
 module.exports = DataModel

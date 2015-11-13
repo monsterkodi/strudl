@@ -6,7 +6,9 @@
 000       000  000   000  0000000  
 ###
 
-_ = require 'lodash'
+_     = require 'lodash'
+fs    = require 'fs'
+chalk = require 'chalk'
 
 class find
 
@@ -33,5 +35,52 @@ class find
     @keyValue: (node, key, value) => @traverse node, (k,v) => (k == key) and (v == value)
     @key:      (node, key)        => @traverse node, (k,v) => (k == key)
     @value:    (node, value)      => @traverse node, (k,v) => (v == value)
+    @keyPath:  (node, keyPath)    =>
+        kp = _.clone keyPath
+        while kp.length
+            node = node[kp.shift()]
+        node
         
 module.exports = find
+
+if process.mainModule == module
+    
+    log = require './log'
+    
+    nomnom = require("nomnom")
+    args = nomnom
+       .script("find")
+       .options
+          file:
+             position: 0
+             help: "the json file to search in"
+             list: false
+             required: false
+          key:    { abbr: 'k', help: 'key to search' }
+          value:  { abbr: 'v', help: 'value to search' }
+          format: { abbr: 'f', help: 'output format: #{k} for key, #{v} for value' }
+          version:{ abbr: 'V', flag: true, help: "show version", hidden: true }
+       .parse()
+
+    if args.version
+        log '0.1.0'
+    else if not args.file? or not args.key? and not args.value?
+        log nomnom.getUsage()
+    else
+        data = JSON.parse fs.readFileSync args.file
+        result = 
+            if args.key? and args.value?
+                find.keyValue data, args.key, args.value
+            else if args.key?
+                find.key data, args.key
+            else
+                find.value data, args.value
+        for path in result
+            k = chalk.gray.bold(path.join('.'))  
+            v = chalk.yellow.bold(find.keyPath(data, path))
+            if args.format
+                s = args.format.replace '#{k}', k
+                s = s.replace '#{v}', v
+            else
+                s = "#{k}: #{v}"
+            log chalk.gray s
