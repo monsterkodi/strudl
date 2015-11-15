@@ -8,49 +8,63 @@
 
 S     = require 'underscore.string'
 chalk = require 'chalk'
-uuid  = require 'uuid'
 _     = require 'lodash'
 log   = require './log'
     
 class Item
 
-    constructor: (@key, @value, parent) -> 
-        @id = uuid.v4()
+    @valueType  = 0
+    @arrayType  = 1
+    @objectType = 2
+    @ID         = 0
+
+    constructor: (@key, @value, prt) -> 
+        Item.ID += 1
+        @id = Item.ID
         if @key == -1
-            @mdl = parent
+            @mdl = prt
         else
-            @parent = parent
-            @parent?.value[@key] = @
+            @parent = prt
+            
+        @type = switch @value.constructor.name
+                when 'Array'  then Item.arrayType
+                when 'Object' then Item.objectType
+                else Item.valueType
+                    
+        @children = [] if @isParent()
+        @keyIndex = {} if @isObject()
         
-    root:     ()      => @parent? and @parent.root() or @
-    model:    ()      => @root().mdl
-    fetch:    ()      => @model().fetchItem @
-    setValue: (value) => @model().setValue @, value
-    getValue: ()      => @value
+    root:     ()      -> @parent?.root() ? @
+    model:    ()      -> @root().mdl
+    setValue: (value) -> @model().setValue @, value
+    getValue: ()      -> @value
+    typeName: ()      -> 
+        switch @type
+            when 1 then 'Array'
+            when 2 then 'Object'
+            else 'Value'
     
-    depth:        => @parent? and (@parent.depth() + 1) or 0
-    isArray:      => _.isArray @value
-    isObject:     => _.isObject(@value) and not (@value instanceof Item)
-    isParent:     => @isArray() or @isObject()
-    type:         => 
-        return 'Array'  if @isArray()
-        return 'Object' if @isObject()
-        return 'Value'
-    hasChildren:  => @isParent() and not _.isEmpty @value
-    children:     => @hasChildren() and _.valuesIn @value or []
-    keys:         => @isObject() and Object.keys(@value) or [0...@value.length].map (v) -> new String(v)
+    depth:        -> @parent? and (@parent.depth() + 1) or 0
+    isArray:      -> @type == Item.arrayType
+    isObject:     -> @type == Item.objectType
+    isParent:     -> @type != Item.valueType
+    hasChildren:  -> @isParent() and (not _.isEmpty(@children))
+    # keys:         -> @isObject() and Object.keys(@value) or [0...@value.length].map (v) -> new String(v)
     
-    childAt: (keyPath) =>
-        @fetch()
+    childAt: (keyPath) ->
         keyPath = keyPath.split('.') if _.isString keyPath
         [key, rest] = [_.first(keyPath), _.rest(keyPath)]
         # log 'childAt', keyPath, key, rest
-        if rest.length
-            @value[key].childAt rest
+        if @isArray()
+            index = parseInt(key)
         else
-            @value[key]
+            index = @keyIndex[key]
+        if rest.length
+            @children[index].childAt rest
+        else
+            @children[index]
         
-    keyPath: => 
+    keyPath: -> 
         if @parent?.keyPath?
             if @parent.parent?
                 pp = @parent.keyPath()
@@ -61,7 +75,17 @@ class Item
         else
             []
         
-    inspect: (depth) =>
+    traverse: (func, result=[]) ->
+        
+        if @isParent()
+            for child in @children
+                child.traverse func, result
+        else 
+            if func @key, @value
+                result.push @
+        return result
+        
+    inspect: (depth) ->
         indent = S.repeat ' ', 2 #9
         s = S.repeat indent, depth-2
         if not @value?
@@ -71,14 +95,14 @@ class Item
         else if @isParent()
             v = ''
             if @isArray()
-                if @hasChildren()
-                    c = @children().map((i)-> i.inspect? and i.inspect(depth+1) or i).join(chalk.gray(',\n'))
+                if @children.length
+                    c = @children.map((i)-> i.inspect? and i.inspect(depth+1) or i).join(chalk.gray(',\n'))
                     v += chalk.blue('[\n') + c + '\n' + s + indent + chalk.blue(' ]') 
                 else
                     v += chalk.blue('[]')
             else if @isObject()
-                if @hasChildren()
-                    c = @children().map((i)-> i.inspect? and i.inspect(depth+1) or i).join(chalk.gray(',\n'))
+                if @children.length
+                    c = @children.map((i)-> i.inspect? and i.inspect(depth+1) or i).join(chalk.gray(',\n'))
                     v += chalk.magenta('{\n') + c + '\n' + s + indent + chalk.magenta(' }') 
                 else
                     v += chalk.magenta('{}')
@@ -91,6 +115,6 @@ class Item
         id = ""
         key = @parent?.isArray() and chalk.blue.bold(@key) or (@parent? and chalk.yellow(@key) or chalk.red.bold(@model().name))
         fetched = @unfetched and " unfetched" or ""
-        chalk.gray("#{s} #{id} #{key}: ") + chalk.white.bold(v) + chalk.gray(fetched) #+ ' ' + @type()
+        chalk.gray("#{s} #{id} #{key}: ") + chalk.white.bold(v) + chalk.gray(fetched)
     
 module.exports = Item

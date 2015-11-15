@@ -18,16 +18,16 @@ class ProxyItem extends Item
         if @isExpandable()
             @expanded = false
 
-    expand:       => @model().expand @
-    collapse: (recursive=false) => @model().collapse @, recursive
-    isExpanded:   => @expanded
-    isCollapsed:  => not @isExpanded()
-    isExpandable: => @isParent()
+    expand:       -> @model().expand @
+    collapse: (recursive=false) -> @model().collapse @, recursive
+    isExpanded:   -> @expanded
+    isCollapsed:  -> not @isExpanded()
+    isExpandable: -> @isParent()
         
-    setValue: (value) => @baseItem.setValue value
-    getValue: ()      => @baseItem.getValue()
+    setValue: (value) -> @baseItem.setValue value
+    getValue: ()      -> @baseItem.getValue()
     
-    inspect: (depth) =>
+    inspect: (depth) ->
         indent = S.repeat ' ', 2
         s = S.repeat indent, depth-2
 

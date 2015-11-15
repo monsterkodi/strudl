@@ -26,24 +26,24 @@ class ProxyModel extends Model
         else
             @setBase base if base?
         
-    onWillReload:() => @root = null
-    onDidReload:() => 
+    onWillReload:() -> @root = null
+    onDidReload:() -> 
         return if not @base?
         @root = @createItem -1, @base.root, @
         @expand @root
         
-    onWillRemove:   (parent, items)  => log 'onWillRemove',   @, parent, items
-    onDidRemove:    (parent)         => log 'onDidRemove',    @, parent
-    onWillInsert:   (parent)         => log 'onWillInsert',   @, parent
-    onDidInsert:    (parent, items)  => log 'onDidInsert',    @, parent, items
-    onWillChange:   (item, newValue) => log 'onWillChange',   @, item, '>', newValue
-    onDidChange:    (item, oldValue) => log 'onDidChange ',   @, item, '<', oldValue
+    onWillRemove:   (parent, items)  -> log 'onWillRemove',   @, parent, items
+    onDidRemove:    (parent)         -> log 'onDidRemove',    @, parent
+    onWillInsert:   (parent)         -> log 'onWillInsert',   @, parent
+    onDidInsert:    (parent, items)  -> log 'onDidInsert',    @, parent, items
+    onWillChange:   (item, newValue) -> log 'onWillChange',   @, item, '>', newValue
+    onDidChange:    (item, oldValue) -> log 'onDidChange ',   @, item, '<', oldValue
                 
-    newItem: (key, value, parent) => new ProxyItem key, value, parent
+    newItem: (key, value, parent) -> new ProxyItem key, value, parent
         
-    createItem: (key, baseItem, parent) =>
+    createItem: (key, baseItem, parent) ->
         
-        switch baseItem.type()
+        switch baseItem.typeName()
             when 'Array'
                 item = super key, [], parent
                 item.unfetched = true
@@ -55,12 +55,13 @@ class ProxyModel extends Model
         item.baseItem = baseItem
         item
         
-    fetchItem: (item) =>
+    fetchItem: (item) ->
         if item.unfetched
             item.baseItem.fetch()
             if item.isParent()
-                for key in item.baseItem.keys()
-                    @createItem key, item.baseItem.childAt([key]), item
+                for child in item.baseItem.children
+                # for key in item.baseItem.keys()
+                    @createItem child.key, child, item
             delete item.unfetched
                 
     ###
@@ -71,7 +72,7 @@ class ProxyModel extends Model
     00000000  000   000  000        000   000  000   000  0000000  
     ###
     
-    expand: (item) =>
+    expand: (item) ->
         if item.isExpandable()
             if not item.expanded
                 @trigger 'willExpand', item
@@ -79,7 +80,7 @@ class ProxyModel extends Model
                 item.expanded = true
                 @trigger 'didExpand', item
                 
-    collapse: (item, recursive=false) =>
+    collapse: (item, recursive=false) ->
         
         if item.isExpandable()
             
@@ -97,27 +98,27 @@ class ProxyModel extends Model
                     child.expanded = false
                     @trigger 'didCollapse', child
 
-    expandItems: (items) => 
+    expandItems: (items) -> 
         for item in items
             @expand item
 
-    expandLeaves: => @expandItems @leafItems()
+    expandLeaves: -> @expandItems @leafItems()
 
-    collapseLeaves: (recursive=false) => 
+    collapseLeaves: (recursive=false) -> 
         for leaf in @leafItems()
             @collapse leaf, recursive
             
-    collapseTop: (recursive=false) => 
+    collapseTop: (recursive=false) -> 
         for child in @root.children()
             @collapse child, recursive
     
-    isLeaf: (item) =>
+    isLeaf: (item) ->
         if item.isExpandable() 
             not item.expanded 
         else 
             true
         
-    leafItems: (item=@root) =>
+    leafItems: (item=@root) ->
         if @isLeaf item
             [item]
         else

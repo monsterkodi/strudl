@@ -20,7 +20,7 @@ v.push new Proxy data
 dump = (msg) ->
     profile "dump"
     log '-------------------------------- ' + msg
-    log data.root
+    # log data.root
     for vw in v
         log ''
         log vw.root
@@ -39,21 +39,26 @@ if true
         profile "load"
         data.load filePath
 
-        # profile "find ref_uid"
-        # found = data.findKey 'ref_uid'
-        # log "#{found.length} items"
-
-        profile "find uid"
-        found = data.findKey 'uid'
-        
-        for path in found
-            log chalk.gray.bold(path.join('.')) + chalk.gray(': ') + chalk.yellow.bold(data.dataAt(path))
-
+        profile "find *uid"
+        found = data.findKey '*uid'
         log "#{found.length} items"
-        profile ''
-        # dump(filePath)
 
-if false
+        profile "find 666"
+        found = data.findValue '*666*'
+        log "#{found.length} items"
+
+        profile "find checksum 2286196866"
+        found = data.findKeyValue 'checksum', 2286196866
+        log "#{found.length} items"
+
+        profile "find key *"
+        found = data.findKey '*'
+        log "#{found.length} items"
+
+        profile ''
+        dump(filePath)
+
+if true
     for file in ["cards.json"]
         filePath = "data/#{file}"
         log "loading #{filePath} ..."
@@ -67,12 +72,15 @@ if false
         
         profile "find"
         found = data.findKey 'rarity'
+        log "#{found.length} items"
 
         profile "find"
         found = data.findKeyValue 'rarity', 'Rare'
+        log "#{found.length} items"
         
         profile "find"
         found = data.findValue 'Forest'
+        log "#{found.length} items"
 
         profile ""
         dump(filePath)
