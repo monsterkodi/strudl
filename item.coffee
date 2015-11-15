@@ -16,11 +16,9 @@ class Item
     @valueType  = 0
     @arrayType  = 1
     @objectType = 2
-    @ID         = 0
 
     constructor: (@key, @value, prt) -> 
-        Item.ID += 1
-        @id = Item.ID
+
         if @key == -1
             @mdl = prt
         else
@@ -37,6 +35,7 @@ class Item
     root:     ()      -> @parent?.root() ? @
     model:    ()      -> @root().mdl
     setValue: (value) -> @model().setValue @, value
+    remove:   ()      -> @model().remove @
     getValue: ()      -> @value
     typeName: ()      -> 
         switch @type
@@ -49,18 +48,35 @@ class Item
     isObject:     -> @type == Item.objectType
     isParent:     -> @type != Item.valueType
     hasChildren:  -> @isParent() and (not _.isEmpty(@children))
-    # keys:         -> @isObject() and Object.keys(@value) or [0...@value.length].map (v) -> new String(v)
     
+    addChild: (child) -> 
+        @keyIndex?[child.key] = @children.length
+        @children.push child
+        
+    delChild: (child) ->
+        if @type == Item.objectType
+            index = @keyIndex[child.key]
+            delete @keyIndex[child.key]
+            @children.splice index, 1
+            @keyIndex = {}
+            for index in [0...@children.length]
+                @keyIndex[@children[index].key] = index
+        else if @type == Item.arrayType
+            index = @children.indexOf child
+            @children.splice index, 1
+            for index in [0...@children.length]
+                @children[index].key = index
+                    
     childAt: (keyPath) ->
         keyPath = keyPath.split('.') if _.isString keyPath
         [key, rest] = [_.first(keyPath), _.rest(keyPath)]
-        # log 'childAt', keyPath, key, rest
-        if @isArray()
+        # log 'childAt', keyPath, key, rest, @typeName()
+        if @type == Item.arrayType
             index = parseInt(key)
         else
             index = @keyIndex[key]
         if rest.length
-            @children[index].childAt rest
+            @children[index]?.childAt rest
         else
             @children[index]
         

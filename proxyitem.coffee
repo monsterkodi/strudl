@@ -13,21 +13,33 @@ Item  = require './item'
 
 class ProxyItem extends Item
 
-    constructor: (@key, @value, parent) -> 
-        super
+    constructor: (@key, @value, prt) -> 
+
+        if @key == -1
+            @mdl = prt
+        else
+            @parent = prt
+            
+        @type = @value.type
+                    
+        @children = [] if @isParent()
+        @keyIndex = {} if @isObject()
+
         if @isExpandable()
             @expanded = false
 
-    expand:       -> @model().expand @
+    setValue: (value) -> @value.setValue value
+    getValue: ()      -> @value.getValue()
+    remove:   ()      -> @value.remove()
+
+    expand:   (recursive=false) -> @model().expand @, recursive
     collapse: (recursive=false) -> @model().collapse @, recursive
     isExpanded:   -> @expanded
     isCollapsed:  -> not @isExpanded()
     isExpandable: -> @isParent()
-        
-    setValue: (value) -> @baseItem.setValue value
-    getValue: ()      -> @baseItem.getValue()
-    
+            
     inspect: (depth) ->
+
         indent = S.repeat ' ', 2
         s = S.repeat indent, depth-2
 
@@ -39,14 +51,14 @@ class ProxyItem extends Item
             else
                 v = '▽ '
             if @isArray() 
-                if @hasChildren()
-                    c = @children().map((i)-> i instanceof ProxyItem and i.inspect(depth+1) or '').join(chalk.gray(',\n'))
+                if @children.length
+                    c = @children.map((i)-> i instanceof ProxyItem and i.inspect(depth+1) or '').join(chalk.gray(',\n'))
                     v += chalk.blue('[\n') + c + '\n' + s + indent + chalk.blue(' ]') 
                 else
                     v += '[]'
             else if @isObject()
-                if @hasChildren()
-                    c = @children().map((i)-> i instanceof ProxyItem and i.inspect(depth+1) or '').join(chalk.gray(',\n'))
+                if @children.length
+                    c = @children.map((i)-> i instanceof ProxyItem and i.inspect(depth+1) or '').join(chalk.gray(',\n'))
                     v += chalk.magenta('{\n') + c + '\n' + s + indent + chalk.magenta(' }') 
                 else
                     v += '{}'

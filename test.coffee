@@ -15,7 +15,6 @@ chalk   = require 'chalk'
 data = new Data()
 v = []
 v.push new Proxy data
-# v.push new Proxy data
 
 dump = (msg) ->
     profile "dump"
@@ -28,11 +27,51 @@ dump = (msg) ->
 
 log process.argv[1], process.mainModule == module
 
-# for file in ["darwin.cson", "test.json", "config.cson", "fish.cson", "swift.cson"]
-
-# coffee find.coffee data/data.json -k name -f "#{v}" | sort | uniq -c | sort 
-
 if true
+    for file in ["test.json"]
+        filePath = "data/#{file}"
+        log "loading #{filePath} ..."
+        profile "load"
+        data.load filePath
+        profile ''
+        log data.root
+        
+        v.push new Proxy data.itemAt '5'
+        v.push new Proxy data.itemAt '5'
+        v[1].itemAt('2').expand(false)
+        
+        dump filePath
+        v[0].expandLeaves()
+        dump 'expand'
+        v[0].expandLeaves()
+        dump 'expand'
+        v[0].collapse v[0].itemAt '3'
+        dump 'collapse 3'
+        v[0].collapse v[0].itemAt '5'
+        dump 'collapse 5'
+        
+        v[0].root.expand(true)
+        dump 'expand root'
+        v[0].root.collapse()
+        dump 'collapse root'
+        v[0].root.collapse(true)
+        dump 'collapse root'
+        v[1].root.collapse(true)
+        dump 'collapse root'
+        v[1].root.expand(true)
+        dump 'expand root'
+        v[0].itemAt('5.0').setValue 'bla'
+        dump 'set value'
+        v[1].itemAt('2.deep.deep').remove()
+        dump 'remove'
+        v[0].itemAt('0').remove()
+        dump 'remove'
+        v[2].itemAt('1').remove()
+        dump 'remove'
+        v[0].itemAt('3.a').remove()
+        dump 'remove'
+
+if false
     for file in ["data.json"]
         filePath = "data/#{file}"
         log "loading #{filePath} ..."
@@ -58,7 +97,7 @@ if true
         profile ''
         dump(filePath)
 
-if true
+if false
     for file in ["cards.json"]
         filePath = "data/#{file}"
         log "loading #{filePath} ..."
@@ -67,8 +106,6 @@ if true
 
         profile "find"
         found = data.findKeyValue 'rarity', 'Mythic Rare'
-        # for path in found
-        #     log path.join('.'), data.dataAt(path)
         
         profile "find"
         found = data.findKey 'rarity'

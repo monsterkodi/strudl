@@ -33,17 +33,18 @@ class DataModel extends Model
     createItem: (key, data, parent) -> 
         
         item = new Item key, data, parent
+        item.id = @nextID()
         
         switch item.type
             when Item.arrayType
                 for index in [0...data.length]
-                    item.children.push @createItem index, data[index], item
+                    item.addChild @createItem index, data[index], item
             when Item.objectType
                 for key in Object.keys(data)
-                    item.children.push @createItem key, data[key], item
+                    item.addChild @createItem key, data[key], item
         
         item
-                        
+                                
     setValue: (item, value) ->
         item.parent.value[item.key] = value
         super
