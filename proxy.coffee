@@ -81,7 +81,6 @@ class ProxyModel extends Model
         if item.isExpandable()
             
             if not item.expanded
-                @trigger 'willExpand', item
                 @fetchItem item
                 item.expanded = true
                 @trigger 'didExpand', item
@@ -99,7 +98,6 @@ class ProxyModel extends Model
                     @collapse child, recursive
                 
             if item.expanded
-                @trigger 'willCollapse', item
                 item.expanded = false
                 @trigger 'didCollapse', item
 

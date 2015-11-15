@@ -16,7 +16,7 @@ class find
                 for i in [0...node.length]
                     v = node[i]
                     keyPath.push i
-                    if func i,v
+                    if func keyPath, i,v
                         result.push _.clone(keyPath, true)
                         return result if count > 0 and result.length >= count                    
                     if v.constructor.name in ["Array", "Object"]
@@ -25,7 +25,7 @@ class find
             when "Object"
                 for k,v of node
                     keyPath.push k
-                    if func k,v
+                    if func keyPath, k,v
                         result.push _.clone(keyPath, true)
                         return result if count > 0 and result.length >= count
                     if v.constructor.name in ["Array", "Object"]
@@ -33,10 +33,12 @@ class find
                     keyPath.pop()
         return result
 
-    @keyValue: (node, key, value) -> @traverse node, (k,v) => @match(k, key) and @match(v, value)
-    @key:      (node, key)        -> @traverse node, (k,v) => @match(k, key)
-    @value:    (node, value)      -> @traverse node, (k,v) => @match(v, value)
-    @keyPath:  (node, keyPath)    ->
+    @keyValue: (node, key, value) -> @traverse node, (p,k,v) => @match(k, key) and @match(v, value)
+    @key:      (node, key)        -> @traverse node, (p,k,v) => @match(k, key)
+    @value:    (node, value)      -> @traverse node, (p,k,v) => @match(v, value)
+    @path:     (node, path)       -> @traverse node, (p,k,v) => @match(p.join('.'), path)
+
+    @keyPath:  (node, keyPath) ->
         kp = _.clone keyPath
         while kp.length
             node = node[kp.shift()]
@@ -44,7 +46,7 @@ class find
         node
         
     @match: (a,b) ->
-        if _.isString(a) and _.isString(b) and b.indexOf('*') >= 0
+        if _.isString(a) and _.isString(b) # and b.indexOf('*') >= 0
             p = _.clone(b)
             p = p.replace /\*/g, '.*'
             p = "^"+p+"$"

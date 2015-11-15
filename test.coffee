@@ -136,10 +136,14 @@ if true
         profile 'expand recursive'
         v[0].root.expand true
 
-        dump(filePath)
+        profile 'collapse recursive'
+        v[0].root.collapse true
+        v[0].root.expand()
+
+        # dump(filePath)
         profile ''        
 
-if false
+if true
     for file in ["cards.json"]
         filePath = "data/#{file}"
         log "loading #{filePath} ..."
@@ -166,5 +170,10 @@ if false
         profile 'expand recursive'
         v[0].root.expand true
         
+        profile 'collapse recursive'
+        v[0].root.collapse true
+        v[0].root.expand()
+
+        # dump(filePath)
         profile ""
         

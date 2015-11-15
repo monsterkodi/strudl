@@ -22,11 +22,9 @@ class ProxyItem extends Item
             
         @type = @value.type
                     
-        @children = [] if @isParent()
-        @keyIndex = {} if @isObject()
-
-        if @isExpandable()
-            @expanded = false
+        @children = []    if @isParent()
+        @keyIndex = {}    if @isObject()
+        @expanded = false if @isExpandable()
 
     setValue: (value)      -> @value.setValue value
     getValue: ()           -> @value.getValue()
@@ -51,18 +49,18 @@ class ProxyItem extends Item
                 v = '▶ '
             else
                 v = '▽ '
-            if @isArray() 
-                if @children.length
-                    c = @children.map((i)-> i instanceof ProxyItem and i.inspect(depth+1) or '').join(chalk.gray(',\n'))
-                    v += chalk.blue('[\n') + c + '\n' + s + indent + chalk.blue(' ]') 
-                else
-                    v += '[]'
-            else if @isObject()
-                if @children.length
-                    c = @children.map((i)-> i instanceof ProxyItem and i.inspect(depth+1) or '').join(chalk.gray(',\n'))
-                    v += chalk.magenta('{\n') + c + '\n' + s + indent + chalk.magenta(' }') 
-                else
-                    v += '{}'
+                if @isArray() 
+                    if @children.length
+                        c = @children.map((i)-> i instanceof ProxyItem and i.inspect(depth+1) or '').join(chalk.gray(',\n'))
+                        v += chalk.blue('[\n') + c + '\n' + s + indent + chalk.blue(' ]') 
+                    else
+                        v += '[]'
+                else if @isObject()
+                    if @children.length
+                        c = @children.map((i)-> i instanceof ProxyItem and i.inspect(depth+1) or '').join(chalk.gray(',\n'))
+                        v += chalk.magenta('{\n') + c + '\n' + s + indent + chalk.magenta(' }') 
+                    else
+                        v += '{}'
         else
             v = JSON.stringify @getValue()
 
