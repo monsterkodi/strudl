@@ -32,41 +32,64 @@ class Item
         @children = [] if @isParent()
         @keyIndex = {} if @isObject()
         
-    root:     ()      -> @parent?.root() ? @
-    model:    ()      -> @root().mdl
-    setValue: (value) -> @model().setValue @, value
-    remove:   ()      -> @model().remove @
-    getValue: ()      -> @value
-    typeName: ()      -> 
+    root:  -> @parent?.root() ? @
+    model: -> @root().mdl
+    
+    setValue: (value)      -> @model().setValue @, value
+    remove:   ()           -> @model().remove @
+    insert:   (key, value) -> @model().insert @, key, value
+    
+    getValue: -> @value
+    typeName: -> 
         switch @type
             when 1 then 'Array'
             when 2 then 'Object'
             else 'Value'
     
-    depth:        -> @parent? and (@parent.depth() + 1) or 0
-    isArray:      -> @type == Item.arrayType
-    isObject:     -> @type == Item.objectType
-    isParent:     -> @type != Item.valueType
-    hasChildren:  -> @isParent() and (not _.isEmpty(@children))
+    depth:       -> @parent? and (@parent.depth() + 1) or 0
+    isArray:     -> @type == Item.arrayType
+    isObject:    -> @type == Item.objectType
+    isParent:    -> @type != Item.valueType
+    hasChildren: -> @isParent() and (not _.isEmpty(@children))
     
     addChild: (child) -> 
-        @keyIndex?[child.key] = @children.length
-        @children.push child
+        index = switch @type 
+            when Item.objectType 
+                @keyIndex[child.key] = @children.length
+                @children.length
+            when Item.arrayType  
+                parseInt(child.key)
+
+        if index == @children.length
+            @children.push child
+        else    
+            log 'splice'
+            @children.splice index, 0, child
+        
+            if @type == Item.arrayType
+                for i in [index+1...@children.length]
+                    log 'update'
+                    @children[i].key = i
         
     delChild: (child) ->
         if @type == Item.objectType
             index = @keyIndex[child.key]
-            delete @keyIndex[child.key]
             @children.splice index, 1
-            @keyIndex = {}
-            for index in [0...@children.length]
-                @keyIndex[@children[index].key] = index
+            @updateIndices()
         else if @type == Item.arrayType
             index = @children.indexOf child
             @children.splice index, 1
+            @updateIndices()
+                
+    updateIndices: ->
+        if @type == Item.objectType
+            @keyIndex = {}    
+            for index in [0...@children.length]
+                @keyIndex[@children[index].key] = index
+        else if @type == Item.arrayType
             for index in [0...@children.length]
                 @children[index].key = index
-                    
+            
     childAt: (keyPath) ->
         keyPath = keyPath.split('.') if _.isString keyPath
         [key, rest] = [_.first(keyPath), _.rest(keyPath)]

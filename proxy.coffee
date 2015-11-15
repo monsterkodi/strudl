@@ -27,22 +27,32 @@ class ProxyModel extends Model
         else
             @setBase base if base?
         
+    setBase: (@base) ->
+        @base.on "willReload", @onWillReload
+        @base.on "didReload",  @onDidReload
+        @base.on "willRemove", @onWillRemove
+        @base.on "didInsert",  @onDidInsert
+        @base.on "didChange",  @onDidChange        
+        
     onWillReload:() => @root = null
-    onDidReload:() => 
+    onDidReload: () => 
         if @base?
             @root = @createItem -1, @baseItem ? @base.root, @
             @expand @root
         
-    onWillRemove:(baseItems) => 
-        # log 'onWillRemove', @, baseItems
+    onWillRemove: (baseItems) => 
         for baseItem in baseItems
             item = @itemMap[baseItem.id]
             if item?
-                log '-----------'
                 item.parent.delChild item
+
+    onDidInsert: (baseItems) => 
+        for baseItem in baseItems
+            parent = @itemMap[baseItem.parent.id]
+            if parent? and (not parent.unfetched)
+                parent.addChild @createItem baseItem.key, baseItem, parent
         
-    onDidInsert: (items)          => log 'onDidInsert',    @, items
-    onDidChange: (item, oldValue) => log 'onDidChange ',   @, item, '<', oldValue
+    onDidChange: (item, oldValue) => log 'onDidChange ', @, item, '<', oldValue
                 
     createItem: (key, value, parent) -> 
         item = new ProxyItem key, value, parent

@@ -28,9 +28,10 @@ class ProxyItem extends Item
         if @isExpandable()
             @expanded = false
 
-    setValue: (value) -> @value.setValue value
-    getValue: ()      -> @value.getValue()
-    remove:   ()      -> @value.remove()
+    setValue: (value)      -> @value.setValue value
+    getValue: ()           -> @value.getValue()
+    remove:   ()           -> @value.remove()
+    insert:   (key, value) -> @value.insert key, value
 
     expand:   (recursive=false) -> @model().expand @, recursive
     collapse: (recursive=false) -> @model().collapse @, recursive

@@ -15,20 +15,9 @@ class Model
     Events.mixin Model.prototype
     
     constructor: (@name='model') -> @lastID = -1
-        
-    setBase: (@base) ->
-        @base.on "willReload", @onWillReload
-        @base.on "didReload",  @onDidReload
-        @base.on "willRemove", @onWillRemove
-        @base.on "didInsert",  @onDidInsert
-        @base.on "didChange",  @onDidChange
-                    
-    onWillReload:   ()               => 
-    onDidReload:    ()               => log 'onDidReload',    @
-    onWillRemove:   (items)          => log 'onWillRemove',   @, items
-    onDidInsert:    (items)          => log 'onDidInsert',    @, items
-    onDidChange:    (item, oldValue) => log 'onDidChange ',   @, item, '<', oldValue
 
+    nextID: -> @lastID += 1
+        
     inspect: (depth) -> "[:#{@name}:]"
             
     ###
@@ -40,15 +29,6 @@ class Model
     ###
         
     itemAt: (keyPath) -> @root.childAt keyPath
-    nextID: () -> @lastID += 1
-    
-    ###
-    000   000   0000000   000      000   000  00000000
-    000   000  000   000  000      000   000  000     
-     000 000   000000000  000      000   000  0000000 
-       000     000   000  000      000   000  000     
-        0      000   000  0000000   0000000   00000000
-    ###
     
     setValue: (item, value) ->
         if item.type == Item.valueType
@@ -59,5 +39,8 @@ class Model
     remove: (item) ->
         @trigger 'willRemove', [item]
         item.parent.delChild item
-                    
+        
+    insert: (parent, key, value) ->
+        @trigger 'didInsert', [parent.childAt [key]]
+                            
 module.exports = Model

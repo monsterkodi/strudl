@@ -21,7 +21,7 @@ class DataModel extends Model
         @data = @parseString fs.readFileSync @filePath
         profile "create tree"
         @root = @createItem -1, @data, @
-        log "#{Item.ID} items"
+        log "#{@lastID} items"
         @trigger 'didReload'
 
     parseString: (stringData) ->
@@ -44,10 +44,22 @@ class DataModel extends Model
                     item.addChild @createItem key, data[key], item
         
         item
+        
+    insert: (parent, key, value) ->
+        parent.addChild @createItem key, value, parent
+        super
                                 
     setValue: (item, value) ->
         item.parent.value[item.key] = value
         super
+
+    ###
+    00000000  000  000   000  0000000  
+    000       000  0000  000  000   000
+    000000    000  000 0 000  000   000
+    000       000  000  0000  000   000
+    000       000  000   000  0000000  
+    ###
 
     findKeyValue: (key, value, item=@root) -> item.traverse (k,v) => @match(k, key) and @match(v, value)
     findValue:    (     value, item=@root) -> item.traverse (k,v) => @match(v, value)
