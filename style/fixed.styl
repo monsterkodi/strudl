@@ -48,49 +48,33 @@ textarea
     -webkit-user-select none
     cursor              pointer
     white-space         nowrap
+    pointer-events      all
 
 .tree-item > *
     display             inline-block
     white-space         nowrap  
     overflow            hidden   
 
-.tree-item > .dull
-    color               #555555
-    text-shadow         none
-
-.tree-item.marked
-    background-color    darken(#4a4e52, 5%)    
-
-.tree-item.selected
-    background-color    #4a4e52    
-
-.tree-item.selected:not(.marked)
-    background-color    #282828    
-
 .tree-item-spc
     display             inline-block
     text-align          right
-    pointer-events      all
+    // pointer-events      all
 
 .tree-item-spc.collapsed::after
-  content               '►'
-  margin-right          @arrow-width
+    content             '►'
+    margin-right        @arrow-width
 
 .tree-item-spc.expanded::after
-  content               '▽'
-  margin-right          @arrow-width
+    content             '▽'
+    margin-right        @arrow-width
 
 .tree-item-key
     display             inline-block
     width               200px
     margin-right        6px
-    pointer-events      all
-
-.tree-item-key.type-object
-    color               #888
+    // pointer-events      all
 
 .tree-item-key.type-array
-    color               #333
     text-shadow         none
 
 .tree-item-value

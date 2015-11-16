@@ -37,3 +37,21 @@ body
     
 ::selection
     color:            clr.yellow
+
+.tree-item > .dull
+    color               #555555
+
+.tree-item.marked
+    background-color    darken(#4a4e52, 5%)    
+
+.tree-item.selected
+    background-color    #4a4e52    
+
+.tree-item.selected:not(.marked)
+    background-color    #282828    
+
+.tree-item-value.type-object
+    color               #888
+
+.tree-item-value.type-array
+    color               #333

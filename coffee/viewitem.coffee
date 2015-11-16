@@ -33,6 +33,7 @@ class ViewItem extends ProxyItem
             else
                 @root().elem.insertBefore @elem, @parent.lastChild().elem.nextSibling
 
+            @elem.addEventListener 'click', (event) => @clicked event
             @elem.classList.add 'tree-item'
             @elem.id = "#{@keyPath().join('.')}"
         
@@ -48,13 +49,13 @@ class ViewItem extends ProxyItem
             
             key = document.createElement 'span'
             @elem.appendChild key
-            key.addEventListener 'click', (event) => @clicked event
+            # key.addEventListener 'click', (event) => @clicked event
             key.className = "tree-item-key type-" + @typeName().toLowerCase()
             key.innerHTML = @key
             
             val = document.createElement 'span'
             @elem.appendChild val
-            val.className = "tree-item-value"
+            val.className = "tree-item-value type-" + @typeName().toLowerCase()
             
             switch @type
                 when Item.objectType
