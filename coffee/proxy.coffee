@@ -28,7 +28,6 @@ class Proxy extends Model
             @setBase base if base?
         
     setBase: (@base) ->
-        log.debug "setBase", @, @base
         @base.on "willReload", @onWillReload
         @base.on "didReload",  @onDidReload
         @base.on "willRemove", @onWillRemove
@@ -42,8 +41,8 @@ class Proxy extends Model
     onDidReload: () => 
         if @base?
             @root = @createItem -1, @baseItem ? @base.root, @
+            @trigger "didReload"
             @expand @root
-        @trigger "didReload"
         
     onWillRemove: (baseItems) =>
         for baseItem in baseItems
@@ -64,9 +63,11 @@ class Proxy extends Model
         item = @itemMap[baseItem.id]
         if item?
             @trigger "didChange", item, oldValue
+        
+    newItem: (key, value, parent) -> new ProxyItem key, value, parent
                 
     createItem: (key, value, parent) -> 
-        item = new ProxyItem key, value, parent
+        item = @newItem key, value, parent
         item.id = @nextID()
         item.unfetched = true if item.isExpandable()
         @itemMap[value.id] = item

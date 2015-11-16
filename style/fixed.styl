@@ -6,393 +6,93 @@
 *  000       000  000   000  00000000  0000000  
 */
 
-drag()
-    -webkit-app-region  drag
 nodrag()
     -webkit-app-region  no-drag
-
-input-transition()
-    -webkit-transition all 0.4s ease-in-out
-ghost-transition()
-    -webkit-transition: all 0.8s ease-in-out    
-fast-transition()
-    -webkit-transition: all 0.2s ease-in-out
-bubble-transition()
-    -webkit-transition:  all 0.5s ease-in-out    
-no-transition()
-    -webkit-transition: none
 
 body
     margin              0px
     height              100%
-    overflow            hidden
-    drag()
     -webkit-user-select none
+    pointer-events      none
 
 input 
 textarea
-    nodrag()
+    // nodrag()
     outline             none
     
-#password
-#turtle
-.button
-.vault-item
-.vault-arrow
-.stash-item
-.pref-item
-    cursor              pointer
-        
-a
-    text-decoration     none
-
 .no-pointer
     pointer-events      none
 
-.main-input
-    input-transition()
+#tree-scroll
     nodrag()
-    font-size           24px
-    padding-left        6px
-    padding-right       6px
-    width               100%
-    box-sizing          border-box
-    text-align          center
-    height              35px
-    
-#master
-#site
-#pattern
-    padding-top    0px
-    padding-bottom 3px
-    
-.ghost
-    ghost-transition()
-    pointer-events: none
-    position:       absolute
-    left:           0
-    right:          0
-    text-align:     left
-    font-size:      24px
-    top:            12px
-    padding-left:   20px
-
-.timeout-box
-    pointer-events  none
-    position        absolute
-    top             23px
-    left            20px
-    right           20px
-    
-.timeout
-    -webkit-transition all 0.3s linear
-    pointer-events  none
-    height          9px
-    border-radius   5px
-    position        absolute
-        
-#lock
-#password-ghost
-    fast-transition()
-    
-.lock    
-#lock
-    top:            12px
-    opacity:        0    
-    &.closed
-    &.open
-        opacity:    1
-
-.bool    
-    top:            14px
-    opacity:        0    
-    &.bool-true
-    &.bool-false
-        opacity:    1
-        opacity:    1
-
-#floppy
-    font-size:      19px
-    top:            15px
-    text-align:     right
-    padding-right:  20px
-    
-.border
-    nodrag()
-    input-transition()
-    position:      relative
-    padding:       10px
-    border-radius: 10px
-    margin-left:   12px
-    margin-right:  12px
-
-#password-border
-#master-border
-#site-border
-    margin-bottom: 12px
-
-#turtle
-    nodrag()
-    -webkit-transition box-shadow 0.1s ease-in-out
-    margin          12px
-    width           340px
-    height          260px
-    background-size cover
-    border          none
-
-#bubble
-    bubble-transition()
-    nodrag()
-    position:       absolute
-    top:            170px    
-    right:          27px
-    &.ask
-    &.say
-        pointer-events: all
-        opacity:        1
-    &.whisper
-        pointer-events: all
-        opacity:        1 
-    &.silent
-        pointer-events: none
-        opacity:        0
-
-#say-tri
-    bubble-transition()
-    position:      absolute
-    width:         0
-    height:        0
-    right:         33px
-
-#say-box
-    bubble-transition()
-    position:         relative
-    top:              20px
-    right:            0
-    left:             0
-
-#say
-    bubble-transition()
-    border-radius:    20px
-    padding:          14px
-    max-height:       46px
-    min-width:        90px
-    overflow:         hidden
-    
-.whisper #say
-    padding:          10px
-    padding-right:    14px
-    
-.silent #say
-    font-size:        1px
-    
-.open:hover
-    cursor: pointer
-
-.scroll
-    overflow-x hidden
-    overflow-y auto
-    border 1px solid reds
-    height 397px
-
-#settings
+    top: 0
+    left: 0
+    bottom: 0
+    right: 0
     position: absolute
-    left:     0
-    right:    0
 
-.buttons
-    position:      fixed
-    bottom:        12px
-    left:          0px
-    right:         0px
+#tree
+    overflow: scroll
 
-.button-border
-    drag()
-    input-transition()
-    pointer-events:       all
-    display:              inline-block
-    position:             relative
-    padding:              10px
-    margin:               0px
-    margin-left:          13px
+.tree-item
+    border-top: 0px solid #222
+    padding: 0
+    margin: 0
+    spacing: 0
+    height: @tree-item-height
+    line-height: @tree-item-height 
+    overflow: hidden   
+    -webkit-user-select: none
+    cursor: pointer
+    white-space: nowrap
 
-.button
-    nodrag()
-    -webkit-transition-property: box-shadow, border  
-    -webkit-transition-duration: 0.4s
-    -webkit-transition-timing-function: ease-in-out
-    box-sizing:       border-box
-    position:         static
-    height:           35px
-    width:            35px
+.tree-item > *
+    display: inline-block
+    white-space: nowrap  
+    overflow: hidden   
 
-.button-icon
-    pointer-events: none
-    position:       absolute
-    left:           21px
-    top:            19px
+.tree-item > .dull
+    color:    #555555
+    text-shadow: none
 
-#vault-border .button-icon
-    left: 20px
+.tree-item.marked
+    background-color: darken(#4a4e52, 5%)    
 
-.list
-    position:       absolute
-    padding-top:    13px
-    padding-bottom: 10px
-    padding-left:   0
-    padding-right:  0
-    top:            0
-    left:           0
-    right:          0
-    bottom:         0
-    overflow:       auto
+.tree-item.selected
+    background-color: #4a4e52    
 
-.vault-item-border
-    no-transition()
-    box-sizing      border-box
-    padding         5px
-    position        relative
-    pointer-events  all
+.tree-item.selected:not(.marked)
+    background-color: #282828    
 
-.vault-arrow
-    position        absolute
-    left            15px
-    top             12px
-
-.vault-item
-    nodrag()
-    font-size       18px
-    pointer-events  all
-    text-align      left
-    width           100%
-    height          34px
-    padding-left    41px
-    
-.vault-value
-    box-sizing      border-box
-    position        relative
-    pointer-events  all
-    left            50px
-    width           296px
-    max-width       296px
-    min-height      10px
-    text-align      left
-    padding-left    8px
-    padding-right   8px
-    padding-top     4px
-    padding-bottom  8px
-    font-size       14px
-    border-radius   6px
-    resize          none 
-    overflow-x      auto 
-    overflow-y      hidden
-
-.vault-overlay 
-    nodrag()
-    box-sizing      border-box
-    font-size       18px
-    pointer-events  all
-    border-radius   6px
-    position        absolute
-    left            32px
-    width           296px
-    top             0px
-    bottom          0px
-    margin          5px
-    text-align      left
-    padding-left:   8px
-    padding-right:  8px
-    padding-top:    0px
-    padding-bottom: 1px
-
-
-.stash-item-border
-    no-transition()
-    padding:  5px
-    & .site
-    & .lock    
-    & .pattern
-        position:       absolute
-        pointer-events: none
-        top:            7px
-    & .site
-        left:      10px
-    & .lock
-        left:      0
-        right:     0
-        text-align: center
-    & .pattern
-        left:      60%
-
-.pref-item-border
-    no-transition()
-    padding:  5px
-    & .int
-    & .shortcut
-    & .bool
-    & .pref    
-        position:       absolute
-        pointer-events: none
-        top:            11px
-    & .pref        
-        left:      20px
-    & .int
-    & .shortcut
-    & .bool
-        right:     20px
-
-.pref-item
-    width:         100%
-    height:        32px
-    
-.pref-overlay.shortcut
-.pref-overlay.int
-.pref-overlay 
-    nodrag()
-    box-sizing      border-box
-    pointer-events  all
-    position        absolute
-    right           0
-    top             0
-    bottom          0
-    width           40%
-    margin          6px
-
-.pref-overlay.shortcut
-    cursor          cell    
-    font-size       10px        
-
-.pref-overlay.int
-    cursor          text    
-    text-align      right
-    font-size       17px        
-    
-.stash-item
-    width:         100%
-    height:        24px
-                
-#about
-    text-align:    center
-
-    & h1
-        nodrag()
-        margin-top    33px
-        margin-bottom 9px
-        &:hover 
-            cursor: pointer
-    & .link
-        nodrag()
-        &:hover 
-            cursor: pointer
-
-#about-github
-    nodrag()
-    margin-top:     30px
-    margin-bottom:  40px    
+.tree-item-spc
+    display: inline-block
+    text-align: right
     pointer-events: all
-    &:hover
-        cursor:     pointer
 
-.github-svg
-    nodrag()
-        
+@arrow-width: 4px
+
+.tree-item-spc.collapsed::after
+  content: '►'
+  margin-right: @arrow-width
+
+.tree-item-spc.expanded::after
+  content: '▽'
+  margin-right: @arrow-width
+
+.tree-item-key
+    display: inline-block
+    width:   200px
+    margin-right: 6px
+    pointer-events: all
+
+.tree-item-key.type-object
+    color: #888
+
+.tree-item-key.type-array
+    color: #333
+    text-shadow: none
+
+.tree-item-value
+    display: inline-block
+    min-width: 100px
+    white-space: nowrap

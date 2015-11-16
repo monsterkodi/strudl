@@ -30,10 +30,31 @@ class ProxyItem extends Item
     getValue: ()           -> @value.getValue()
     remove:   ()           -> @value.remove()
     insert:   (key, value) -> @value.insert key, value
-
-    expand:   (recursive=false) -> @model().expand @, recursive
-    collapse: (recursive=false) -> @model().collapse @, recursive
-    isExpanded:   -> @expanded
+    depth:                 -> @value.depth()
+    
+    toggle: () ->
+        if @isExpanded()
+            log.debug item:@, 'toggle collapse'
+            @collapse()
+        else
+            @expand()
+    
+    expand: (recursive=false) -> 
+        if @value instanceof ProxyItem
+            @value.expand recursive
+        else
+            @model().expand @, recursive
+    collapse: (recursive=false) -> 
+        log.debug item:@, 'collapse'
+        if @value instanceof ProxyItem
+            @value.collapse recursive
+        else
+            @model().collapse @, recursive
+    isExpanded: -> 
+        if @value instanceof ProxyItem
+            @value.isExpanded()
+        else
+            @expanded
     isCollapsed:  -> not @isExpanded()
     isExpandable: -> @isParent()
             

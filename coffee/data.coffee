@@ -61,9 +61,9 @@ class DataModel extends Model
     000       000  000   000  0000000  
     ###
 
-    findKeyValue: (key, value, item=@root) -> item.traverse (k,v) => @match(k, key) and @match(v, value)
-    findValue:    (     value, item=@root) -> item.traverse (k,v) => @match(v, value)
-    findKey:      (key,        item=@root) -> item.traverse (k,v) => @match(k, key)
+    findKeyValue: (key, value, item=@root) -> item.traverse (i) => @match(i.key, key) and @match(i.getValue(), value)
+    findValue:    (     value, item=@root) -> item.traverse (i) => @match(i.getValue(), value)
+    findKey:      (key,        item=@root) -> item.traverse (i) => @match(i.key, key)
         
     match: (a,b) ->
         if _.isString(a) and _.isString(b) and b.indexOf('*') >= 0

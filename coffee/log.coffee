@@ -24,6 +24,11 @@ yan = bun.createLogger
             name:   model.name
             lastID: model.lastID
             base:   model.base?.name
+        item: (item) ->
+            id:    item.id
+            key:   item.key
+            model: item.model().name
+            # value: item.value?.inspect? and item.value.inspect() or 'none'
     
 log = -> 
     str = ""

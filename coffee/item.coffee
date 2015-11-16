@@ -114,14 +114,16 @@ class Item
         else
             []
         
-    traverse: (func, result=[]) ->
+    traverse: (func, result=[], test=false) ->
+
+        if test
+            if func @
+                result.push @
         
         if @isParent()
             for child in @children
-                child.traverse func, result
-        else 
-            if func @key, @value
-                result.push @
+                child.traverse func, result, true
+
         return result
         
     inspect: (depth) ->
