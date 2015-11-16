@@ -52,6 +52,11 @@ class Item
     isParent:    -> @type != Item.valueType
     hasChildren: -> @isParent() and (not _.isEmpty(@children))
     
+    lastChild: ->
+        if @children?.length
+            return @children[@children.length-1].lastChild()
+        @
+    
     addChild: (child) -> 
         index = switch @type 
             when Item.objectType 

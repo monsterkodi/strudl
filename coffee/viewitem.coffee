@@ -26,8 +26,13 @@ class ViewItem extends ProxyItem
     createElement: ->
         
         if @key != -1
-            log 'createElement', @key
-            @elem = @root().elem.appendChild document.createElement 'div'
+            @elem = document.createElement 'div'
+
+            if @parent == @root()
+                @root().elem.appendChild @elem
+            else
+                @root().elem.insertBefore @elem, @parent.lastChild().elem.nextSibling
+
             @elem.classList.add 'tree-item'
             @elem.id = "#{@keyPath().join('.')}"
         
@@ -60,7 +65,6 @@ class ViewItem extends ProxyItem
                     val.innerHTML = @getValue()
     
     removeElement: ->
-        log 'removeElement', @elem
         @elem.remove()
         @elem = null
     

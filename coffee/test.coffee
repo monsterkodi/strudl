@@ -22,17 +22,17 @@ dump = (msg) ->
     # log data.root
     for vw in v
         log ''
-        log vw.root
+        console.log vw.root
     profile ""
 
-if false
+if true
     for file in ["test.json"]
         filePath = "data/#{file}"
         log "loading #{filePath} ..."
         profile "load"
         data.load filePath
         profile ''
-        log data.root
+        console.log data.root
         
         v.push new Proxy data.itemAt '3'
         v.push new Proxy data.itemAt '3'        
@@ -41,7 +41,6 @@ if false
         v[1].expandLeaves()
         v[1].expandLeaves()
         v[1].root.collapse(true)
-        dump filePath
         
         data.itemAt('3.empty').insert 0, 666
         data.itemAt('3.empty').insert 0, 999
@@ -64,48 +63,30 @@ if false
         v[1].expandLeaves()
         dump filePath
 
-if false
+if true
     for file in ["test.json"]
         filePath = "data/#{file}"
         log "loading #{filePath} ..."
         profile "load"
         data.load filePath
         profile ''
-        log data.root
+        console.log data.root
         
         v.push new Proxy data.itemAt '5'
         v.push new Proxy data.itemAt '5'
-        v[1].itemAt('2').expand(false)
-        
         dump filePath
         v[0].expandLeaves()
-        dump 'expand'
         v[0].expandLeaves()
-        dump 'expand'
         v[0].collapse v[0].itemAt '3'
-        dump 'collapse 3'
         v[0].collapse v[0].itemAt '5'
         dump 'collapse 5'
         
         v[0].root.expand(true)
-        dump 'expand root'
         v[0].root.collapse()
-        dump 'collapse root'
         v[0].root.collapse(true)
-        dump 'collapse root'
         v[1].root.collapse(true)
-        dump 'collapse root'
         v[1].root.expand(true)
-        dump 'expand root'
         v[0].itemAt('5.0').setValue 'bla'
-        dump 'set value'
-        v[1].itemAt('2.deep.deep').remove()
-        dump 'remove'
-        v[0].itemAt('0').remove()
-        dump 'remove'
-        v[2].itemAt('1').remove()
-        dump 'remove'
-        v[0].itemAt('3.a').remove()
         dump 'remove'
 
 if true
@@ -138,7 +119,6 @@ if true
         v[0].root.collapse true
         v[0].root.expand()
 
-        # dump(filePath)
         profile ''        
 
 if true
@@ -163,8 +143,6 @@ if true
         found = data.findValue 'Forest'
         log "#{found.length} items"
 
-        # dump(filePath)
-        
         profile 'expand recursive'
         v[0].root.expand true
         
@@ -172,6 +150,5 @@ if true
         v[0].root.collapse true
         v[0].root.expand()
 
-        # dump(filePath)
         profile ""
         
