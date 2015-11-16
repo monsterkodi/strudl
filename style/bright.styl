@@ -1,0 +1,408 @@
+
+clr                   = {} 
+clr.black             = #000000
+clr.gray-most-dark    = #181818
+clr.gray-very-dark    = #282828
+clr.gray-dark         = #333333
+clr.gray-medium       = #555555
+clr.gray              = #888888
+clr.gray-bright       = #cccccc
+clr.gray-very-bright  = #dddddd
+clr.gray-super-bright = #eeeeee
+clr.background        = #fafafa
+clr.white             = #ffffff
+clr.yellow-bright     = #ffff88
+clr.yellow            = #ffff00
+clr.orange-bright     = #ffbb00
+clr.orange            = #ff8800
+clr.red               = #ff0000
+clr.green             = #00aa00
+clr.green-bright      = #44ff44
+clr.green-dark        = #006600
+clr.blue-dark         = #2222aa
+clr.blue              = #4444ff
+clr.blue-medium       = #6666ff
+clr.blue-bright       = #8888ff
+clr.blue-very-bright  = #aaaaff
+clr.blue-super-bright = #ccccff
+
+body
+    font-family       Verdana
+    background-color: clr.background
+
+::selection
+    color:            clr.gray-bright
+
+/*
+*  000  000   000  00000000   000   000  000000000
+*  000  0000  000  000   000  000   000     000   
+*  000  000 0 000  00000000   000   000     000   
+*  000  000  0000  000        000   000     000   
+*  000  000   000  000         0000000      000   
+*/
+     
+.main-input
+    border-radius     6px
+    background-color: clr.white
+    color:            clr.gray
+    border:           1px solid transparent
+    &:focus
+        background-color: clr.white
+        box-shadow:       1px 1px 10px rgba(0, 0, 0, 0.25)
+
+#master
+    color:          clr.gray-bright
+    &:focus
+        color:      clr.blue-medium
+
+        
+clr.site        = clr.green 
+clr.site-medium = clr.green-dark
+clr.site-bright = clr.green-bright 
+#site
+    color:                   clr.site
+    &:focus
+        color:               clr.site-medium
+                
+clr.pattern        = clr.gray-dark
+clr.pattern-medium = clr.black
+clr.pattern-bright = clr.gray-bright
+#pattern
+    color:                   clr.pattern 
+    &:focus
+        color:               clr.pattern-medium
+
+clr.password        = clr.blue
+clr.password-medium = clr.blue-dark
+clr.password-bright = clr.blue-bright
+#password
+    color:                   clr.password
+    &:focus
+        color:               clr.password-medium
+    
+.ghost
+    font-family:    sans-serif
+    font-weight:    bold
+    color:          rgba(0,0,0, 0.1)
+    
+.timeout
+    background:     rgba(0,0,0, 0.05)
+    
+/*
+*  0000000     0000000   00000000   0000000    00000000  00000000 
+*  000   000  000   000  000   000  000   000  000       000   000
+*  0000000    000   000  0000000    000   000  0000000   0000000  
+*  000   000  000   000  000   000  000   000  000       000   000
+*  0000000     0000000   000   000  0000000    00000000  000   000
+*/
+    
+.border
+    box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.25)
+    background-color:     clr.white
+    border:               1px solid transparent
+    &.focus
+        background-color: clr.orange-bright
+        box-shadow:       inset 1px 1px 10px rgba(0, 0, 0, 0.25)
+
+#master-border
+    &.focus
+        background-color: clr.white
+
+#site-border
+    &.focus
+        background-color: clr.site-bright
+
+#pattern-border
+    &.focus
+        background-color: clr.gray-very-bright
+
+#password-border
+    &.focus
+        background-color: clr.blue-very-bright
+        
+/*
+*  000   0000000   0000000   000   000   0000000
+*  000  000       000   000  0000  000  000     
+*  000  000       000   000  000 0 000  0000000 
+*  000  000       000   000  000  0000       000
+*  000   0000000   0000000   000   000  0000000 
+*/
+    
+.lock    
+#lock
+    &.closed
+        color:      clr.blue-medium
+    &.open
+        color:      clr.blue-very-bright
+
+.bool    
+    &.bool-true
+        color:      clr.gray-bright
+    &.bool-false
+        color:      clr.gray-super-bright
+
+.focus .bool
+    color:      clr.black
+
+#floppy
+    color:          clr.black
+    &.saved
+        color:      clr.gray-super-bright
+            
+/*
+*  000000000  000   000  00000000   000000000  000      00000000
+*     000     000   000  000   000     000     000      000     
+*     000     000   000  0000000       000     000      0000000 
+*     000     000   000  000   000     000     000      000     
+*     000      0000000   000   000     000     0000000  00000000
+*/
+
+#turtle
+    box-shadow:    inset 1px 1px 15px rgba(0, 0, 0, 0.2)
+    &:focus
+        box-shadow:      4px 4px 8px rgba(0, 0, 0, 0.4)
+    &:active
+        box-shadow:      0px 0px  1px rgba(0, 0, 0, 0.1)
+        border: 1px solid clr.gray-most-dark
+    border-radius: 12px        
+    background url(../img/turtle-bright.png) no-repeat
+    
+/*
+*  0000000    000   000  0000000    0000000    000      00000000
+*  000   000  000   000  000   000  000   000  000      000     
+*  0000000    000   000  0000000    0000000    000      0000000 
+*  000   000  000   000  000   000  000   000  000      000     
+*  0000000     0000000   0000000    0000000    0000000  00000000
+*/
+
+clr.bubble = rgba(255,255,255,0.38)
+clr.bubble-ask = rgba(255,255,255,0.8)
+
+#say-tri
+    border-left:   20px solid transparent 
+    border-right:  20px solid transparent 
+    border-bottom: 20px solid clr.bubble
+
+.ask #say-tri
+    border-bottom: 20px solid clr.bubble-ask
+
+#say
+    text-align:       center
+    font-family:      arial
+    font-weight:      bold
+    text-shadow:      1px 1px 5px clr.gray
+    color:            clr.blue-dark
+    background-color: clr.bubble     
+    line-height:      1.1    
+    
+#say b
+        color: clr.site-medium
+#say i
+        color: clr.pattern-medium
+        font-style: normal
+#say u
+        color: clr.password-medium
+        text-decoration: none
+#say p
+        margin-top: 8px
+                
+.ask #say
+    background-color: clr.bubble-ask
+.whisper #say
+    font-size:  14px
+.say #say    
+.ask #say
+    font-size:  17px
+    
+/*
+*  0000000    000   000  000000000  000000000   0000000   000   000
+*  000   000  000   000     000        000     000   000  0000  000
+*  0000000    000   000     000        000     000   000  000 0 000
+*  000   000  000   000     000        000     000   000  000  0000
+*  0000000     0000000      000        000      0000000   000   000
+*/
+
+.button-border
+    border-radius:        10px
+    background-color:     clr.white
+    color:                clr.gray-bright
+    border:               1px solid transparent
+    &.focus
+        color:            clr.black
+        background-color: clr.white
+        box-shadow:       inset 1px 1px 10px rgba(0, 0, 0, 0.25)
+    &.disabled
+        opacity:          0.5
+        color:            clr.gray
+        
+#about-border
+    &.focus
+        color:            clr.password
+        background-color: clr.password-bright
+
+#ok-border
+#prefs-border
+    &.focus
+        color:            clr.pattern
+        background-color: clr.pattern-bright
+    
+#stash-border
+    &.focus
+        color:            clr.site-medium
+        background-color: clr.site-bright
+
+#help-border
+    &.focus
+        color:            clr.orange
+        background-color: clr.yellow
+
+#vault-border
+    &.focus
+        color:            clr.red
+        background-color: clr.orange
+    
+.button
+    border-radius:        4px
+    border:               none
+    background-color:     clr.white
+    &:focus
+        box-shadow:       1px 1px 10px rgba(0, 0, 0, 0.25)
+    &:active
+        background-color: clr.gray-bright
+    
+/*
+*  000   000   0000000   000   000  000      000000000
+*  000   000  000   000  000   000  000         000   
+*   000 000   000000000  000   000  000         000   
+*     000     000   000  000   000  000         000   
+*      0      000   000   0000000   0000000     000   
+*/
+
+.vault-item-border
+    border:               1px solid transparent
+    background-color:     clr.white
+    &.focus
+        background-color: clr.orange
+
+.vault-item
+    border:           none
+    border-radius:    6px    
+    background-color: clr.white
+    color:            clr.gray
+    &:focus
+        color:        clr.red
+
+.vault-value
+    border:           1px solid transparent
+    color:            clr.gray-medium
+    box-shadow:       inset 0px 0px 10px rgba(0, 0, 0, 0.15)
+
+.vault-value:focus
+.vault-overlay    
+.vault-overlay.vault-key
+.vault-overlay.vault-value
+    border:           1px solid transparent
+    color:            clr.black
+    background-color: clr.orange
+    box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.25)
+
+.vault-arrow
+    color:            clr.white
+.vault-arrow.open
+    color:            clr.gray-super-bright
+.vault-item-border.focus .vault-arrow
+    color:            clr.red
+    
+/*
+*   0000000  000000000   0000000    0000000  000   000
+*  000          000     000   000  000       000   000
+*  0000000      000     000000000  0000000   000000000
+*       000     000     000   000       000  000   000
+*  0000000      000     000   000  0000000   000   000
+*/
+
+.stash-item-border        
+    & .site
+        color:     clr.gray            
+    &.focus .site   
+        color:     clr.site-medium
+    & .pattern
+        color:     clr.gray
+    &.focus
+        background: clr.site-bright
+
+/*
+*  00000000   00000000   00000000  00000000   0000000
+*  000   000  000   000  000       000       000     
+*  00000000   0000000    0000000   000000    0000000 
+*  000        000   000  000       000            000
+*  000        000   000  00000000  000       0000000 
+*/
+
+.pref-item-border
+    & .int
+    & .pref
+    & .shortcut
+        color:        clr.gray
+    &.focus .int
+    &.focus .pref   
+    &.focus .shortcut
+        color:        clr.black
+    &.focus
+        background:   clr.blue-super-bright
+
+.pref-item
+.stash-item
+.pref-overlay 
+    border            none
+    border-radius     6px    
+    background-color: clr.white   
+        
+.pref-overlay.int
+.pref-overlay.shortcut
+    padding-right     14px    
+    padding-left      14px    
+    font-family       Verdana
+    color:            clr.black
+    background-color: clr.blue-super-bright
+    box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.25)
+                
+/*
+*   0000000   0000000     0000000   000   000  000000000
+*  000   000  000   000  000   000  000   000     000   
+*  000000000  0000000    000   000  000   000     000   
+*  000   000  000   000  000   000  000   000     000   
+*  000   000  0000000     0000000    0000000      000   
+*/
+
+#about
+    color:         clr.black
+
+    & h1
+        
+        &:hover 
+            background: clr.blue-bright
+            color: clr.white
+        &:active 
+            color: clr.blue-medium
+        
+    & h2
+    & sub
+        color:     clr.gray-very-bright
+    & a
+    & .link
+        color: clr.blue-bright
+        &:hover 
+            color: clr.black
+            background: clr.blue-very-bright
+        &:active 
+            color: clr.blue-very-bright
+
+#about-github
+    &:hover .github-svg
+        fill:      clr.black
+    &:active .github-svg
+        fill:      clr.blue-bright
+
+.github-svg
+    fill:          clr.blue-very-bright

@@ -6,9 +6,9 @@
 0000000    000   000     000     000   000
 ###
 
+Model   = require './model'
 Item    = require './item'
 profile = require './profile'
-Model   = require './model'
 log     = require './log'
 path    = require 'path'
 fs      = require 'fs'
@@ -21,7 +21,7 @@ class DataModel extends Model
         @data = @parseString fs.readFileSync @filePath
         profile "create tree"
         @root = @createItem -1, @data, @
-        log "#{@lastID} items"
+        log.debug "#{@lastID} items"
         @trigger 'didReload'
 
     parseString: (stringData) ->

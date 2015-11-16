@@ -1,9 +1,9 @@
 ###
-00000000   00000000    0000000   000   000  000   000  00     00   0000000   0000000    00000000  000    
-000   000  000   000  000   000   000 000    000 000   000   000  000   000  000   000  000       000    
-00000000   0000000    000   000    00000      00000    000000000  000   000  000   000  0000000   000    
-000        000   000  000   000   000 000      000     000 0 000  000   000  000   000  000       000    
-000        000   000   0000000   000   000     000     000   000   0000000   0000000    00000000  0000000
+00000000   00000000    0000000   000   000  000   000
+000   000  000   000  000   000   000 000    000 000 
+00000000   0000000    000   000    00000      00000  
+000        000   000  000   000   000 000      000   
+000        000   000   0000000   000   000     000   
 ###
 
 log       = require './log'
@@ -13,10 +13,10 @@ Item      = require './item'
 
 ID=0
 
-class ProxyModel extends Model
+class Proxy extends Model
         
-    constructor: (base) -> 
-        super 'proxy' + (ID += 1)
+    constructor: (base, name='proxy') -> 
+        super name + (ID += 1)
         @itemMap = {}
         if base instanceof Item
             @baseItem = base
@@ -28,31 +28,42 @@ class ProxyModel extends Model
             @setBase base if base?
         
     setBase: (@base) ->
+        log.debug "setBase", @, @base
         @base.on "willReload", @onWillReload
         @base.on "didReload",  @onDidReload
         @base.on "willRemove", @onWillRemove
         @base.on "didInsert",  @onDidInsert
         @base.on "didChange",  @onDidChange        
         
-    onWillReload:() => @root = null
+    onWillReload:() => 
+        @trigger "willReload"
+        @root = null
+        
     onDidReload: () => 
         if @base?
             @root = @createItem -1, @baseItem ? @base.root, @
             @expand @root
+        @trigger "didReload"
         
-    onWillRemove: (baseItems) => 
+    onWillRemove: (baseItems) =>
         for baseItem in baseItems
             item = @itemMap[baseItem.id]
             if item?
+                @trigger "willRemove", item
                 item.parent.delChild item
 
     onDidInsert: (baseItems) => 
         for baseItem in baseItems
             parent = @itemMap[baseItem.parent.id]
             if parent? and (not parent.unfetched)
-                parent.addChild @createItem baseItem.key, baseItem, parent
+                item = @createItem baseItem.key, baseItem, parent
+                parent.addChild item
+                @trigger "didInsert", item
         
-    onDidChange: (item, oldValue) => log 'onDidChange ', @, item, '<', oldValue
+    onDidChange: (baseItem, oldValue) => 
+        item = @itemMap[baseItem.id]
+        if item?
+            @trigger "didChange", item, oldValue
                 
     createItem: (key, value, parent) -> 
         item = new ProxyItem key, value, parent
@@ -130,4 +141,4 @@ class ProxyModel extends Model
                 leafs.push.apply(leafs, @leafItems child)
             leafs
                     
-module.exports = ProxyModel
+module.exports = Proxy

@@ -1,5 +1,5 @@
 {
     "cmd": "grunt",
-    "args": ["test"],
+    "args": ["run"],
     "sh": false
 }

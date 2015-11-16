@@ -18,14 +18,12 @@ v.push new Proxy data
 
 dump = (msg) ->
     profile "dump"
-    log '-------------------------------- ' + msg
+    log.debug '-------------------------------- ' + msg
     # log data.root
     for vw in v
-        log ''
-        log vw.root
+        log.debug ''
+        log.debug vw.root
     profile ""
-
-log process.argv[1], process.mainModule == module
 
 if false
     for file in ["test.json"]
@@ -113,25 +111,25 @@ if false
 if true
     for file in ["data.json"]
         filePath = "data/#{file}"
-        log "loading #{filePath} ..."
+        log.debug "loading #{filePath} ..."
         profile "load"
         data.load filePath
 
         profile "find *uid"
         found = data.findKey '*uid'
-        log "#{found.length} items"
+        log.debug "#{found.length} items"
 
         profile "find 666"
         found = data.findValue '*666*'
-        log "#{found.length} items"
+        log.debug "#{found.length} items"
 
         profile "find checksum 2286196866"
         found = data.findKeyValue 'checksum', 2286196866
-        log "#{found.length} items"
+        log.debug "#{found.length} items"
 
         profile "find key *"
         found = data.findKey '*'
-        log "#{found.length} items"
+        log.debug "#{found.length} items"
 
         profile 'expand recursive'
         v[0].root.expand true
@@ -146,7 +144,7 @@ if true
 if true
     for file in ["cards.json"]
         filePath = "data/#{file}"
-        log "loading #{filePath} ..."
+        log.debug "loading #{filePath} ..."
         profile "load"
         data.load filePath
 
@@ -155,15 +153,15 @@ if true
         
         profile "find"
         found = data.findKey 'rarity'
-        log "#{found.length} items"
+        log.debug "#{found.length} items"
 
         profile "find"
         found = data.findKeyValue 'rarity', 'Rare'
-        log "#{found.length} items"
+        log.debug "#{found.length} items"
         
         profile "find"
         found = data.findValue 'Forest'
-        log "#{found.length} items"
+        log.debug "#{found.length} items"
 
         # dump(filePath)
         

@@ -17,9 +17,9 @@ profile = (msg) ->
     if start? and s_msg.length
         ms = (now()-start).toFixed 0
         if ms > 1000
-            log "#{s_msg} in #{(ms/1000).toFixed(3)} sec"
+            log.debug "#{s_msg} in #{(ms/1000).toFixed(3)} sec"
         else
-            log "#{s_msg} in #{ms} ms"
+            log.debug "#{s_msg} in #{ms} ms"
 
     start = now()
     s_msg = msg
