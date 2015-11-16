@@ -25,13 +25,13 @@ class ViewItem extends ProxyItem
         
             spc = document.createElement 'span'
             @elem.appendChild spc
-            spc.addEventListener 'click', (event) => @clicked event
+            spc.addEventListener 'click', (event) => @clicked event, true
                 
             spc.className = "tree-item-spc"
             spc.style.minWidth = "#{@depth()*30}.px"
             spc.innerHTML = "&nbsp;"
             if @isExpandable()
-                spc.classList.add "collapsed"
+                spc.classList.add @isExpanded() and "expanded" or "collapsed"
             
             key = document.createElement 'span'
             @elem.appendChild key
@@ -62,90 +62,35 @@ class ViewItem extends ProxyItem
         
     expand: (recursive=false) -> 
         super
-        spc = @elem.getElementsByClassName('tree-item-spc')[0]
-        @swapClass "collapsed", "expanded", spc
+        if @isExpandable()
+            spc = @elem.getElementsByClassName('tree-item-spc')[0]
+            @swapClass "collapsed", "expanded", spc
             
     collapse: (recursive=false) -> 
-        log.debug item:@, 'collapse'
         super
-        spc = @elem.getElementsByClassName('tree-item-spc')[0]
-        log.debug 'swap', spc?
-        @swapClass "expanded", "collapsed", spc
+        if @isExpandable()
+            spc = @elem.getElementsByClassName('tree-item-spc')[0]
+            @swapClass "expanded", "collapsed", spc
     
-    clicked: (event) =>
-        log.debug 'clicked', @isExpanded()
+    clicked: (event, toggle=false) =>
         
-        # if @isExpanded()
-        #     @collapse()
-        # else
-        #     @expand()
-        
-        if @hasClass 'selected'
+        if toggle or @hasClass 'selected'
             @toggle()
         else 
             @expand()
 
-        # if event.shiftKey
-        #     for item in @root.itemsInRange(@root.selected.listIndex, @listIndex)
-        #         item.select event
-        #     @select event
-        # else if event.metaKey
-        #     @toggleClass "marked"
-        #     @ownClass "selected"
-        #     @clrClass "temp"
-        #     @root.selected = @
-        # else
-        #     @select event
-        
         @select event
 
-        # if not event.metaKey and not event.shiftKey
-        #     @mark "exclusive"
-        
         event.stopPropagation()
         
     deselect: -> @delClass "selected"
         
     select: (event) ->
-        # type = "temp"
-        # type = "extend" if event.shiftKey
-        # type = "remove" if event.metaKey
-        # @mark type
-        
-        # @addClass "selected"
         
         @ownClass "selected"
-        @ownClass "marked"
         
         if @elem != document.activeElement
             @elem.focus()
-
-    # mark: (type) =>
-    #     oldtemp = document.getElementsByClassName("temp")[0]
-    #     
-    #     switch type
-    #         when "extend"
-    #             oldtemp = null
-    #             @clrClass "temp"
-    #             @addClass "marked"
-    #         when "exclusive"
-    #             oldtemp = null
-    #             @ownClass "marked"
-    #             @ownClass "temp"
-    #         when "remove"
-    #             @clrClass "temp"
-    #             @delClass "marked"
-    #         when "temp"
-    #             if not @hasClass "marked"
-    #                 @ownClass "temp"
-    #                 @addClass "marked"
-    #             else
-    #                 @clrClass "temp"
-    #         else
-    #             log.error "ERROR"
-    #             
-    #     oldtemp?.classList.remove "marked"                
-        
         
     hasClass: (clss,e=@elem) -> e.classList.contains clss
     delClass: (clss,e=@elem) -> e.classList.remove clss

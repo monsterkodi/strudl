@@ -25,14 +25,15 @@ class View extends Proxy
     onDidExpand: (baseItem) => 
         item = @itemMap[baseItem.id]
         @fetchItem item
+        item.traverse (i) =>
+            if i.isExpanded()
+                @fetchItem i
 
     onDidCollapse: (baseItem) => 
         item = @itemMap[baseItem.id]
         log.debug 'didCollapse', item.id
         item.traverse (i) -> i.removeElement()
         item.children = []
-        # while item.children.length
-        #     item.delChild item.children[0]
         item.unfetched = true
         
     onWillReload: => @root = null

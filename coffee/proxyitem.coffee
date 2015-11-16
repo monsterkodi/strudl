@@ -34,7 +34,6 @@ class ProxyItem extends Item
     
     toggle: () ->
         if @isExpanded()
-            log.debug item:@, 'toggle collapse'
             @collapse()
         else
             @expand()
@@ -44,17 +43,19 @@ class ProxyItem extends Item
             @value.expand recursive
         else
             @model().expand @, recursive
+            
     collapse: (recursive=false) -> 
-        log.debug item:@, 'collapse'
         if @value instanceof ProxyItem
             @value.collapse recursive
         else
             @model().collapse @, recursive
+            
     isExpanded: -> 
         if @value instanceof ProxyItem
             @value.isExpanded()
         else
             @expanded
+            
     isCollapsed:  -> not @isExpanded()
     isExpandable: -> @isParent()
             
