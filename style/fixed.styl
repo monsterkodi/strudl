@@ -9,15 +9,18 @@
 nodrag()
     -webkit-app-region  no-drag
 
+tree-item-height = 24px
+arrow-width      = 4px
+
 body
     margin              0px
     height              100%
     -webkit-user-select none
     pointer-events      none
+    font-size           14px
 
 input 
 textarea
-    // nodrag()
     outline             none
     
 .no-pointer
@@ -25,74 +28,72 @@ textarea
 
 #tree-scroll
     nodrag()
-    top: 0
-    left: 0
-    bottom: 0
-    right: 0
-    position: absolute
+    top                 0
+    left                0
+    bottom              0
+    right               0
+    position            absolute
 
 #tree
-    overflow: scroll
+    overflow            scroll
 
 .tree-item
-    border-top: 0px solid #222
-    padding: 0
-    margin: 0
-    spacing: 0
-    height: @tree-item-height
-    line-height: @tree-item-height 
-    overflow: hidden   
-    -webkit-user-select: none
-    cursor: pointer
-    white-space: nowrap
+    border-top          0px solid #222
+    padding             0
+    margin              0
+    spacing             0
+    height              tree-item-height
+    line-height         tree-item-height 
+    overflow            hidden   
+    -webkit-user-select none
+    cursor              pointer
+    white-space         nowrap
 
 .tree-item > *
-    display: inline-block
-    white-space: nowrap  
-    overflow: hidden   
+    display             inline-block
+    white-space         nowrap  
+    overflow            hidden   
 
 .tree-item > .dull
-    color:    #555555
-    text-shadow: none
+    color               #555555
+    text-shadow         none
 
 .tree-item.marked
-    background-color: darken(#4a4e52, 5%)    
+    background-color    darken(#4a4e52, 5%)    
 
 .tree-item.selected
-    background-color: #4a4e52    
+    background-color    #4a4e52    
 
 .tree-item.selected:not(.marked)
-    background-color: #282828    
+    background-color    #282828    
 
 .tree-item-spc
-    display: inline-block
-    text-align: right
-    pointer-events: all
-
-@arrow-width: 4px
+    display             inline-block
+    text-align          right
+    pointer-events      all
 
 .tree-item-spc.collapsed::after
-  content: '►'
-  margin-right: @arrow-width
+  content               '►'
+  margin-right          @arrow-width
 
 .tree-item-spc.expanded::after
-  content: '▽'
-  margin-right: @arrow-width
+  content               '▽'
+  margin-right          @arrow-width
 
 .tree-item-key
-    display: inline-block
-    width:   200px
-    margin-right: 6px
-    pointer-events: all
+    display             inline-block
+    width               200px
+    margin-right        6px
+    pointer-events      all
 
 .tree-item-key.type-object
-    color: #888
+    color               #888
 
 .tree-item-key.type-array
-    color: #333
-    text-shadow: none
+    color               #333
+    text-shadow         none
 
 .tree-item-value
-    display: inline-block
-    min-width: 100px
-    white-space: nowrap
+    display             inline-block
+    min-width           100px
+    white-space         nowrap

@@ -58,7 +58,7 @@ class ViewItem extends ProxyItem
             
             switch @type
                 when Item.objectType
-                    val.innerHTML = "{}"
+                    val.innerHTML = @getValue()["name"] or ""
                 when Item.arrayType
                     val.innerHTML = "[#{@getValue().length}]"
                 when Item.valueType
@@ -83,14 +83,12 @@ class ViewItem extends ProxyItem
     expand: (recursive=false) -> 
         super
         if @isExpandable()
-            spc = @elem.getElementsByClassName('tree-item-spc')[0]
-            @swapClass "collapsed", "expanded", spc
+            @swapClass "collapsed", "expanded", @getElem 'tree-item-spc'
             
     collapse: (recursive=false) -> 
         super
         if @isExpandable()
-            spc = @elem.getElementsByClassName('tree-item-spc')[0]
-            @swapClass "expanded", "collapsed", spc
+            @swapClass "expanded", "collapsed", @getElem 'tree-item-spc'
     
     clicked: (event, toggle=false) =>
         
@@ -128,6 +126,7 @@ class ViewItem extends ProxyItem
      0000000  0000000  0000000   0000000 
     ###
         
+    getElem:  (clss,e=@elem) -> e.getElementsByClassName(clss)[0]
     hasClass: (clss,e=@elem) -> e.classList.contains clss
     delClass: (clss,e=@elem) -> e.classList.remove clss
     addClass: (clss,e=@elem) -> e.classList.add clss

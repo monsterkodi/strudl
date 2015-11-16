@@ -23,7 +23,7 @@ loadData = () ->
     data = new Data()
     prxy = new Proxy data
     view = new View prxy, $('tree')
-    data.load 'data/test.json'
+    data.load 'data/data.json'
 
 ###
 000       0000000    0000000   0000000    00000000  0000000  
