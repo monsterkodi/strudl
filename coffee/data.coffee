@@ -21,7 +21,7 @@ class DataModel extends Model
         @data = @parseString fs.readFileSync @filePath
         profile "create tree"
         @root = @createItem -1, @data, @
-        log.debug "#{@lastID} items"
+        log "#{@lastID} items"
         @trigger 'didReload'
 
     parseString: (stringData) ->

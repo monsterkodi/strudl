@@ -6,9 +6,7 @@
 0000000   0000000    0000000 
 ###
 
-bun = require 'bunyan'
-fs  = require 'fs'
-yan = bun.createLogger 
+log = (require 'bunyan').createLogger 
     name:    "model"
     level:   "debug"
     src:     false
@@ -28,12 +26,5 @@ yan = bun.createLogger
             id:    item.id
             key:   item.key
             model: item.model().name
-            # value: item.value?.inspect? and item.value.inspect() or 'none'
     
-log = -> 
-    str = ""
-    for arg in arguments
-        str += "#{arg.inspect? and arg.inspect() or arg} "
-    yan.debug str
-
-module.exports = yan #yan.debug #log
+module.exports = -> log.debug.apply log, arguments

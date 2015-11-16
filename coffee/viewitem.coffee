@@ -15,10 +15,18 @@ class ViewItem extends ProxyItem
     constructor: (@key, @value, prt) -> 
         super            
 
+    ###
+    00000000  000      00000000  00     00
+    000       000      000       000   000
+    0000000   000      0000000   000000000
+    000       000      000       000 0 000
+    00000000  0000000  00000000  000   000
+    ###
+    
     createElement: ->
         
         if @key != -1
-            log.debug 'createElement', @key
+            log 'createElement', @key
             @elem = @root().elem.appendChild document.createElement 'div'
             @elem.classList.add 'tree-item'
             @elem.id = "#{@keyPath().join('.')}"
@@ -52,13 +60,21 @@ class ViewItem extends ProxyItem
                     val.innerHTML = @getValue()
     
     removeElement: ->
-        log.debug 'removeElement', @elem
+        log 'removeElement', @elem
         @elem.remove()
         @elem = null
     
     delChild: (child) ->
         child.removeElement()
         super
+    
+    ###
+    00000000  000   000  00000000    0000000   000   000  0000000  
+    000        000 000   000   000  000   000  0000  000  000   000
+    0000000     00000    00000000   000000000  000 0 000  000   000
+    000        000 000   000        000   000  000  0000  000   000
+    00000000  000   000  000        000   000  000   000  0000000  
+    ###
         
     expand: (recursive=false) -> 
         super
@@ -83,6 +99,14 @@ class ViewItem extends ProxyItem
 
         event.stopPropagation()
         
+    ###
+     0000000  00000000  000      00000000   0000000  000000000
+    000       000       000      000       000          000   
+    0000000   0000000   000      0000000   000          000   
+         000  000       000      000       000          000   
+    0000000   00000000  0000000  00000000   0000000     000   
+    ###
+        
     deselect: -> @delClass "selected"
         
     select: (event) ->
@@ -91,6 +115,14 @@ class ViewItem extends ProxyItem
         
         if @elem != document.activeElement
             @elem.focus()
+            
+    ###
+     0000000  000       0000000   0000000
+    000       000      000       000     
+    000       000      0000000   0000000 
+    000       000           000       000
+     0000000  0000000  0000000   0000000 
+    ###
         
     hasClass: (clss,e=@elem) -> e.classList.contains clss
     delClass: (clss,e=@elem) -> e.classList.remove clss

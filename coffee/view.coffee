@@ -31,7 +31,6 @@ class View extends Proxy
 
     onDidCollapse: (baseItem) => 
         item = @itemMap[baseItem.id]
-        log.debug 'didCollapse', item.id
         item.traverse (i) -> i.removeElement()
         item.children = []
         item.unfetched = true
@@ -39,14 +38,13 @@ class View extends Proxy
     onWillReload: => @root = null
     onDidReload: =>
         if @base?
-            log.debug model:@, 'onDidReload'
+            log model:@, 'onDidReload'
             @root = @createItem -1, @base.root, @
             @root.elem = @tree
         
     newItem: (key, value, parent) -> new ViewItem key, value, parent        
         
     createItem: (key, value, parent) -> 
-        log.debug 'createItem', key
         item = super
         item.createElement()
         item

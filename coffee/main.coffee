@@ -20,7 +20,6 @@ app     = remote.require 'app'
 win     = remote.getCurrentWindow()
 
 loadData = () ->
-    log.debug 'load data'
     data = new Data()
     prxy = new Proxy data
     view = new View prxy, $('tree')
@@ -51,7 +50,7 @@ win.on 'unmaximize', (event) ->
 ###
 
 win.on 'resize', (event,e) -> 
-    log.debug "resize #{win.getContentSize()}"
+    log "resize #{win.getContentSize()}"
     $(log).innerHTML = JSON.stringify(win.getContentSize())
     
 ###
@@ -68,7 +67,7 @@ document.addEventListener 'keydown', (event) ->
     switch key
         when 'command+i'  then toggleStyle()
         when 'command+w'  then win.close()
-        else log.debug key
+        else log key
 
 ###
  0000000  000000000  000   000  000      00000000
