@@ -32,8 +32,10 @@ class Item
         @children = [] if @isParent()
         @keyIndex = {} if @isObject()
         
-    root:  -> @parent?.root() ? @
-    model: -> @root().mdl
+    root:    -> @parent?.root() ? @
+    isTop:   -> @parent == @root()
+    topItem: -> @isTop() and @ or @parent?.topItem()
+    model:   -> @root().mdl
     
     setValue: (value)      -> @model().setValue @, value
     remove:   ()           -> @model().remove @

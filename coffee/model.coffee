@@ -28,6 +28,7 @@ class Model
     000     000     00000000  000   000
     ###
         
+    getItem:(keyPath) -> @root.childAt keyPath
     itemAt: (keyPath) -> @root.childAt keyPath
     
     setValue: (item, value) ->

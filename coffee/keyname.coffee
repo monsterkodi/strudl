@@ -30,6 +30,7 @@ class keyname
             key = @join @modifiersOfEvent(event), key
         else
             key = ""
-        key        
+        key  
+    @keycode: (event) -> keycode event
 
 module.exports = keyname

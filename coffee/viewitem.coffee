@@ -73,6 +73,20 @@ class ViewItem extends ProxyItem
         child.removeElement()
         super
     
+    nextItem: () ->
+        id = @elem?.nextSibling?.id
+        if id
+            @model().getItem id 
+        else
+            log 'nextItem', id, @elem, @elem?.nextSibling
+
+    prevItem: () ->
+        id = @elem?.previousSibling?.id
+        if id
+            @model().getItem id 
+        else
+            log 'prevItem', id, @elem, @elem?.nextSibling
+    
     ###
     00000000  000   000  00000000    0000000   000   000  0000000  
     000        000 000   000   000  000   000  0000  000  000   000
@@ -118,6 +132,33 @@ class ViewItem extends ProxyItem
         
         if @elem != document.activeElement
             @elem.focus()
+
+    selectUp: (event) -> 
+        if event.ctrlKey and not @isTop()
+            @parent.select event
+        else
+            @prevItem()?.select(event) if @prevItem() != @root()
+            
+    selectDown: (event) -> 
+        @nextItem()?.select event
+                                            
+    selectLeft: (event) -> 
+        if event.metaKey
+            @collapse true
+        else if @isExpanded()
+            @collapse()
+        else if not @isTop() 
+            @selectUp event
+            
+    selectRight: (event) -> 
+        log 'selectRight'
+        if @isExpandable() and not @isExpanded()
+            log 'expand'
+            recursive = event.metaKey
+            log 'expand', recursive
+            @expand recursive 
+        else if @nextItem()?.topItem() == @topItem()
+            @selectDown event
             
     ###
      0000000  000       0000000   0000000

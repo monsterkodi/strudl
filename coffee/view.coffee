@@ -6,6 +6,7 @@
     0      000  00000000  00     00
 ###
 
+_        = require 'lodash'
 log      = require './log'
 Model    = require './model'
 Proxy    = require './proxy'
@@ -51,15 +52,24 @@ class View extends Proxy
         item.createElement()
         item
         
-    #!!keydown
+    ###
+    000   000  00000000  000   000  0000000     0000000   000   000  000   000
+    000  000   000        000 000   000   000  000   000  000 0 000  0000  000
+    0000000    0000000     00000    000   000  000   000  000000000  000 0 000
+    000  000   000          000     000   000  000   000  000   000  000  0000
+    000   000  00000000     000     0000000     0000000   00     00  000   000
+    ###
     
     onKeyDown: (event) =>
         key = keyname.ofEvent event
         e   = document.activeElement
         log 'View.onKeyDown', key, e, e.id
-        switch key
+        keycode = keyname.keycode event
+        switch keycode
             when 'up', 'down', 'left', 'right'
+                log 'dirslet'
+                item = @getItem e.id
+                item?["select#{_.capitalize(keycode)}"] event
                 event.preventDefault()
-            
         
 module.exports = View
