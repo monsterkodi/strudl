@@ -55,7 +55,9 @@ class Item
     hasChildren: -> @isParent() and (not _.isEmpty(@children))
     numDescendants: ->
         num = 0
-        @traverse (i) -> num += 1
+        @traverse (i) -> 
+            num += 1
+            false
         num
     
     lastChild: ->
@@ -136,6 +138,16 @@ class Item
                 child.traverse func, result, true
 
         return result
+        
+    findFirst: (func, test=false) ->
+        if test
+            if func @
+                return @
+        if @children?
+            for child in @children
+                if found = child.findFirst func, true
+                    return found
+        null
         
     inspect: (depth) ->
         indent = S.repeat ' ', 2 #9

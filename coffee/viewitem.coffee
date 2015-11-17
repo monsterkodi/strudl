@@ -78,16 +78,18 @@ class ViewItem extends ProxyItem
     nextItem: () ->
         id = @elem?.nextSibling?.id
         if id
-            @model().getItem id 
+            @model().getItem id
         else
-            log 'nextItem', id, @elem, @elem?.nextSibling
+            null
+        #     log 'nextItem', id, @elem, @elem?.nextSibling
 
     prevItem: () ->
         id = @elem?.previousSibling?.id
         if id
             @model().getItem id 
         else
-            log 'prevItem', id, @elem, @elem?.nextSibling
+            null
+            # log 'prevItem', id, @elem, @elem?.nextSibling
     
     ###
     00000000  000   000  00000000    0000000   000   000  0000000  

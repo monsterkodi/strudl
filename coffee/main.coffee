@@ -27,7 +27,8 @@ loadData = () ->
     data = new Data()
     prxy = new Proxy data
     view = new View prxy, $('tree')
-    data.load 'data/data.json'
+    # data.load 'data/data.json'
+    data.load 'data/test.json'
 
 ###
 000       0000000    0000000   0000000    00000000  0000000  
@@ -53,8 +54,7 @@ win.on 'unmaximize', (event) ->
 000   000  00000000  0000000   000  0000000  00000000
 ###
 
-win.on 'resize', (event,e) -> 
-    view.resize win.getContentSize()
+win.on 'resize', () -> view.update()
     
 ###
 000   000  00000000  000   000  0000000     0000000   000   000  000   000

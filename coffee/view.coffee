@@ -19,16 +19,11 @@ class View extends Proxy
     constructor: (base, @tree) -> 
         super base, 'view', @tree
         @tree.addEventListener 'keydown', @onKeyDown
-        
-        @tree.addEventListener 'scroll',  @onScroll
         @tree.parentElement.addEventListener 'scroll',  @onScroll
-        @tree.addEventListener 'onscroll',  @onScroll
-        @tree.parentElement.addEventListener 'onscroll',  @onScroll
-        $('tree-scroll').addEventListener 'scroll',  @onScroll
-        $('tree-scroll').onscroll = @onScroll
-        @tree.addEventListener 'scroll',  @onScroll
-        @tree.onscroll = @onScroll
-        log 'fark'
+        @aboveElem = $('above')
+        @belowElem = $('below')
+        @belowElem.items = []
+        @aboveElem.items = []
         
     setBase: (base) ->
         super base
@@ -43,17 +38,30 @@ class View extends Proxy
     000   000  00000000  0000000   000  0000000  00000000
     ###
 
-    resize: (@size) ->
-        log "resize --- #{@size}"
-        r = $('tree-scroll').getBoundingClientRect()
-        log 'tree-scroll', r.left, r.top, r.width, r.height
-        r = $('tree').getBoundingClientRect()
-        log 'tree', r.left, r.top, r.width, r.height
-        log 'st', @tree.scrollTop
+    onScroll: (event) => @update()
         
-    onScroll: (event) ->
-        log "onScroll"
-        # log "scroll", @tree.scrollTop, @tree.getBoundingClientRect()
+    update: ->
+        scroll = @tree.parentElement
+        @space =
+            above:  scroll.scrollTop
+            height: scroll.clientHeight
+            bottom: scroll.scrollTop + scroll.clientHeight
+            below:  @tree.clientHeight - scroll.scrollTop - scroll.clientHeight
+            total:  @tree.clientHeight
+            line:   @root?.children[0]?.elem.clientHeight or 24
+
+        # log "update", @space, @root
+        # @root?.findFirst (i) =>
+        #     if not i.nextItem()
+        #         if i.elem.offsetTop + i.elem.clientHeight < @space.bottom
+        #             item = @belowElem.items.shift()
+        #             item.createElement()
+        #             @belowElem.style.height = "#{@belowElem.clientHeight - @space.line}.px"
+        #             false
+        #         else
+        #             true
+        #     else
+        #         false        
         
     ###
     00000000   00000000  000       0000000    0000000   0000000  
@@ -66,7 +74,7 @@ class View extends Proxy
     onWillReload: => @root = null
     onDidReload: =>
         if @base?
-            # log model:@, 'onDidReload'
+            @update()
             @root = @createItem -1, @base.root, @
             @root.elem = @tree
     
@@ -82,7 +90,23 @@ class View extends Proxy
         
     createItem: (key, value, parent) -> 
         item = super
-        item.createElement()
+        
+        # if pe = parent.elem
+        #     top = pe.offsetTop
+        #     ph  = @space.line * (parent.children.length+1)
+        #     if top + ph > @space.bottom
+        #         @belowElem.style.height = "#{@belowElem.clientHeight + @space.line}.px"
+        #         @belowElem.items.push item
+        #         log 'below!', @belowElem.items.length
+        #     else if top < @space.above - ph - @space.line
+        #         # log 'above!', pe, top, ph
+        #         @aboveElem.style.height = "#{@aboveElem.clientHeight + @space.line}.px"
+        #     else 
+        #         # log 'ok', top, ph
+        #         item.createElement()
+                
+        item.createElement()                
+        
         item
         
     selectedItem: -> @getItem document.activeElement?.id
@@ -104,12 +128,16 @@ class View extends Proxy
                 
         if not @selectedItem()
             item.children[0]?.select()
+            
+        @update()
 
     onDidCollapse: (baseItem) => 
         item = @itemMap[baseItem.id]
-        item.traverse (i) -> i.removeElement()
+        item.traverse (i) -> i.removeElement() and false
         item.children = []
         item.unfetched = true
+        
+        @update()
         
     ###
     000   000  00000000  000   000  0000000     0000000   000   000  000   000
