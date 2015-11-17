@@ -61,15 +61,13 @@ class View extends Proxy
     ###
     
     onKeyDown: (event) =>
-        key = keyname.ofEvent event
         e   = document.activeElement
-        log 'View.onKeyDown', key, e, e.id
         keycode = keyname.keycode event
         switch keycode
             when 'up', 'down', 'left', 'right'
-                log 'dirslet'
                 item = @getItem e.id
                 item?["select#{_.capitalize(keycode)}"] event
+                event.stopPropagation()
                 event.preventDefault()
         
 module.exports = View

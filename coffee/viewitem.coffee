@@ -151,11 +151,8 @@ class ViewItem extends ProxyItem
             @selectUp event
             
     selectRight: (event) -> 
-        log 'selectRight'
         if @isExpandable() and not @isExpanded()
-            log 'expand'
             recursive = event.metaKey
-            log 'expand', recursive
             @expand recursive 
         else if @nextItem()?.topItem() == @topItem()
             @selectDown event
