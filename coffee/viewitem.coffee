@@ -52,6 +52,8 @@ class ViewItem extends ProxyItem
             @elem.appendChild key
             key.className = "tree-item-key type-" + @typeName().toLowerCase()
             key.innerHTML = @key
+            if @parent.type == Item.arrayType
+                @addClass 'array-index', key
             
             val = document.createElement 'span'
             @elem.appendChild val
@@ -61,7 +63,7 @@ class ViewItem extends ProxyItem
                 when Item.objectType
                     val.innerHTML = @getValue()["name"] or ""
                 when Item.arrayType
-                    val.innerHTML = "[#{@getValue().length}]"
+                    val.innerHTML = "[#{@getValue().length}-#{@dataItem().numDescendants()}]"
                 when Item.valueType
                     val.innerHTML = @getValue()
     
@@ -99,11 +101,15 @@ class ViewItem extends ProxyItem
         super
         if @isExpandable()
             @swapClass "collapsed", "expanded", @getElem 'tree-item-spc'
+            if @type == Item.arrayType
+                @getElem("tree-item-value").innerHTML = "[#{@getValue().length}-#{@dataItem().numDescendants()}] <#{@numDescendants()}>"
             
     collapse: (recursive=false) -> 
         super
         if @isExpandable()
             @swapClass "expanded", "collapsed", @getElem 'tree-item-spc'
+            if @type == Item.arrayType
+                @getElem("tree-item-value").innerHTML = "[#{@getValue().length}-#{@dataItem().numDescendants()}]"
     
     clicked: (event, toggle=false) =>
         
@@ -145,6 +151,8 @@ class ViewItem extends ProxyItem
     selectLeft: (event) -> 
         if event.metaKey
             @collapse true
+        else if event.altKey
+            @parent.select() if not @isTop()
         else if @isExpanded()
             @collapse()
         else if not @isTop() 

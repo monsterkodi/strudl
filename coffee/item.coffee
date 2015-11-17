@@ -53,6 +53,10 @@ class Item
     isObject:    -> @type == Item.objectType
     isParent:    -> @type != Item.valueType
     hasChildren: -> @isParent() and (not _.isEmpty(@children))
+    numDescendants: ->
+        num = 0
+        @traverse (i) -> num += 1
+        num
     
     lastChild: ->
         if @children?.length

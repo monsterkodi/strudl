@@ -31,6 +31,7 @@ class ProxyItem extends Item
     remove:   ()           -> @value.remove()
     insert:   (key, value) -> @value.insert key, value
     depth:                 -> @value.depth()
+    dataItem: ()           -> @value.dataItem?() ? @value
     
     toggle: () ->
         if @isExpanded()

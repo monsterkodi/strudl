@@ -19,6 +19,10 @@ View    = require './view'
 app     = remote.require 'app'
 win     = remote.getCurrentWindow()
 
+data    = null
+prxy    = null
+view    = null
+
 loadData = () ->
     data = new Data()
     prxy = new Proxy data
@@ -33,7 +37,7 @@ loadData = () ->
 0000000   0000000   000   000  0000000    00000000  0000000  
 ###
 
-document.addEventListener 'DOMContentLoaded', -> loadData()
+document.addEventListener 'DOMContentLoaded', loadData
         
 win.on 'close',      (event) -> app.quit()
 win.on 'focus',      (event) -> 
@@ -50,8 +54,7 @@ win.on 'unmaximize', (event) ->
 ###
 
 win.on 'resize', (event,e) -> 
-    log "resize #{win.getContentSize()}"
-    $(log).innerHTML = JSON.stringify(win.getContentSize())
+    view.resize win.getContentSize()
     
 ###
 000   000  00000000  000   000  0000000     0000000   000   000  000   000

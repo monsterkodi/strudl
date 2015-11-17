@@ -31,27 +31,34 @@ clr.background       = #222222
     src url('./font/UbuntuMono-R.ttf')
 
 body
-    font-family       Verdana
-    background-color: clr.background
-    color:            clr.white
+    font-family         Verdana
+    background-color:   clr.background
+    color:              clr.white
     
 ::selection
-    color:            clr.yellow
+    color:              clr.yellow
 
-.tree-item > .dull
-    color               #555555
+.tree-item-spc
+    color:              clr.gray-medium
 
 .tree-item.marked
     background-color    darken(#4a4e52, 5%)    
 
 .tree-item.selected
     background-color    #4a4e52    
-
+    -webkit-box-shadow  none
+    
 .tree-item.selected:not(.marked)
-    background-color    #282828    
+    background-color:   clr.gray-very-dark
+
+.tree-item-key.array-index
+    color:              clr.gray-medium
+    
+.tree-item-key
+    color:              clr.gray
 
 .tree-item-value.type-object
-    color               #888
+    color:              clr.gray-bright
 
 .tree-item-value.type-array
-    color               #333
+    color:              clr.gray-dark
