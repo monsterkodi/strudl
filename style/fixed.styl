@@ -36,6 +36,7 @@ textarea
 
 #tree
     overflow            scroll
+    pointer-events      all
 
 .tree-item
     border-top          0px solid #222
@@ -48,7 +49,6 @@ textarea
     -webkit-user-select none
     cursor              pointer
     white-space         nowrap
-    pointer-events      all
 
 .tree-item > *
     display             inline-block
@@ -58,7 +58,6 @@ textarea
 .tree-item-spc
     display             inline-block
     text-align          right
-    // pointer-events      all
 
 .tree-item-spc.collapsed::after
     content             '►'
@@ -72,7 +71,6 @@ textarea
     display             inline-block
     width               200px
     margin-right        6px
-    // pointer-events      all
 
 .tree-item-key.type-array
     text-shadow         none

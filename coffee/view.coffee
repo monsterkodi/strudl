@@ -11,11 +11,13 @@ Model    = require './model'
 Proxy    = require './proxy'
 Item     = require './item'
 ViewItem = require './viewitem'
+keyname  = require './keyname'
 
 class View extends Proxy
         
     constructor: (base, @tree) -> 
         super base, 'view', @tree
+        @tree.addEventListener 'keydown', @onKeyDown
         
     setBase: (base) ->
         super base
@@ -48,5 +50,16 @@ class View extends Proxy
         item = super
         item.createElement()
         item
+        
+    #!!keydown
+    
+    onKeyDown: (event) =>
+        key = keyname.ofEvent event
+        e   = document.activeElement
+        log 'View.onKeyDown', key, e, e.id
+        switch key
+            when 'up', 'down', 'left', 'right'
+                event.preventDefault()
+            
         
 module.exports = View

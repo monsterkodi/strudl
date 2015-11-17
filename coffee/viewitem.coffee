@@ -36,6 +36,7 @@ class ViewItem extends ProxyItem
             @elem.addEventListener 'click', (event) => @clicked event
             @elem.classList.add 'tree-item'
             @elem.id = "#{@keyPath().join('.')}"
+            @elem.tabIndex = -1
         
             spc = document.createElement 'span'
             @elem.appendChild spc
@@ -49,7 +50,6 @@ class ViewItem extends ProxyItem
             
             key = document.createElement 'span'
             @elem.appendChild key
-            # key.addEventListener 'click', (event) => @clicked event
             key.className = "tree-item-key type-" + @typeName().toLowerCase()
             key.innerHTML = @key
             

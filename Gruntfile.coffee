@@ -45,7 +45,7 @@ module.exports = (grunt) ->
             test:
                 command: 'coffee test.coffee'
             run:
-                command: 'electron . | bunyan -L -o short'
+                command: 'node_modules/electron-prebuilt/cli.js . | bunyan -L -o short'
             build: 
                 command: "node_modules/electron-packager/cli.js . model --overwrite --platform=darwin --arch=x64 --prune --version=0.34.3 --app-version=0.1.0 --app-bundle-id=net.monsterkodi.model --ignore=node_modules/electron-prebuild --icon=img/model.icns"
             open: 

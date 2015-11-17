@@ -15,5 +15,5 @@ app.on('ready', function() {
         show: true,
         center: true
     });
-    return win.loadUrl("file://" + cwd + "/win.html");
+    return win.loadURL("file://" + cwd + "/win.html");
 });
