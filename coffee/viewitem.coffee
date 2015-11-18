@@ -12,8 +12,7 @@ ProxyItem = require './proxyitem'
 
 class ViewItem extends ProxyItem
 
-    constructor: (@key, @value, prt) -> 
-        super            
+    constructor: (@key, @value, prt) -> super            
 
     ###
     00000000  000      00000000  00     00
@@ -28,14 +27,12 @@ class ViewItem extends ProxyItem
         if @key != -1
             @elem = document.createElement 'div'
 
-            if @parent == @root()
-                @root().elem.appendChild @elem
-            else
-                @root().elem.insertBefore @elem, @parent.lastChild().elem.nextSibling
+            @root().elem.appendChild @elem
 
             @elem.addEventListener 'click', (event) => @clicked event
             @elem.classList.add 'tree-item'
-            @elem.id = "#{@keyPath().join('.')}"
+            
+            @elem.id = "#{@indexInParent()}"
             @elem.tabIndex = -1
 
             idx = document.createElement 'span'
@@ -71,12 +68,10 @@ class ViewItem extends ProxyItem
             when Item.objectType
                 val.innerHTML = (@getValue()["name"] or "") + (@isExpanded() and " <#{@numDescendants()}> <#{@value.numVisible}>" or "")
             when Item.arrayType
-                val.innerHTML = "[#{@getValue().length}-#{@dataItem().numDescendants()}]" + (true and " <#{@numDescendants()}> <#{@value.numVisible}>" or "")
+                val.innerHTML = "[#{@getValue().length}-#{@dataItem().numDescendants()}]" + (@isExpanded() and " <#{@numDescendants()}> <#{@value.numVisible}>" or "")
             when Item.valueType
                 val.innerHTML = @getValue()
-                
-        @parent?.update()
-    
+                    
     removeElement: ->
         @elem.remove()
         @elem = null
@@ -85,19 +80,8 @@ class ViewItem extends ProxyItem
         child.removeElement()
         super
     
-    nextItem: () ->
-        id = @elem?.nextSibling?.id
-        if id
-            @model().getItem id
-        else
-            null
-
-    prevItem: () ->
-        id = @elem?.previousSibling?.id
-        if id
-            @model().getItem id 
-        else
-            null
+    nextItem: () -> @parent.children[@indexInParent()+1]
+    prevItem: () -> @parent.children[@indexInParent()-1]
         
     ###
     00000000  000   000  00000000    0000000   000   000  0000000  
@@ -107,26 +91,26 @@ class ViewItem extends ProxyItem
     00000000  000   000  000        000   000  000   000  0000000  
     ###
         
-    expand: (recursive=false) -> 
+    expand: (recursive=false) ->
         super
         if @isExpandable()
             @swapClass "collapsed", "expanded", @getElem 'tree-item-spc'
             @update()
             
-    collapse: (recursive=false) -> 
+    collapse: (recursive=false) ->
         super
         if @isExpandable()
             @swapClass "expanded", "collapsed", @getElem 'tree-item-spc'
             @update()
     
     clicked: (event, toggle=false) =>
+
+        @select event
         
         if toggle or @hasClass 'selected'
             @toggle()
         else 
             @expand()
-
-        @select event
 
         event.stopPropagation()
         
@@ -146,15 +130,20 @@ class ViewItem extends ProxyItem
         
         if @elem != document.activeElement
             @elem.focus()
-
-    selectUp: (event) -> 
-        if event.ctrlKey and not @isTop()
-            @parent.select event
+            
+    selectUp: (event) ->
+        if @prevItem()
+            @prevItem().select event
         else
-            @prevItem()?.select(event) if @prevItem() != @root()
+            @model().scrollLines -1
+            @model().selectUp()
             
     selectDown: (event) -> 
-        @nextItem()?.select event
+        if @nextItem()
+            @nextItem().select event
+        else
+            @model().scrollLines 1  
+            @model().selectDown()  
                                             
     selectLeft: (event) -> 
         if event.metaKey

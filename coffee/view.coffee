@@ -29,37 +29,61 @@ class View extends Proxy
         @base.on "didCollapse", @onDidCollapse
 
     ###
-    00000000   00000000   0000000  000  0000000  00000000
-    000   000  000       000       000     000   000     
-    0000000    0000000   0000000   000    000    0000000 
-    000   000  000            000  000   000     000     
-    000   000  00000000  0000000   000  0000000  00000000
+     0000000   0000000  00000000    0000000   000      000    
+    000       000       000   000  000   000  000      000    
+    0000000   000       0000000    000   000  000      000    
+         000  000       000   000  000   000  000      000    
+    0000000    0000000  000   000   0000000   0000000  0000000
     ###
+        
+    scrollLines: (lines) ->
+        scroll = @tree.parentElement
+        line   = @root?.children[0]?.elem.clientHeight or 24
+        scroll.scrollTop += lines * line
+        @update()
 
     onScroll: (event) => @update()
+
+    ###
+    000   000  00000000   0000000     0000000   000000000  00000000
+    000   000  000   000  000   000  000   000     000     000     
+    000   000  00000000   000   000  000000000     000     0000000 
+    000   000  000        000   000  000   000     000     000     
+     0000000   000        0000000    000   000     000     00000000
+    ###
         
     update: ->
-        scroll = @tree.parentElement
-
+        
+        selected = @root.children[parseInt(document.activeElement.id)]?.value?.id
+        
+        scroll   = @tree.parentElement
         line     = @root?.children[0]?.elem.clientHeight or 24
         numlines = parseInt(scroll.clientHeight / line)
         total    = @base.root.numVisible * line
         height   = line * numlines
         above    = Math.min(@base.root.numVisible - numlines, parseInt(scroll.scrollTop / line)) * line
-        bottom   = above + height
         first    = parseInt(above / line)
         last     = first + numlines
         below    = Math.max(0, total - above - height)
             
         @root.children = []
+        @root.keyIndex = {}
         @tree.innerHTML = "" # proper destruction needed?
 
         @aboveElem.style.height = "#{above}.px"
         @belowElem.style.height = "#{below}.px"
                                         
-        for i in [first...last]
+        for i in [first..last]
             baseItem = @base.visibleAtIndex i
-            @createItem baseItem.key, baseItem, @root
+            @root.keyIndex[baseItem.key] = @root.children.length
+            item = @createItem baseItem.key, baseItem, @root
+            @root.children.push item
+            item.createElement()                
+            if baseItem.id == selected
+                item.select()
+                                
+        if Number.isNaN parseInt(document.activeElement.id)
+            @root.children[0].select()
                                 
     ###
     00000000   00000000  000       0000000    0000000   0000000  
@@ -84,14 +108,7 @@ class View extends Proxy
     ###
         
     newItem: (key, value, parent) -> new ViewItem key, value, parent        
-        
-    createItem: (key, value, parent) -> 
-        item = super
-        item.createElement()                
-        item
-        
-    selectedItem: -> @getItem document.activeElement?.id
-    
+                    
     ###
     00000000  000   000  00000000    0000000   000   000  0000000  
     000        000 000   000   000  000   000  0000  000  000   000
@@ -111,12 +128,17 @@ class View extends Proxy
     000   000  00000000     000     0000000     0000000   00     00  000   000
     ###
     
+    selectedItem: () -> @root.children[parseInt(document.activeElement.id)]
+    selectUp:   () -> @selectedItem().prevItem().select()
+    selectDown: () -> @selectedItem().nextItem().select()
+    
     onKeyDown: (event) =>
-        e   = document.activeElement
+        e = document.activeElement
         keycode = keyname.keycode event
         switch keycode
             when 'up', 'down', 'left', 'right'
-                item = @getItem e.id
+                item = @root.children[parseInt(e.id)]
+                log e.id, item
                 item?["select#{_.capitalize(keycode)}"] event
                 event.stopPropagation()
                 event.preventDefault()

@@ -27,8 +27,8 @@ class Item
         @type = switch @value.constructor.name
                 when 'Array'  then Item.arrayType
                 when 'Object' then Item.objectType
-                else Item.valueType
-                    
+                else @value.type ? Item.valueType
+                                        
         @children = [] if @isParent()
         @keyIndex = {} if @isObject()
         
@@ -82,12 +82,10 @@ class Item
         if index == @children.length
             @children.push child
         else    
-            log 'splice'
             @children.splice index, 0, child
         
             if @type == Item.arrayType
                 for i in [index+1...@children.length]
-                    log 'update'
                     @children[i].key = i
         
     delChild: (child) ->
@@ -112,7 +110,6 @@ class Item
     childAt: (keyPath) ->
         keyPath = keyPath.split('.') if _.isString keyPath
         [key, rest] = [_.first(keyPath), _.rest(keyPath)]
-        # log 'childAt', keyPath, key, rest, @typeName()
         if @type == Item.arrayType
             index = parseInt(key)
         else
