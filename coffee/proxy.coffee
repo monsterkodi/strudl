@@ -33,6 +33,13 @@ class Proxy extends Model
         @base.on "willRemove", @onWillRemove
         @base.on "didInsert",  @onDidInsert
         @base.on "didChange",  @onDidChange        
+    
+    numVisible: () ->
+        num = 0
+        @root.findFirstVisible (i) => 
+            num += 1
+            false
+        num
         
     onWillReload:() => 
         @trigger "willReload"
@@ -95,7 +102,6 @@ class Proxy extends Model
             if not item.expanded
                 @fetchItem item
                 item.expanded = true
-                item.changeVisible item.children.length
                 @trigger 'didExpand', item
                 
             if recursive
@@ -112,7 +118,6 @@ class Proxy extends Model
                 
             if item.expanded
                 item.expanded = false
-                item.changeVisible 1 - item.numVisible
                 @trigger 'didCollapse', item
 
     expandItems: (items) -> 

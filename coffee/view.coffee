@@ -55,13 +55,13 @@ class View extends Proxy
     update: ->
         
         selected = @root.children[parseInt(document.activeElement.id)]?.value?.id
-        
+        visible  = @base.numVisible()
         scroll   = @tree.parentElement
         line     = @root?.children[0]?.elem.clientHeight or 24
         numlines = parseInt(scroll.clientHeight / line)
-        total    = @base.root.numVisible * line
+        total    = visible * line
         height   = line * numlines
-        above    = Math.min(@base.root.numVisible - numlines, parseInt(scroll.scrollTop / line)) * line
+        above    = Math.min(visible - numlines, parseInt(scroll.scrollTop / line)) * line
         first    = parseInt(above / line)
         last     = first + numlines
         below    = Math.max(0, total - above - height)
@@ -83,7 +83,7 @@ class View extends Proxy
                 item.select()
                                 
         if Number.isNaN parseInt(document.activeElement.id)
-            @root.children[0].select()
+            @root.children[0]?.select()
                                 
     ###
     00000000   00000000  000       0000000    0000000   0000000  
@@ -138,7 +138,7 @@ class View extends Proxy
         switch keycode
             when 'up', 'down', 'left', 'right'
                 item = @root.children[parseInt(e.id)]
-                log e.id, item
+                log e.id, item.indexInParent()
                 item?["select#{_.capitalize(keycode)}"] event
                 event.stopPropagation()
                 event.preventDefault()

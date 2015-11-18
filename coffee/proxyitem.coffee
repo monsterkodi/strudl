@@ -21,7 +21,6 @@ class ProxyItem extends Item
             @parent = prt
             
         @type = @value.type
-        @numVisible = 1
                     
         @children = []    if @isParent()
         @keyIndex = {}    if @isObject()
@@ -33,23 +32,29 @@ class ProxyItem extends Item
     insert:   (key, value) -> @value.insert key, value
     depth:                 -> @value.depth()
     dataItem: ()           -> @value.dataItem?() ? @value
-    
-    changeVisible: (delta) -> @eachAncestor (i) -> i.numVisible += delta
-        
+            
+    findFirstVisible: (func, test=false) ->
+        if test
+            if func @
+                return @
+        if @children? and @expanded
+            for child in @children
+                if found = child.findFirstVisible func, true
+                    return found
+        null
+            
+            
     visibleIndex: -> 
-        return -1 if not @parent?
-        @parent.visibleIndex() + @indexInParent() + 1
+        index = -1
+        @root().findFirstVisible (i) =>
+            index += 1
+            i == @
+        index
         
-    visibleAtIndex: (i) ->
-        for child in @children
-            if i < child.numVisible
-                if i == 0
-                    return child
-                else
-                    return child.visibleAtIndex i-1
-            else # i >= child.numVisible
-                i -= child.numVisible
-        return null
+    visibleAtIndex: (index) ->
+        @root().findFirstVisible (i) => 
+            index -= 1
+            index < 0
     
     toggle: () ->
         if @isExpanded()

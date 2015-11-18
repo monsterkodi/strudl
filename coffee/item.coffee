@@ -61,6 +61,8 @@ class Item
         num
     
     indexInParent: ->
+        if @parent?.children?.length < 1000
+            return @parent.children.indexOf @
         switch @parent?.type
             when Item.arrayType then parseInt(@key)
             when Item.objectType then @parent.keyIndex[@key]
