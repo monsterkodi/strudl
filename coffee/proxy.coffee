@@ -79,7 +79,7 @@ class Proxy extends Model
                 for child in item.value.children
                     item.addChild @createItem child.key, child, item
             delete item.unfetched
-                
+                        
     ###
     00000000  000   000  00000000    0000000   000   000  0000000  
     000        000 000   000   000  000   000  0000  000  000   000
@@ -87,7 +87,7 @@ class Proxy extends Model
     000        000 000   000        000   000  000  0000  000   000
     00000000  000   000  000        000   000  000   000  0000000  
     ###
-    
+        
     expand: (item, recursive=false) ->
         
         if item.isExpandable()
@@ -95,6 +95,7 @@ class Proxy extends Model
             if not item.expanded
                 @fetchItem item
                 item.expanded = true
+                item.changeVisible item.children.length
                 @trigger 'didExpand', item
                 
             if recursive
@@ -111,6 +112,7 @@ class Proxy extends Model
                 
             if item.expanded
                 item.expanded = false
+                item.changeVisible 1 - item.numVisible
                 @trigger 'didCollapse', item
 
     expandItems: (items) -> 
@@ -141,5 +143,7 @@ class Proxy extends Model
             for child in item.children
                 leafs.push.apply(leafs, @leafItems child)
             leafs
+
+    visibleAtIndex: (i) -> @root.visibleAtIndex i
                     
 module.exports = Proxy

@@ -22,8 +22,6 @@ class View extends Proxy
         @tree.parentElement.addEventListener 'scroll',  @onScroll
         @aboveElem = $('above')
         @belowElem = $('below')
-        @belowElem.items = []
-        @aboveElem.items = []
         
     setBase: (base) ->
         super base
@@ -42,27 +40,27 @@ class View extends Proxy
         
     update: ->
         scroll = @tree.parentElement
-        @space =
-            above:  scroll.scrollTop
-            height: scroll.clientHeight
-            bottom: scroll.scrollTop + scroll.clientHeight
-            below:  @tree.clientHeight - scroll.scrollTop - scroll.clientHeight
-            total:  @tree.clientHeight
-            line:   @root?.children[0]?.elem.clientHeight or 24
 
-        # log "update", @space, @root
-        # @root?.findFirst (i) =>
-        #     if not i.nextItem()
-        #         if i.elem.offsetTop + i.elem.clientHeight < @space.bottom
-        #             item = @belowElem.items.shift()
-        #             item.createElement()
-        #             @belowElem.style.height = "#{@belowElem.clientHeight - @space.line}.px"
-        #             false
-        #         else
-        #             true
-        #     else
-        #         false        
-        
+        line     = @root?.children[0]?.elem.clientHeight or 24
+        numlines = parseInt(scroll.clientHeight / line)
+        total    = @base.root.numVisible * line
+        height   = line * numlines
+        above    = Math.min(@base.root.numVisible - numlines, parseInt(scroll.scrollTop / line)) * line
+        bottom   = above + height
+        first    = parseInt(above / line)
+        last     = first + numlines
+        below    = Math.max(0, total - above - height)
+            
+        @root.children = []
+        @tree.innerHTML = "" # proper destruction needed?
+
+        @aboveElem.style.height = "#{above}.px"
+        @belowElem.style.height = "#{below}.px"
+                                        
+        for i in [first...last]
+            baseItem = @base.visibleAtIndex i
+            @createItem baseItem.key, baseItem, @root
+                                
     ###
     00000000   00000000  000       0000000    0000000   0000000  
     000   000  000       000      000   000  000   000  000   000
@@ -74,10 +72,9 @@ class View extends Proxy
     onWillReload: => @root = null
     onDidReload: =>
         if @base?
-            @update()
             @root = @createItem -1, @base.root, @
             @root.elem = @tree
-    
+            
     ###
     000  000000000  00000000  00     00
     000     000     000       000   000
@@ -90,23 +87,7 @@ class View extends Proxy
         
     createItem: (key, value, parent) -> 
         item = super
-        
-        # if pe = parent.elem
-        #     top = pe.offsetTop
-        #     ph  = @space.line * (parent.children.length+1)
-        #     if top + ph > @space.bottom
-        #         @belowElem.style.height = "#{@belowElem.clientHeight + @space.line}.px"
-        #         @belowElem.items.push item
-        #         log 'below!', @belowElem.items.length
-        #     else if top < @space.above - ph - @space.line
-        #         # log 'above!', pe, top, ph
-        #         @aboveElem.style.height = "#{@aboveElem.clientHeight + @space.line}.px"
-        #     else 
-        #         # log 'ok', top, ph
-        #         item.createElement()
-                
         item.createElement()                
-        
         item
         
     selectedItem: -> @getItem document.activeElement?.id
@@ -119,25 +100,8 @@ class View extends Proxy
     00000000  000   000  000        000   000  000   000  0000000  
     ###
 
-    onDidExpand: (baseItem) => 
-        item = @itemMap[baseItem.id]
-        @fetchItem item
-        item.traverse (i) =>
-            if i.isExpanded()
-                @fetchItem i
-                
-        if not @selectedItem()
-            item.children[0]?.select()
-            
-        @update()
-
-    onDidCollapse: (baseItem) => 
-        item = @itemMap[baseItem.id]
-        item.traverse (i) -> i.removeElement() and false
-        item.children = []
-        item.unfetched = true
-        
-        @update()
+    onDidExpand:   (baseItem) =>  @update()
+    onDidCollapse: (baseItem) =>  @update()
         
     ###
     000   000  00000000  000   000  0000000     0000000   000   000  000   000

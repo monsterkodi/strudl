@@ -37,6 +37,10 @@ class ViewItem extends ProxyItem
             @elem.classList.add 'tree-item'
             @elem.id = "#{@keyPath().join('.')}"
             @elem.tabIndex = -1
+
+            idx = document.createElement 'span'
+            @elem.appendChild idx
+            idx.innerHTML = "#{@value.visibleIndex?()} "
         
             spc = document.createElement 'span'
             @elem.appendChild spc
@@ -59,13 +63,19 @@ class ViewItem extends ProxyItem
             @elem.appendChild val
             val.className = "tree-item-value type-" + @typeName().toLowerCase()
             
-            switch @type
-                when Item.objectType
-                    val.innerHTML = @getValue()["name"] or ""
-                when Item.arrayType
-                    val.innerHTML = "[#{@getValue().length}-#{@dataItem().numDescendants()}]"
-                when Item.valueType
-                    val.innerHTML = @getValue()
+            @update()
+            
+    update: ->
+        val = @getElem("tree-item-value")
+        switch @type
+            when Item.objectType
+                val.innerHTML = (@getValue()["name"] or "") + (@isExpanded() and " <#{@numDescendants()}> <#{@value.numVisible}>" or "")
+            when Item.arrayType
+                val.innerHTML = "[#{@getValue().length}-#{@dataItem().numDescendants()}]" + (true and " <#{@numDescendants()}> <#{@value.numVisible}>" or "")
+            when Item.valueType
+                val.innerHTML = @getValue()
+                
+        @parent?.update()
     
     removeElement: ->
         @elem.remove()
@@ -81,7 +91,6 @@ class ViewItem extends ProxyItem
             @model().getItem id
         else
             null
-        #     log 'nextItem', id, @elem, @elem?.nextSibling
 
     prevItem: () ->
         id = @elem?.previousSibling?.id
@@ -89,8 +98,7 @@ class ViewItem extends ProxyItem
             @model().getItem id 
         else
             null
-            # log 'prevItem', id, @elem, @elem?.nextSibling
-    
+        
     ###
     00000000  000   000  00000000    0000000   000   000  0000000  
     000        000 000   000   000  000   000  0000  000  000   000
@@ -103,15 +111,13 @@ class ViewItem extends ProxyItem
         super
         if @isExpandable()
             @swapClass "collapsed", "expanded", @getElem 'tree-item-spc'
-            if @type == Item.arrayType
-                @getElem("tree-item-value").innerHTML = "[#{@getValue().length}-#{@dataItem().numDescendants()}] <#{@numDescendants()}>"
+            @update()
             
     collapse: (recursive=false) -> 
         super
         if @isExpandable()
             @swapClass "expanded", "collapsed", @getElem 'tree-item-spc'
-            if @type == Item.arrayType
-                @getElem("tree-item-value").innerHTML = "[#{@getValue().length}-#{@dataItem().numDescendants()}]"
+            @update()
     
     clicked: (event, toggle=false) =>
         

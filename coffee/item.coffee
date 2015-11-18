@@ -60,6 +60,12 @@ class Item
             false
         num
     
+    indexInParent: ->
+        switch @parent?.type
+            when Item.arrayType then parseInt(@key)
+            when Item.objectType then @parent.keyIndex[@key]
+            else 0
+    
     lastChild: ->
         if @children?.length
             return @children[@children.length-1].lastChild()
@@ -126,6 +132,10 @@ class Item
                 return [ @key ]
         else
             []
+            
+    eachAncestor: (func) ->
+        func @
+        @parent?.eachAncestor func
         
     traverse: (func, result=[], test=false) ->
 
