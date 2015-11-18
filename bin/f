@@ -7,8 +7,8 @@
 000     
 ###
 
-log   = require './log'
-find  = require './find'
+log   = require '../coffee/log'
+find  = require '../coffee/find'
 _     = require 'lodash'
 fs    = require 'fs'
 chalk = require 'chalk'
