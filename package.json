@@ -1,10 +1,15 @@
 {
-  "name": "model",
+  "name": "strudl",
   "version": "0.1.0",
-  "description": "",
+  "description": "i like strudel!",
+  "author": "monsterkodi",
+  "license": "Unlicense",
+  "bin": {
+    "strudl": "./bin/strudl"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/monsterkodi/model.git"
+    "url": "https://github.com/monsterkodi/strudl.git"
   },
   "main": "app.js",
   "dependencies": {
