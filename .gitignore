@@ -1,7 +1,8 @@
 node_modules
 data
-model-darwin-x64
-model.log
+*-darwin-x64
+*.log
 style/bright.css
 style/dark.css
 style/fixed.css
+img/*.pxm

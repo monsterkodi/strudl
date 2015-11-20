@@ -9,12 +9,11 @@
 nodrag()
     -webkit-app-region  no-drag
 
-tree-item-height = 28px
+tree-item-height = 24px
 arrow-width      = 4px
 
 body
     margin              0px
-    // height              100%
     -webkit-user-select none
     pointer-events      all
     font-size           14px
@@ -41,12 +40,9 @@ textarea
 #tree
     width               100%
 
-.spacer
-    width               100%
-    height              0px
-    box-sizing          border-box
-
 .tree-item
+    display             block
+    position            absolute
     border-top          0px solid #222
     padding             0
     margin              0

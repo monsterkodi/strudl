@@ -36,26 +36,43 @@ module.exports = (grunt) ->
         watch:
             coffee:
                 files: ['coffee/*.coffee']
-                tasks: ['salt']
+                tasks: ['salt', 'restart']
+                
             style:
                 files: ['style/*.styl']
-                tasks: ['stylus']
-
+                tasks: ['stylus', 'restart']
+                
+            js:
+                files: ['*.js']
+                tasks: ['restart']
+                                
         shell:
             test:
                 command: 'coffee test.coffee'
             run:
-                command: 'node_modules/electron-prebuilt/cli.js . | bunyan -L -o short'
+                command: 'bin/strudl'
             build: 
-                command: "node_modules/electron-packager/cli.js . model --overwrite --platform=darwin --arch=x64 --prune --version=0.34.3 --app-version=0.1.0 --app-bundle-id=net.monsterkodi.model --ignore=node_modules/electron-prebuild --icon=img/model.icns"
+                command: "node_modules/electron-packager/cli.js . strudl --overwrite --platform=darwin --arch=x64 --prune --version=0.35.0 --app-version=0.1.0 --app-bundle-id=net.monsterkodi.strudl --ignore=node_modules/electron-prebuild --icon=img/strudl.icns"
             open: 
-                command: "open model-darwin-x64/strudl.app"
+                command: "open strudl-darwin-x64/strudl.app"
+            kill:
+                command: "killall Electron || true"
 
+        external_daemon: 
+            strudl: 
+                cmd: "bin/strudl"
+  
     grunt.loadNpmTasks 'grunt-contrib-watch'
     grunt.loadNpmTasks 'grunt-contrib-stylus'
     grunt.loadNpmTasks 'grunt-pepper'
     grunt.loadNpmTasks 'grunt-shell'
+    grunt.loadNpmTasks 'grunt-external-daemon'
 
     grunt.registerTask 'test',     [ 'salt', 'shell:test' ]
     grunt.registerTask 'run',      [ 'shell:run' ]
     grunt.registerTask 'build',    [ 'salt', 'stylus', 'shell:build', 'shell:open' ]
+    grunt.registerTask 'restart',  [ 'shell:kill', 'external_daemon' ]
+    grunt.registerTask 'default',  [ 'watch' ]
+        
+
+ 

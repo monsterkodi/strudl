@@ -15,7 +15,6 @@ keyname = require './keyname'
 Data    = require './data'
 Proxy   = require './proxy'
 View    = require './view'
-
 app     = remote.require 'app'
 win     = remote.getCurrentWindow()
 
@@ -27,8 +26,11 @@ loadData = () ->
     data = new Data()
     prxy = new Proxy data
     view = new View prxy, $('tree')
+    log '\nloading data' 
     data.load 'data/data.json'
-    # data.load 'data/test.json'
+    # data.load 'data/cards.json'
+    # data.load 'data/darwin.cson'
+    
 
 ###
 000       0000000    0000000   0000000    00000000  0000000  
@@ -45,7 +47,7 @@ win.on 'focus',      (event) ->
 win.on 'blur',       (event) -> 
 win.on 'maximize',   (event) -> 
 win.on 'unmaximize', (event) -> 
-
+    
 ###
 00000000   00000000   0000000  000  0000000  00000000
 000   000  000       000       000     000   000     

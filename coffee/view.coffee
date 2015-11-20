@@ -20,8 +20,6 @@ class View extends Proxy
         super base, 'view', @tree
         @tree.addEventListener 'keydown', @onKeyDown
         @tree.parentElement.addEventListener 'scroll',  @onScroll
-        @aboveElem = $('above')
-        @belowElem = $('below')
         
     setBase: (base) ->
         super base
@@ -53,7 +51,7 @@ class View extends Proxy
     ###
         
     update: ->
-        
+
         selected = @root.children[parseInt(document.activeElement.id)]?.value?.id
         visible  = @base.numVisible()
         scroll   = @tree.parentElement
@@ -61,30 +59,29 @@ class View extends Proxy
         numlines = parseInt(scroll.clientHeight / line)
         total    = visible * line
         height   = line * numlines
-        above    = Math.min(visible - numlines, parseInt(scroll.scrollTop / line)) * line
-        first    = parseInt(above / line)
+        first    = Math.min(Math.max(0, visible - numlines), parseInt(scroll.scrollTop / line))
         last     = first + numlines
-        below    = Math.max(0, total - above - height)
             
         @root.children = []
         @root.keyIndex = {}
         @tree.innerHTML = "" # proper destruction needed?
-
-        @aboveElem.style.height = "#{above}.px"
-        @belowElem.style.height = "#{below}.px"
                                         
         for i in [first..last]
             baseItem = @base.visibleAtIndex i
             @root.keyIndex[baseItem.key] = @root.children.length
             item = @createItem baseItem.key, baseItem, @root
             @root.children.push item
-            item.createElement()                
+            item.createElement()     
+            item.elem.style.top = "#{i*line}.px"  
             if baseItem.id == selected
                 item.select()
                                 
         if Number.isNaN parseInt(document.activeElement.id)
             @root.children[0]?.select()
-                                
+
+        @tree.style.height = "#{total}.px"
+        # log @tree.style.height
+                          
     ###
     00000000   00000000  000       0000000    0000000   0000000  
     000   000  000       000      000   000  000   000  000   000

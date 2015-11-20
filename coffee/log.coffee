@@ -6,25 +6,15 @@
 0000000   0000000    0000000 
 ###
 
-log = (require 'bunyan').createLogger 
-    name:    "model"
-    level:   "debug"
-    src:     false
-    streams: [
-        level: 'debug'
-        path:  'model.log'
-    ,
-        level:  'debug'
-        stream: process.stdout
-    ]
-    serializers: 
-        model: (model) ->
-            name:   model.name
-            lastID: model.lastID
-            base:   model.base?.name
-        item: (item) ->
-            id:    item.id
-            key:   item.key
-            model: item.model().name
+str    = require './str'
+fs     = require 'fs'
     
-module.exports = -> log.debug.apply log, arguments
+stream = fs.createWriteStream('strudl.log', flags: 'a', encoding: 'utf8')
+stream.closeOnExit = true
+        
+module.exports = -> 
+    msg = (str(a) for a in arguments).join(' ')
+    console.log msg
+    stream.write msg + "\n"
+    
+    # console.log.apply console.log, Array.prototype.slice.call(arguments, 0)

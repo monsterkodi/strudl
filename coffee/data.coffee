@@ -42,7 +42,6 @@ class DataModel extends Model
             when Item.objectType
                 for key in Object.keys(data)
                     item.addChild @createItem key, data[key], item
-        
         item
         
     insert: (parent, key, value) ->

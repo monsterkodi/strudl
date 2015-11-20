@@ -13,7 +13,7 @@ app.on('ready', function() {
         resizable: true,
         frame: true,
         show: true,
-        center: true
+        center: false
     });
-    return win.loadURL("file://" + cwd + "/win.html");
+    win.loadURL("file://" + cwd + "/win.html");
 });
