@@ -27,8 +27,6 @@ class ViewItem extends ProxyItem
         if @key != -1
             @elem = document.createElement 'div'
 
-            @root().elem.appendChild @elem
-
             @elem.addEventListener 'click', (event) => @clicked event
             @elem.classList.add 'tree-item'
             
@@ -50,6 +48,7 @@ class ViewItem extends ProxyItem
             @elem.appendChild spc
             
             key = document.createElement 'span'
+            key.addEventListener 'click', (event) => @clicked event, true
             key.className = "tree-item-key type-" + @typeName().toLowerCase()
             key.innerHTML = @key
             if @parent.type == Item.arrayType
@@ -74,9 +73,10 @@ class ViewItem extends ProxyItem
                 @elem.appendChild vis
             
             @update()
+            @root().elem.appendChild @elem            
             
     update: ->
-        
+        # log @value.visibleIndex()
         if @isParent()
             vis = @getElem("tree-item-vis")
             chd = @getElem("tree-item-chd")
@@ -125,12 +125,11 @@ class ViewItem extends ProxyItem
     
     clicked: (event, toggle=false) =>
 
+        toggle = true if @hasClass 'selected'
         @select event
         
-        if toggle or @hasClass 'selected'
+        if toggle
             @toggle()
-        else 
-            @expand()
 
         event.stopPropagation()
         
@@ -142,7 +141,9 @@ class ViewItem extends ProxyItem
     0000000   00000000  0000000  00000000   0000000     000   
     ###
         
-    deselect: -> @delClass "selected"
+    deselect: -> 
+        @delClass "selected"
+        @elem.blur()
         
     select: (event) ->
         

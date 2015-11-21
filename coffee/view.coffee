@@ -20,6 +20,7 @@ class View extends Proxy
         super base, 'view', @tree
         @tree.addEventListener 'keydown', @onKeyDown
         @tree.parentElement.addEventListener 'scroll',  @onScroll
+        @topIndex = 0
         
     setBase: (base) ->
         super base
@@ -40,7 +41,13 @@ class View extends Proxy
         scroll.scrollTop += lines * line
         @update()
 
-    onScroll: (event) => @update()
+    onScroll: (event) => 
+        scroll   = @tree.parentElement
+        line     = @root?.children[0]?.elem.clientHeight or 24
+        topindex = parseInt(scroll.scrollTop / line)
+        if topindex != @topIndex
+            @update()
+            @topIndex = topindex
 
     ###
     000   000  00000000   0000000     0000000   000000000  00000000
@@ -52,16 +59,22 @@ class View extends Proxy
         
     update: ->
 
-        selected = @root.children[parseInt(document.activeElement.id)]?.value?.id
-        visible  = @base.numVisible()
         scroll   = @tree.parentElement
+        sheight  = scroll.clientHeight
+
+        selitem  = @selectedItem()
+        selindex = selitem?.value.visibleIndex()
+        selitem?.deselect()
+
+        visible  = @base.numVisible()
         line     = @root?.children[0]?.elem.clientHeight or 24
-        numlines = parseInt(scroll.clientHeight / line)
+        numlines = parseInt(sheight / line)
         total    = visible * line
-        height   = line * numlines
-        first    = Math.min(Math.max(0, visible - numlines), parseInt(scroll.scrollTop / line))
-        last     = first + numlines
-            
+        topindex = parseInt(scroll.scrollTop / line)
+        botindex = topindex + numlines
+        first    = Math.max(0, parseInt((scroll.scrollTop - sheight) / line))
+        last     = Math.min(first + 3*numlines, visible)
+                    
         @root.children = []
         @root.keyIndex = {}
         @tree.innerHTML = "" # proper destruction needed?
@@ -73,14 +86,11 @@ class View extends Proxy
             @root.children.push item
             item.createElement()     
             item.elem.style.top = "#{i*line}.px"  
-            if baseItem.id == selected
-                item.select()
+            if baseItem.visibleIndex() == selindex
+                if selindex >= topindex and selindex <= botindex
+                    item.select()
                                 
-        if Number.isNaN parseInt(document.activeElement.id)
-            @root.children[0]?.select()
-
         @tree.style.height = "#{total}.px"
-        # log @tree.style.height
                           
     ###
     00000000   00000000  000       0000000    0000000   0000000  
