@@ -60,8 +60,8 @@ class View extends Proxy
     ###
         
     update: ->
-
-        # profile "update #{@root.value.numVisible}"
+        doProfile = false
+        profile "update #{@root.value.numVisible}" if doProfile
         scroll   = @tree.parentElement
         sheight  = scroll.clientHeight
 
@@ -95,7 +95,7 @@ class View extends Proxy
                     item.select()
                                 
         @tree.style.height = "#{total}.px"
-        # profile ""
+        profile "" if doProfile
                           
     ###
     00000000   00000000  000       0000000    0000000   0000000  
