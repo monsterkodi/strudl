@@ -73,6 +73,7 @@ class ViewItem extends ProxyItem
                 @elem.appendChild vis
             
             @update()
+            
             @root().elem.appendChild @elem            
             
     update: ->

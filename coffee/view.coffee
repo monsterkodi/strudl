@@ -20,14 +20,21 @@ class View extends Proxy
     constructor: (base, @tree) -> 
         super base, 'view', @tree
         @tree.addEventListener 'keydown', @onKeyDown
-        @tree.parentElement.addEventListener 'scroll',  @onScroll
+        @tree.addEventListener 'wheel', @onWheel
         @topIndex = 0
+        @botIndex = 0
+        @scroll   = 0
         
     setBase: (base) ->
         super base
         @base.on "didExpand",   @onDidExpand
         @base.on "didCollapse", @onDidCollapse
         @base.on "didLayout",   @onDidLayout
+
+    lineHeight: -> @root?.children[0]?.elem.offsetHeight or 24
+    viewHeight: -> @tree.clientHeight
+    numViewLines: -> Math.floor(@tree.clientHeight / @lineHeight())
+    numVisibleLines: -> @base.root.numVisible
 
     ###
      0000000   0000000  00000000    0000000   000      000    
@@ -37,19 +44,16 @@ class View extends Proxy
     0000000    0000000  000   000   0000000   0000000  0000000
     ###
         
-    scrollLines: (lines) ->
-        scroll = @tree.parentElement
-        line   = @root?.children[0]?.elem.clientHeight or 24
-        scroll.scrollTop += lines * line
-        @update()
+    scrollLines: (lines) -> @scrollBy lines * @lineHeight()
 
-    onScroll: (event) => 
-        scroll   = @tree.parentElement
-        line     = @root?.children[0]?.elem.clientHeight or 24
-        topindex = parseInt(scroll.scrollTop / line)
-        if topindex != @topIndex
+    onWheel: (event) => @scrollBy event.deltaY * 2
+    
+    scrollBy: (delta) ->
+        @scroll += delta
+        @scroll = Math.max(@scroll, 0)
+        @scroll = Math.min(@scroll, (@numVisibleLines() - @numViewLines()) * @lineHeight())
+        if parseInt(@scroll / @lineHeight()) != @topIndex
             @update()
-            @topIndex = topindex
 
     ###
     000   000  00000000   0000000     0000000   000000000  00000000
@@ -61,40 +65,30 @@ class View extends Proxy
         
     update: ->
         doProfile = false
-        profile "update #{@root.value.numVisible}" if doProfile
-        scroll   = @tree.parentElement
-        sheight  = scroll.clientHeight
+        profile "update #{@numVisibleLines()}" if doProfile
 
         selitem  = @selectedItem()
         selindex = selitem?.value.visibleIndex
         selitem?.deselect()
 
-        visible  = @base.root.numVisible
-        line     = @root?.children[0]?.elem.clientHeight or 24
-        numlines = parseInt(sheight / line)
-        total    = visible * line
-        topindex = parseInt(scroll.scrollTop / line)
-        botindex = topindex + numlines
-        n = 0
-        first    = Math.max(0, topindex - n * numlines)
-        last     = Math.min(first + (1 + 2 * n) * numlines, visible)
+        numlines = @numViewLines()
+        @topIndex = parseInt(@scroll / @lineHeight())
+        @botIndex = Math.min(@topIndex + numlines, @numVisibleLines()-1)
                     
         @root.children = []
         @root.keyIndex = {}
         @tree.innerHTML = "" # proper destruction needed?
                                         
-        for i in [first..last]
+        for i in [@topIndex..@botIndex]
             baseItem = @base.visibleItems[i]
-            @root.keyIndex[baseItem.key] = @root.children.length
+            @root.keyIndex[baseItem.key] = @numVisibleLines()
             item = @createItem baseItem.key, baseItem, @root
             @root.children.push item
             item.createElement()     
-            item.elem.style.top = "#{i*line}.px"  
             if baseItem.visibleIndex == selindex
-                if selindex >= topindex and selindex <= botindex
+                if selindex >= @topIndex and selindex <= @botIndex
                     item.select()
                                 
-        @tree.style.height = "#{total}.px"
         profile "" if doProfile
                           
     ###
@@ -154,5 +148,7 @@ class View extends Proxy
                 item?["select#{_.capitalize(keycode)}"] event
                 event.stopPropagation()
                 event.preventDefault()
+            when 'page up', 'page down'
+                @scrollLines (keycode == 'page up' and -1 or 1) * @numViewLines()
         
 module.exports = View
