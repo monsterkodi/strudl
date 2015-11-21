@@ -33,6 +33,11 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-external-daemon": "^1.1.0",
     "grunt-pepper": "^0.5.7",
-    "grunt-shell": "^1.1.2"
+    "grunt-shell": "^1.1.2",
+    "gulp": "^3.9.0",
+    "gulp-grunt": "^0.5.3",
+    "gulp-run": "^1.6.11",
+    "gulp-stylus": "^2.1.0",
+    "gulp-watch": "^4.3.5"
   }
 }

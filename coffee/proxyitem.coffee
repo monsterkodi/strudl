@@ -32,7 +32,15 @@ class ProxyItem extends Item
     insert:   (key, value) -> @value.insert key, value
     depth:                 -> @value.depth()
     dataItem: ()           -> @value.dataItem?() ? @value
-            
+        
+    ###
+    000   000  000   0000000  000  0000000    000      00000000
+    000   000  000  000       000  000   000  000      000     
+     000 000   000  0000000   000  0000000    000      0000000 
+       000     000       000  000  000   000  000      000     
+        0      000  0000000   000  0000000    0000000  00000000
+    ###
+        
     findFirstVisible: (func, test=false) ->
         if test
             if func @
@@ -55,6 +63,14 @@ class ProxyItem extends Item
         @root().findFirstVisible (i) => 
             index -= 1
             index < 0
+    
+    ###
+    00000000  000   000  00000000    0000000   000   000  0000000  
+    000        000 000   000   000  000   000  0000  000  000   000
+    0000000     00000    00000000   000000000  000 0 000  000   000
+    000        000 000   000        000   000  000  0000  000   000
+    00000000  000   000  000        000   000  000   000  0000000  
+    ###
     
     toggle: () ->
         if @isExpanded()
@@ -82,6 +98,14 @@ class ProxyItem extends Item
             
     isCollapsed:  -> not @isExpanded()
     isExpandable: -> @isParent()
+        
+    ###
+    000  000   000   0000000  00000000   00000000   0000000  000000000
+    000  0000  000  000       000   000  000       000          000   
+    000  000 0 000  0000000   00000000   0000000   000          000   
+    000  000  0000       000  000        000       000          000   
+    000  000   000  0000000   000        00000000   0000000     000   
+    ###
             
     inspect: (depth) ->
 
