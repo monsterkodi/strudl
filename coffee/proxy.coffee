@@ -125,19 +125,20 @@ class Proxy extends Model
             if recursive == true or recursive == false
                 @layout item
 
-    expandItems: (items) -> 
+    expandItems: (items, recursive=false) -> 
         for item in items
-            @expand item, 0
+            @expand item, recursive and 1 or 0
+        @layout items[0]
 
+    collapseItems: (items, recursive=false) -> 
+        for item in items
+            @collapse item, recursive and 1 or 0
+        @layout items[0]
+
+    expandTop:      (recursive=false) -> @expandItems @root.children, recursive
+    collapseTop:    (recursive=false) -> @collapseItems @root.children, recursive
+    collapseLeaves: (recursive=false) -> @collapseItems @leafItems(), recursive
     expandLeaves: -> @expandItems @leafItems()
-
-    collapseLeaves: (recursive=false) -> 
-        for leaf in @leafItems()
-            @collapse leaf, recursive and 1 or 0
-            
-    collapseTop: (recursive=false) -> 
-        for child in @root.children
-            @collapse child, recursive and 1 or 0
     
     isLeaf: (item) ->
         if item.isExpandable() 

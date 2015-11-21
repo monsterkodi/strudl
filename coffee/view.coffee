@@ -34,7 +34,7 @@ class View extends Proxy
 
     lineHeight: -> @root?.children[0]?.elem.offsetHeight or 24
     viewHeight: -> @tree.clientHeight
-    numViewLines: -> Math.floor(@tree.clientHeight / @lineHeight())
+    numViewLines: -> Math.floor(@viewHeight() / @lineHeight())
     numVisibleLines: -> @base.root.numVisible
 
     ###
@@ -45,9 +45,17 @@ class View extends Proxy
     0000000    0000000  000   000   0000000   0000000  0000000
     ###
         
-    scrollLines: (lines) -> @scrollBy lines * @lineHeight()
+    scrollLines: (lineDelta) -> @scrollBy lineDelta * @lineHeight()
 
-    onWheel: (event) => @scrollBy event.deltaY * 2
+    scrollFactor: (event) ->
+        f  = 1 
+        f *= 1 + 9 * event.shiftKey
+        f *= 1 + 9 * event.metaKey
+        f *= 1 + 9 * event.ctrlKey
+        f *= 1 + 9 * event.altKey        
+
+    onWheel: (event) => 
+        @scrollBy event.deltaY * @scrollFactor event
     
     scrollBy: (delta) ->
         @scroll += delta
@@ -73,6 +81,8 @@ class View extends Proxy
         numlines = @numViewLines()
         @topIndex = parseInt(@scroll / @lineHeight())
         @botIndex = Math.min(@topIndex + numlines, @numVisibleLines()-1)
+            
+        log @viewHeight(), numlines
                     
         @root.children = []
         @root.keyIndex = {}
@@ -129,7 +139,7 @@ class View extends Proxy
     onDidExpand:   (baseItem) => 
     onDidCollapse: (baseItem) => 
     onDidLayout:   (baseItem) => @update()
-        
+    
     ###
     000   000  00000000  000   000  0000000     0000000   000   000  000   000
     000  000   000        000 000   000   000  000   000  000 0 000  0000  000
@@ -140,13 +150,25 @@ class View extends Proxy
     
     selectedItem: () -> @root.children[parseInt(document.activeElement.id)]
     
+    selectLines: (lineDelta) ->
+        @selectedItem.value.visibleIndex
+        @scrollLines lineDelta
+        
     selectUp: (event) -> 
+
+        if 1 < f = @scrollFactor event
+            @selectLines -f
+            return
         
         if not @selectedItem().prevItem()? or event.shiftKey
             @scrollLines -1
         @selectedItem().prevItem()?.select()
         
     selectDown: (event) -> 
+        
+        if 1 < f = @scrollFactor event
+            @selectLines f
+            return
         
         if not @selectedItem().nextItem()? or event.shiftKey
             @scrollLines 1
@@ -156,11 +178,23 @@ class View extends Proxy
         keycode = keyname.keycode event
         switch keycode
             when 'left', 'right'
-                @selectedItem()?["select#{_.capitalize(keycode)}"] event
+                if event.metaKey and event.altKey
+                    if keycode == 'left'
+                        @base.collapseTop true
+                    else
+                        @base.expandTop true
+                else
+                    @selectedItem()?["select#{_.capitalize(keycode)}"] event
             when 'up'  then @selectUp event
             when 'down'then @selectDown event
             when 'page up', 'page down'
-                @scrollLines((keycode == 'page up' and -1 or 1) * @numViewLines())
-                _.first(@root.children).select()
+                n = event.shiftKey and @numVisibleLines() or @numViewLines()
+                @scrollLines(keycode == 'page up' and -n or n)
+                first = _.first @root.children
+                last  = _.last @root.children
+                if last.value.visibleIndex == @numVisibleLines()-1
+                    last.select()
+                else
+                    first.select()
         
 module.exports = View
