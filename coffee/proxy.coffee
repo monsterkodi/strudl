@@ -45,27 +45,7 @@ class Proxy extends Model
             @root = @createItem -1, @baseItem ? @base.root, @
             @trigger "didReload"
             @expand @root
-        
-    onWillRemove: (baseItems) =>
-        for baseItem in baseItems
-            item = @itemMap[baseItem.id]
-            if item?
-                @trigger "willRemove", item
-                item.parent.delChild item
-
-    onDidInsert: (baseItems) => 
-        for baseItem in baseItems
-            parent = @itemMap[baseItem.parent.id]
-            if parent? and (not parent.unfetched)
-                item = @createItem baseItem.key, baseItem, parent
-                parent.addChild item
-                @trigger "didInsert", item
-        
-    onDidChange: (baseItem, oldValue) => 
-        item = @itemMap[baseItem.id]
-        if item?
-            @trigger "didChange", item, oldValue
-        
+                
     newItem: (key, value, parent) -> new ProxyItem key, value, parent
                 
     createItem: (key, value, parent) -> 
@@ -85,6 +65,34 @@ class Proxy extends Model
     layout: (item) ->
         @root.updateCounters()
         @trigger 'didLayout', item
+        
+    ###
+    00000000  0000000    000  000000000
+    000       000   000  000     000   
+    0000000   000   000  000     000   
+    000       000   000  000     000   
+    00000000  0000000    000     000   
+    ###
+    
+    onWillRemove: (baseItems) =>
+        for baseItem in baseItems
+            item = @itemMap[baseItem.id]
+            if item?
+                @trigger "willRemove", item
+                item.parent.delChild item
+
+    onDidInsert: (baseItems) => 
+        for baseItem in baseItems
+            parent = @itemMap[baseItem.parent.id]
+            if parent? and (not parent.unfetched)
+                item = @createItem baseItem.key, baseItem, parent
+                parent.addChild item
+                @trigger "didInsert", item
+        
+    onDidChange: (baseItem, oldValue) => 
+        item = @itemMap[baseItem.id]
+        if item?
+            @trigger "didChange", item, oldValue    
                         
     ###
     00000000  000   000  00000000    0000000   000   000  0000000  
@@ -139,6 +147,14 @@ class Proxy extends Model
     collapseTop:    (recursive=false) -> @collapseItems @root.children, recursive
     collapseLeaves: (recursive=false) -> @collapseItems @leafItems(), recursive
     expandLeaves: -> @expandItems @leafItems()
+    
+    ###
+    000      00000000   0000000   00000000
+    000      000       000   000  000     
+    000      0000000   000000000  000000  
+    000      000       000   000  000     
+    0000000  00000000  000   000  000     
+    ###
     
     isLeaf: (item) ->
         if item.isExpandable() 

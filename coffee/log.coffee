@@ -16,5 +16,3 @@ module.exports = ->
     msg = (str(a) for a in arguments).join(' ')
     console.log msg
     stream.write msg + "\n"
-    
-    # console.log.apply console.log, Array.prototype.slice.call(arguments, 0)

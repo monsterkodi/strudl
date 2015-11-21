@@ -32,6 +32,14 @@ class DataModel extends Model
         else
             JSON.parse stringData
 
+    ###
+    000  000000000  00000000  00     00
+    000     000     000       000   000
+    000     000     0000000   000000000
+    000     000     000       000 0 000
+    000     000     00000000  000   000
+    ###
+
     createItem: (key, data, parent) -> 
         
         item = new Item key, data, parent
@@ -45,6 +53,14 @@ class DataModel extends Model
                 for key in Object.keys(data)
                     item.addChild @createItem key, data[key], item
         item
+        
+    ###
+    00000000  0000000    000  000000000
+    000       000   000  000     000   
+    0000000   000   000  000     000   
+    000       000   000  000     000   
+    00000000  0000000    000     000   
+    ###
         
     insert: (parent, key, value) ->
         parent.addChild @createItem key, value, parent

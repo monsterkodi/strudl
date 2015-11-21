@@ -6,9 +6,9 @@
 000     000     00000000  000   000
 ###
 
+_     = require 'lodash'
 S     = require 'underscore.string'
 chalk = require 'chalk'
-_     = require 'lodash'
 log   = require './log'
     
 class Item
@@ -34,47 +34,62 @@ class Item
         @keyIndex = {} if @isObject()
         
     root:    -> @parent?.root() ? @
-    isTop:   -> @parent == @root()
-    topItem: -> @isTop() and @ or @parent?.topItem()
     model:   -> @root().mdl
     
+    ###
+    0000000    00000000  00000000   000000000  000   000
+    000   000  000       000   000     000     000   000
+    000   000  0000000   00000000      000     000000000
+    000   000  000       000           000     000   000
+    0000000    00000000  000           000     000   000
+    ###
+    
+    isTop:   -> @parent == @root()
+    topItem: -> @isTop() and @ or @parent?.topItem()
+    depth:   -> @parent? and (@parent.depth() + 1) or 0
+
+    ###
+    00000000  0000000    000  000000000
+    000       000   000  000     000   
+    0000000   000   000  000     000   
+    000       000   000  000     000   
+    00000000  0000000    000     000   
+    ###
+    
+    getValue:              -> @value
     setValue: (value)      -> @model().setValue @, value
+    
     remove:   ()           -> @model().remove @
     insert:   (key, value) -> @model().insert @, key, value
     
-    getValue: -> @value
+    ###
+    000000000  000   000  00000000   00000000
+       000      000 000   000   000  000     
+       000       00000    00000000   0000000 
+       000        000     000        000     
+       000        000     000        00000000
+    ###
+    
     typeName: -> 
         switch @type
             when 1 then 'Array'
             when 2 then 'Object'
             else 'Value'
     
-    depth:       -> @parent? and (@parent.depth() + 1) or 0
     isArray:     -> @type == Item.arrayType
     isObject:    -> @type == Item.objectType
+    
+    ###
+     0000000  000   000  000  000      0000000    00000000   00000000  000   000
+    000       000   000  000  000      000   000  000   000  000       0000  000
+    000       000000000  000  000      000   000  0000000    0000000   000 0 000
+    000       000   000  000  000      000   000  000   000  000       000  0000
+     0000000  000   000  000  0000000  0000000    000   000  00000000  000   000
+    ###
+    
     isParent:    -> @type != Item.valueType
     hasChildren: -> @isParent() and (not _.isEmpty(@children))
-    
-    updateDescendants: () ->
-        @numDescendants = 1
-        if @isParent()
-            for child in @children
-                @numDescendants += child.updateDescendants()
-        @numDescendants
-    
-    indexInParent: ->
-        if @parent?.children?.length < 1000
-            return @parent.children.indexOf @
-        switch @parent?.type
-            when Item.arrayType then parseInt(@key)
-            when Item.objectType then @parent.keyIndex[@key]
-            else 0
-    
-    lastChild: ->
-        if @children?.length
-            return @children[@children.length-1].lastChild()
-        @
-    
+            
     addChild: (child) -> 
         index = switch @type 
             when Item.objectType 
@@ -101,6 +116,34 @@ class Item
             index = @children.indexOf child
             @children.splice index, 1
             @updateIndices()
+
+    updateDescendants: () ->
+        @numDescendants = 1
+        if @isParent()
+            for child in @children
+                @numDescendants += child.updateDescendants()
+        @numDescendants
+
+    ###
+    000  000   000  0000000    00000000  000   000
+    000  0000  000  000   000  000        000 000 
+    000  000 0 000  000   000  0000000     00000  
+    000  000  0000  000   000  000        000 000 
+    000  000   000  0000000    00000000  000   000
+    ###
+    
+    indexInParent: ->
+        if @parent?.children?.length < 1000
+            return @parent.children.indexOf @
+        switch @parent?.type
+            when Item.arrayType then parseInt(@key)
+            when Item.objectType then @parent.keyIndex[@key]
+            else 0
+    
+    lastChild: ->
+        if @children?.length
+            return @children[@children.length-1].lastChild()
+        @
                 
     updateIndices: ->
         if @type == Item.objectType
@@ -110,6 +153,14 @@ class Item
         else if @type == Item.arrayType
             for index in [0...@children.length]
                 @children[index].key = index
+            
+    ###
+    000   000  00000000  000   000  00000000    0000000   000000000  000   000
+    000  000   000        000 000   000   000  000   000     000     000   000
+    0000000    0000000     00000    00000000   000000000     000     000000000
+    000  000   000          000     000        000   000     000     000   000
+    000   000  00000000     000     000        000   000     000     000   000
+    ###
             
     childAt: (keyPath) ->
         keyPath = keyPath.split('.') if _.isString keyPath
@@ -133,6 +184,14 @@ class Item
                 return [ @key ]
         else
             []
+        
+    ###
+    000000000  00000000    0000000   000   000  00000000  00000000    0000000  00000000
+       000     000   000  000   000  000   000  000       000   000  000       000     
+       000     0000000    000000000   000 000   0000000   0000000    0000000   0000000 
+       000     000   000  000   000     000     000       000   000       000  000     
+       000     000   000  000   000      0      00000000  000   000  0000000   00000000
+    ###
             
     eachAncestor: (func) ->
         func @
@@ -159,6 +218,14 @@ class Item
                 if found = child.findFirst func, true
                     return found
         null
+        
+    ###
+    000  000   000   0000000  00000000   00000000   0000000  000000000
+    000  0000  000  000       000   000  000       000          000   
+    000  000 0 000  0000000   00000000   0000000   000          000   
+    000  000  0000       000  000        000       000          000   
+    000  000   000  0000000   000        00000000   0000000     000   
+    ###
         
     inspect: (depth) ->
         indent = S.repeat ' ', 2 #9

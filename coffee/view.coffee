@@ -25,6 +25,8 @@ class View extends Proxy
         @topIndex = 0
         @botIndex = 0
         @scroll   = 0
+        @scrollLeft = @tree.parentElement.getElementsByClassName('scroll left')[0]
+        # log 'View scrollLeft', @scrollLeft
         
     setBase: (base) ->
         super base
@@ -58,11 +60,26 @@ class View extends Proxy
         @scrollBy event.deltaY * @scrollFactor event
     
     scrollBy: (delta) ->
+        l = @lineHeight()
+        treeHeight = @numVisibleLines() * l
+        linesHeight = @numViewLines() * l
+        maxScroll = treeHeight - linesHeight
+        
         @scroll += delta
-        @scroll = Math.max(@scroll, 0)
-        @scroll = Math.min(@scroll, (@numVisibleLines() - @numViewLines()) * @lineHeight())
-        if parseInt(@scroll / @lineHeight()) != @topIndex
-            @update()
+        @scroll = Math.max @scroll, 0
+        @scroll = Math.min @scroll, maxScroll
+        
+        scrollTop = parseInt (@scroll / treeHeight) * @viewHeight()
+        scrollHeight = parseInt (linesHeight / treeHeight) * @viewHeight()
+        scrollHeight = Math.max scrollHeight, parseInt l/4
+        
+        @scrollLeft.style.top = "#{scrollTop}.px"
+        @scrollLeft.style.height = "#{scrollHeight}.px"
+        
+        # log 'scrollBy', scrollTop, @scrollLeft.style.top
+        # log 'scrollBy', scrollHeight, @scrollLeft.style.height
+        
+        @update() if @topIndex != parseInt @scroll / l
 
     ###
     000   000  00000000   0000000     0000000   000000000  00000000
@@ -81,9 +98,7 @@ class View extends Proxy
         numlines = @numViewLines()
         @topIndex = parseInt(@scroll / @lineHeight())
         @botIndex = Math.min(@topIndex + numlines, @numVisibleLines()-1)
-            
-        log @viewHeight(), numlines
-                    
+                                
         @root.children = []
         @root.keyIndex = {}
         @tree.innerHTML = "" # proper destruction needed?
@@ -151,8 +166,10 @@ class View extends Proxy
     selectedItem: () -> @root.children[parseInt(document.activeElement.id)]
     
     selectLines: (lineDelta) ->
-        @selectedItem.value.visibleIndex
-        @scrollLines lineDelta
+        if @selectedItem?
+            idx = @selected.value.visibleIndex
+            @scrollLines lineDelta
+            
         
     selectUp: (event) -> 
 
@@ -192,7 +209,7 @@ class View extends Proxy
                 @scrollLines(keycode == 'page up' and -n or n)
                 first = _.first @root.children
                 last  = _.last @root.children
-                if last.value.visibleIndex == @numVisibleLines()-1
+                if last.value?.visibleIndex == @numVisibleLines()-1
                     last.select()
                 else
                     first.select()

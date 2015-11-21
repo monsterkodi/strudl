@@ -31,6 +31,14 @@ class Model
     getItem:(keyPath) -> @root.childAt keyPath
     itemAt: (keyPath) -> @root.childAt keyPath
     
+    ###
+    00000000  0000000    000  000000000
+    000       000   000  000     000   
+    0000000   000   000  000     000   
+    000       000   000  000     000   
+    00000000  0000000    000     000   
+    ###
+    
     setValue: (item, value) ->
         if item.type == Item.valueType
             oldValue = item.value
