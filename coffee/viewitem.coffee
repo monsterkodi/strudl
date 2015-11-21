@@ -36,39 +36,59 @@ class ViewItem extends ProxyItem
             @elem.tabIndex = -1
 
             idx = document.createElement 'span'
-            @elem.appendChild idx
+            idx.className = "tree-item-idx"
             idx.innerHTML = "#{@value.visibleIndex?()} "
+            @elem.appendChild idx
         
             spc = document.createElement 'span'
-            @elem.appendChild spc
             spc.addEventListener 'click', (event) => @clicked event, true
-                
             spc.className = "tree-item-spc"
             spc.style.minWidth = "#{@depth()*30}.px"
             spc.innerHTML = "&nbsp;"
             if @isExpandable()
                 spc.classList.add @isExpanded() and "expanded" or "collapsed"
+            @elem.appendChild spc
             
             key = document.createElement 'span'
-            @elem.appendChild key
             key.className = "tree-item-key type-" + @typeName().toLowerCase()
             key.innerHTML = @key
             if @parent.type == Item.arrayType
                 @addClass 'array-index', key
+            @elem.appendChild key
             
             val = document.createElement 'span'
-            @elem.appendChild val
             val.className = "tree-item-value type-" + @typeName().toLowerCase()
+            @elem.appendChild val
+
+            if @isParent()
+                dsc = document.createElement 'span'
+                dsc.className = "tree-item-dsc"
+                @elem.appendChild dsc
+
+                chd = document.createElement 'span'
+                chd.className = "tree-item-chd"
+                @elem.appendChild chd
+
+                vis = document.createElement 'span'
+                vis.className = "tree-item-vis"
+                @elem.appendChild vis
             
             @update()
             
     update: ->
+        
+        if @isParent()
+            vis = @getElem("tree-item-vis")
+            chd = @getElem("tree-item-chd")
+            dsc = @getElem("tree-item-dsc")
+            vis.innerHTML = (@isExpanded() and "#{@value.numVisible()}" or "")
+            chd.innerHTML = "#{@dataItem().children.length}"
+            dsc.innerHTML = "#{@dataItem().numDescendants()}"
+
         val = @getElem("tree-item-value")
         switch @type
             when Item.objectType
-                val.innerHTML = (@getValue()["name"] or "") + (@isExpanded() and " <#{@numDescendants()}> <#{@value.numVisible}>" or "")
-            when Item.arrayType
-                val.innerHTML = "[#{@getValue().length}-#{@dataItem().numDescendants()}]" + (@isExpanded() and " <#{@numDescendants()}> <#{@value.numVisible}>" or "")
+                val.innerHTML = @getValue()["name"] or ""
             when Item.valueType
                 val.innerHTML = @getValue()
                     

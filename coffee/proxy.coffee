@@ -34,12 +34,7 @@ class Proxy extends Model
         @base.on "didInsert",  @onDidInsert
         @base.on "didChange",  @onDidChange        
     
-    numVisible: () ->
-        num = 0
-        @root.findFirstVisible (i) => 
-            num += 1
-            false
-        num
+    numVisible: (item=@root) -> item.numVisible()
         
     onWillReload:() => 
         @trigger "willReload"

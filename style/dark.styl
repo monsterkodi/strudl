@@ -1,6 +1,7 @@
 
 clr                  = {} 
 clr.black            = #000000
+clr.gray-pitch-dark  = #101010
 clr.gray-most-dark   = #181818
 clr.gray-super-dark  = #222222
 clr.gray-very-dark   = #282828
@@ -24,7 +25,7 @@ clr.blue-medium      = #6666ff
 clr.blue-bright      = #8888ff
 clr.blue-very-bright = #aaaaff
 
-clr.background       = #222222
+clr.background       = clr.gray-most-dark
 
 @font-face
     font-family UbuntuMono
@@ -38,19 +39,20 @@ body
 ::selection
     color:              clr.yellow
 
+.tree-item
+    border-top:         1px solid clr.gray-pitch-dark
+    border-bottom:      1px solid clr.gray-super-dark
+
+.tree-item-idx
+    color:              clr.gray-dark
+
 .tree-item-spc
     color:              clr.gray-medium
 
-.tree-item.marked
-    background-color    darken(#4a4e52, 5%)    
-
 .tree-item.selected
-    background-color    #4a4e52    
+    background-color:   clr.gray-super-dark
     -webkit-box-shadow  none
     
-.tree-item.selected:not(.marked)
-    background-color:   clr.gray-very-dark
-
 .tree-item-key.array-index
     color:              clr.gray-medium
     
@@ -60,5 +62,11 @@ body
 .tree-item-value.type-object
     color:              clr.gray-bright
 
-.tree-item-value.type-array
+.tree-item-vis
+    color:              clr.gray-medium
+
+.tree-item-chd
     color:              clr.gray-dark
+
+.tree-item-dsc
+    color:              clr.gray-very-dark

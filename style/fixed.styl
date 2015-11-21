@@ -50,18 +50,19 @@ textarea
 
 .tree-item
     display             block
+    width               100%
     position            absolute
-    border-top          0px solid #222
     padding             0
     margin              0
     spacing             0
     height              tree-item-height
-    line-height         tree-item-height 
+    line-height         tree-item-height
     overflow            hidden   
     -webkit-user-select none
     cursor              pointer
     white-space         nowrap
     outline             none
+    box-sizing          border-box
 
 .tree-item > *
     display             inline-block
@@ -69,8 +70,13 @@ textarea
     overflow            hidden   
     outline             none
 
+.tree-item-idx
+    text-align          right
+    min-width           33px
+    font-size           12px
+    margin-left         6px
+
 .tree-item-spc
-    display             inline-block
     text-align          right
 
 .tree-item-spc.collapsed::after
@@ -82,14 +88,26 @@ textarea
     margin-right        arrow-width
 
 .tree-item-key
-    display             inline-block
-    width               200px
+    min-width           200px
     margin-right        6px
 
 .tree-item-key.type-array
     text-shadow         none
 
 .tree-item-value
-    display             inline-block
-    min-width           100px
+    min-width           200px
     white-space         nowrap
+
+.tree-item-vis
+.tree-item-dsc
+.tree-item-chd
+    text-align          right
+    min-width           40px
+    font-size           12px
+    margin-right         4px
+    float right
+    position relative
+
+.tree-item-dsc
+    margin-right         16px
+    

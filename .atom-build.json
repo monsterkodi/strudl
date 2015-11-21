@@ -1,5 +1,5 @@
 {
-    "cmd": "grunt",
-    "args": ["run"],
+    "cmd": "electron",
+    "args": ["."],
     "sh": false
 }

@@ -51,7 +51,6 @@ class ProxyItem extends Item
                     return found
         null
             
-            
     visibleIndex: -> 
         index = -1
         @root().findFirstVisible (i) =>
@@ -63,6 +62,13 @@ class ProxyItem extends Item
         @root().findFirstVisible (i) => 
             index -= 1
             index < 0
+
+    numVisible: ->
+        num = 0
+        @findFirstVisible (i) => 
+            num += 1
+            false
+        num
     
     ###
     00000000  000   000  00000000    0000000   000   000  0000000  
