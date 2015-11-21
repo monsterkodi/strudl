@@ -82,7 +82,7 @@ class ViewItem extends ProxyItem
             dsc = @getElem("tree-item-dsc")
             vis.innerHTML = (@isExpanded() and "#{@value.numVisible}" or "")
             chd.innerHTML = "#{@dataItem().children.length}"
-            dsc.innerHTML = "#{@dataItem().numDescendants()-1}"
+            dsc.innerHTML = "#{@dataItem().numDescendants-1}"
 
         val = @getElem("tree-item-value")
         switch @type

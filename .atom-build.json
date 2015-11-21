@@ -1,5 +1,3 @@
 {
-    "cmd": "electron",
-    "args": ["."],
-    "sh": false
+    "cmd": "{PROJECT_PATH}/run"
 }

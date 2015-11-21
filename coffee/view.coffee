@@ -61,7 +61,7 @@ class View extends Proxy
         
     update: ->
 
-        profile "update"
+        # profile "update #{@root.value.numVisible}"
         scroll   = @tree.parentElement
         sheight  = scroll.clientHeight
 
@@ -84,7 +84,7 @@ class View extends Proxy
         @tree.innerHTML = "" # proper destruction needed?
                                         
         for i in [first..last]
-            baseItem = @base.visibleAtIndex i
+            baseItem = @base.visibleItems[i]
             @root.keyIndex[baseItem.key] = @root.children.length
             item = @createItem baseItem.key, baseItem, @root
             @root.children.push item
@@ -95,7 +95,7 @@ class View extends Proxy
                     item.select()
                                 
         @tree.style.height = "#{total}.px"
-        profile ""
+        # profile ""
                           
     ###
     00000000   00000000  000       0000000    0000000   0000000  
@@ -129,9 +129,9 @@ class View extends Proxy
     00000000  000   000  000        000   000  000   000  0000000  
     ###
 
-    onDidExpand:   (baseItem) =>  #@update()
-    onDidCollapse: (baseItem) =>  #@update()
-    onDidLayout:   (baseItem) =>  @update()
+    onDidExpand:   (baseItem) => 
+    onDidCollapse: (baseItem) => 
+    onDidLayout:   (baseItem) => @update()
         
     ###
     000   000  00000000  000   000  0000000     0000000   000   000  000   000
@@ -151,7 +151,6 @@ class View extends Proxy
         switch keycode
             when 'up', 'down', 'left', 'right'
                 item = @root.children[parseInt(e.id)]
-                # log 'onKeyDown', e.id, item.indexInParent()
                 item?["select#{_.capitalize(keycode)}"] event
                 event.stopPropagation()
                 event.preventDefault()

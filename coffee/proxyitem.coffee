@@ -53,19 +53,16 @@ class ProxyItem extends Item
                 if found = child.findFirstVisible func, true
                     return found
         null
-            
-    visibleAtIndex: (index) ->
-        @root().findFirstVisible (i) => 
-            index -= 1
-            index < 0
-    
+                
     updateCounters: () ->
         incVis = (i) ->
             i.numVisible += 1
             incVis i.parent if i.parent?
         @numVisible = 0
+        @mdl.visibleItems = []
         vis = 0
         @findFirstVisible (i) =>
+            @mdl.visibleItems.push i
             i.numVisible = 0
             incVis i.parent
             i.visibleIndex = vis

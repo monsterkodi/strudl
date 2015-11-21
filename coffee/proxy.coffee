@@ -8,6 +8,7 @@
 
 log       = require './log'
 Model     = require './model'
+profile   = require './profile'
 ProxyItem = require './proxyitem'
 Item      = require './item'
 
@@ -18,6 +19,7 @@ class Proxy extends Model
     constructor: (base, name='proxy') -> 
         super name + (ID += 1)
         @itemMap = {}
+        @visibleItems = []
         if base instanceof Item
             @baseItem = base
             @name += ':' + @baseItem?.keyPath?().join?('.')
@@ -81,10 +83,7 @@ class Proxy extends Model
             delete item.unfetched
             
     layout: (item) ->
-        log 'layout', item.visibleIndex
-        
         @root.updateCounters()
-        
         @trigger 'didLayout', item
                         
     ###
@@ -154,7 +153,5 @@ class Proxy extends Model
             for child in item.children
                 leafs.push.apply(leafs, @leafItems child)
             leafs
-
-    visibleAtIndex: (i) -> @root.visibleAtIndex i
                     
 module.exports = Proxy
