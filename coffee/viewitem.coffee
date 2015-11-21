@@ -143,7 +143,7 @@ class ViewItem extends ProxyItem
         
     deselect: -> 
         @delClass "selected"
-        @elem.blur()
+        @root().elem.focus()
         
     select: (event) ->
         
@@ -151,21 +151,7 @@ class ViewItem extends ProxyItem
         
         if @elem != document.activeElement
             @elem.focus()
-            
-    selectUp: (event) ->
-        if @prevItem()
-            @prevItem().select event
-        else
-            @model().scrollLines -1
-            @model().selectUp()
-            
-    selectDown: (event) -> 
-        if @nextItem()
-            @nextItem().select event
-        else
-            @model().scrollLines 1  
-            @model().selectDown()  
-                                            
+                                                        
     selectLeft: (event) -> 
         if event.metaKey
             @collapse true
@@ -174,7 +160,7 @@ class ViewItem extends ProxyItem
         else if @isExpanded()
             @collapse()
         else
-            @selectUp event
+            @model().selectUp event
             
     selectRight: (event) -> 
         if event.metaKey
@@ -182,7 +168,7 @@ class ViewItem extends ProxyItem
         else if @isExpandable() and not @isExpanded()
             @expand false
         else
-            @selectDown event
+            @model().selectDown event
             
     ###
      0000000  000       0000000   0000000

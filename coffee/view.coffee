@@ -11,7 +11,7 @@ log      = require './log'
 Model    = require './model'
 Proxy    = require './proxy'
 Item     = require './item'
-profile = require './profile'
+profile  = require './profile'
 ViewItem = require './viewitem'
 keyname  = require './keyname'
 
@@ -21,6 +21,7 @@ class View extends Proxy
         super base, 'view', @tree
         @tree.addEventListener 'keydown', @onKeyDown
         @tree.addEventListener 'wheel', @onWheel
+        @tree.tabIndex = -1
         @topIndex = 0
         @botIndex = 0
         @scroll   = 0
@@ -67,9 +68,7 @@ class View extends Proxy
         doProfile = false
         profile "update #{@numVisibleLines()}" if doProfile
 
-        selitem  = @selectedItem()
-        selindex = selitem?.value.visibleIndex
-        selitem?.deselect()
+        selIndex = @selectedItem()?.value.visibleIndex
 
         numlines = @numViewLines()
         @topIndex = parseInt(@scroll / @lineHeight())
@@ -85,10 +84,14 @@ class View extends Proxy
             item = @createItem baseItem.key, baseItem, @root
             @root.children.push item
             item.createElement()     
-            if baseItem.visibleIndex == selindex
-                if selindex >= @topIndex and selindex <= @botIndex
-                    item.select()
-                                
+            if baseItem.visibleIndex == selIndex
+                item.select()
+                    
+        if not @selectedItem()?
+            if selIndex > @botIndex
+                _.last(@root.children).select()
+            else
+                _.first(@root.children).select()
         profile "" if doProfile
                           
     ###
@@ -136,19 +139,28 @@ class View extends Proxy
     ###
     
     selectedItem: () -> @root.children[parseInt(document.activeElement.id)]
-    selectUp:   () -> @selectedItem().prevItem().select()
-    selectDown: () -> @selectedItem().nextItem().select()
+    
+    selectUp: (event) -> 
+        
+        if not @selectedItem().prevItem()? or event.shiftKey
+            @scrollLines -1
+        @selectedItem().prevItem()?.select()
+        
+    selectDown: (event) -> 
+        
+        if not @selectedItem().nextItem()? or event.shiftKey
+            @scrollLines 1
+        @selectedItem().nextItem()?.select()
     
     onKeyDown: (event) =>
-        e = document.activeElement
         keycode = keyname.keycode event
         switch keycode
-            when 'up', 'down', 'left', 'right'
-                item = @root.children[parseInt(e.id)]
-                item?["select#{_.capitalize(keycode)}"] event
-                event.stopPropagation()
-                event.preventDefault()
+            when 'left', 'right'
+                @selectedItem()?["select#{_.capitalize(keycode)}"] event
+            when 'up'  then @selectUp event
+            when 'down'then @selectDown event
             when 'page up', 'page down'
-                @scrollLines (keycode == 'page up' and -1 or 1) * @numViewLines()
+                @scrollLines((keycode == 'page up' and -1 or 1) * @numViewLines())
+                _.first(@root.children).select()
         
 module.exports = View
