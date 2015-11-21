@@ -9,7 +9,7 @@
 _     = require 'lodash'
 S     = require 'underscore.string'
 chalk = require 'chalk'
-log   = require './log'
+log   = require './tools/log'
     
 class Item
 

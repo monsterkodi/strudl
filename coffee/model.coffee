@@ -8,7 +8,7 @@
 
 Events = require 'backbone-events-standalone'
 Item   = require './item'
-log    = require './log'
+log    = require './tools/log'
 
 class Model
     

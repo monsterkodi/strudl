@@ -7,13 +7,13 @@
 ###
 
 _        = require 'lodash'
-log      = require './log'
+log      = require './tools/log'
 Model    = require './model'
 Proxy    = require './proxy'
 Item     = require './item'
-profile  = require './profile'
+profile  = require './tools/profile'
 ViewItem = require './viewitem'
-keyname  = require './keyname'
+keyname  = require './tools/keyname'
 
 class View extends Proxy
         

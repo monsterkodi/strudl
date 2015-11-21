@@ -6,9 +6,9 @@
 000        000   000   0000000   000   000     000   
 ###
 
-log       = require './log'
+log       = require './tools/log'
 Model     = require './model'
-profile   = require './profile'
+profile   = require './tools/profile'
 ProxyItem = require './proxyitem'
 Item      = require './item'
 

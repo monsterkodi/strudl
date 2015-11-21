@@ -8,7 +8,7 @@
 
 S     = require 'underscore.string'
 chalk = require 'chalk'
-log   = require './log'
+log   = require './tools/log'
 Item  = require './item'
 
 class ProxyItem extends Item

@@ -6,7 +6,7 @@
     0      000  00000000  00     00  000     000     00000000  000   000
 ###
 
-log       = require './log'
+log       = require './tools/log'
 Item      = require './item'
 ProxyItem = require './proxyitem'
 

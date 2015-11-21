@@ -8,8 +8,8 @@
 
 Model   = require './model'
 Item    = require './item'
-profile = require './profile'
-log     = require './log'
+profile = require './tools/profile'
+log     = require './tools/log'
 path    = require 'path'
 fs      = require 'fs'
 _       = require 'lodash'
