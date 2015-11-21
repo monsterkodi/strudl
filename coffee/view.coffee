@@ -11,6 +11,7 @@ log      = require './log'
 Model    = require './model'
 Proxy    = require './proxy'
 Item     = require './item'
+profile = require './profile'
 ViewItem = require './viewitem'
 keyname  = require './keyname'
 
@@ -26,6 +27,7 @@ class View extends Proxy
         super base
         @base.on "didExpand",   @onDidExpand
         @base.on "didCollapse", @onDidCollapse
+        @base.on "didLayout",   @onDidLayout
 
     ###
      0000000   0000000  00000000    0000000   000      000    
@@ -59,21 +61,23 @@ class View extends Proxy
         
     update: ->
 
+        profile "update"
         scroll   = @tree.parentElement
         sheight  = scroll.clientHeight
 
         selitem  = @selectedItem()
-        selindex = selitem?.value.visibleIndex()
+        selindex = selitem?.value.visibleIndex
         selitem?.deselect()
 
-        visible  = @base.numVisible()
+        visible  = @base.root.numVisible
         line     = @root?.children[0]?.elem.clientHeight or 24
         numlines = parseInt(sheight / line)
         total    = visible * line
         topindex = parseInt(scroll.scrollTop / line)
         botindex = topindex + numlines
-        first    = Math.max(0, parseInt((scroll.scrollTop - sheight) / line))
-        last     = Math.min(first + 3*numlines, visible)
+        n = 0
+        first    = Math.max(0, topindex - n * numlines)
+        last     = Math.min(first + (1 + 2 * n) * numlines, visible)
                     
         @root.children = []
         @root.keyIndex = {}
@@ -86,11 +90,12 @@ class View extends Proxy
             @root.children.push item
             item.createElement()     
             item.elem.style.top = "#{i*line}.px"  
-            if baseItem.visibleIndex() == selindex
+            if baseItem.visibleIndex == selindex
                 if selindex >= topindex and selindex <= botindex
                     item.select()
                                 
         @tree.style.height = "#{total}.px"
+        profile ""
                           
     ###
     00000000   00000000  000       0000000    0000000   0000000  
@@ -124,8 +129,9 @@ class View extends Proxy
     00000000  000   000  000        000   000  000   000  0000000  
     ###
 
-    onDidExpand:   (baseItem) =>  @update()
-    onDidCollapse: (baseItem) =>  @update()
+    onDidExpand:   (baseItem) =>  #@update()
+    onDidCollapse: (baseItem) =>  #@update()
+    onDidLayout:   (baseItem) =>  @update()
         
     ###
     000   000  00000000  000   000  0000000     0000000   000   000  000   000
@@ -145,7 +151,7 @@ class View extends Proxy
         switch keycode
             when 'up', 'down', 'left', 'right'
                 item = @root.children[parseInt(e.id)]
-                log e.id, item.indexInParent()
+                # log 'onKeyDown', e.id, item.indexInParent()
                 item?["select#{_.capitalize(keycode)}"] event
                 event.stopPropagation()
                 event.preventDefault()

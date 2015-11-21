@@ -15,10 +15,13 @@ class ProxyItem extends Item
 
     constructor: (@key, @value, prt) -> 
 
+        @numVisible = 0
         if @key == -1
             @mdl = prt
+            @visibleIndex = -1
         else
             @parent = prt
+            @visibleIndex = 0
             
         @type = @value.type
                     
@@ -51,24 +54,23 @@ class ProxyItem extends Item
                     return found
         null
             
-    visibleIndex: -> 
-        index = -1
-        @root().findFirstVisible (i) =>
-            index += 1
-            i == @
-        index
-        
     visibleAtIndex: (index) ->
         @root().findFirstVisible (i) => 
             index -= 1
             index < 0
-
-    numVisible: ->
-        num = 0
-        @findFirstVisible (i) => 
-            num += 1
-            false
-        num
+    
+    updateCounters: () ->
+        incVis = (i) ->
+            i.numVisible += 1
+            incVis i.parent if i.parent?
+        @numVisible = 0
+        vis = 0
+        @findFirstVisible (i) =>
+            i.numVisible = 0
+            incVis i.parent
+            i.visibleIndex = vis
+            vis += 1
+            false        
     
     ###
     00000000  000   000  00000000    0000000   000   000  0000000  

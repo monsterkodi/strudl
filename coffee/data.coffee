@@ -21,6 +21,8 @@ class DataModel extends Model
         @data = @parseString fs.readFileSync @filePath
         profile "create tree"
         @root = @createItem -1, @data, @
+        @root.updateDescendants()
+        profile ""
         log "#{@lastID} items"
         @trigger 'didReload'
 

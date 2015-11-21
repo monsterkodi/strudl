@@ -19,6 +19,7 @@ class Item
 
     constructor: (@key, @value, prt) -> 
 
+        @numDesc = 0
         if @key == -1
             @mdl = prt
         else
@@ -53,12 +54,14 @@ class Item
     isObject:    -> @type == Item.objectType
     isParent:    -> @type != Item.valueType
     hasChildren: -> @isParent() and (not _.isEmpty(@children))
-    numDescendants: ->
-        num = 0
-        @traverse (i) -> 
-            num += 1
-            false
-        num
+    numDescendants: -> @numDesc
+    
+    updateDescendants: () ->
+        @numDesc = 1
+        if @isParent()
+            for child in @children
+                @numDesc += child.updateDescendants()
+        @numDesc
     
     indexInParent: ->
         if @parent?.children?.length < 1000

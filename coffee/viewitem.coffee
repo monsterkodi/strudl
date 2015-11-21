@@ -35,7 +35,7 @@ class ViewItem extends ProxyItem
 
             idx = document.createElement 'span'
             idx.className = "tree-item-idx"
-            idx.innerHTML = "#{@value.visibleIndex?()} "
+            idx.innerHTML = "#{@value.visibleIndex} "
             @elem.appendChild idx
         
             spc = document.createElement 'span'
@@ -76,14 +76,13 @@ class ViewItem extends ProxyItem
             @root().elem.appendChild @elem            
             
     update: ->
-        # log @value.visibleIndex()
         if @isParent()
             vis = @getElem("tree-item-vis")
             chd = @getElem("tree-item-chd")
             dsc = @getElem("tree-item-dsc")
-            vis.innerHTML = (@isExpanded() and "#{@value.numVisible()}" or "")
+            vis.innerHTML = (@isExpanded() and "#{@value.numVisible}" or "")
             chd.innerHTML = "#{@dataItem().children.length}"
-            dsc.innerHTML = "#{@dataItem().numDescendants()}"
+            dsc.innerHTML = "#{@dataItem().numDescendants()-1}"
 
         val = @getElem("tree-item-value")
         switch @type
@@ -173,14 +172,15 @@ class ViewItem extends ProxyItem
             @parent.select() if not @isTop()
         else if @isExpanded()
             @collapse()
-        else if not @isTop() 
+        else
             @selectUp event
             
     selectRight: (event) -> 
-        if @isExpandable() and not @isExpanded()
-            recursive = event.metaKey
-            @expand recursive 
-        else if @nextItem()?.topItem() == @topItem()
+        if event.metaKey
+            @expand true
+        else if @isExpandable() and not @isExpanded()
+            @expand false
+        else
             @selectDown event
             
     ###

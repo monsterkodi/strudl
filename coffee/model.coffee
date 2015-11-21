@@ -40,8 +40,10 @@ class Model
     remove: (item) ->
         @trigger 'willRemove', [item]
         item.parent.delChild item
+        @root.updateDescendants()
         
     insert: (parent, key, value) ->
+        @root.updateDescendants()
         @trigger 'didInsert', [parent.childAt [key]]
                             
 module.exports = Model

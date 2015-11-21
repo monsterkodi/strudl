@@ -33,9 +33,7 @@ class Proxy extends Model
         @base.on "willRemove", @onWillRemove
         @base.on "didInsert",  @onDidInsert
         @base.on "didChange",  @onDidChange        
-    
-    numVisible: (item=@root) -> item.numVisible()
-        
+            
     onWillReload:() => 
         @trigger "willReload"
         @root = null
@@ -81,6 +79,13 @@ class Proxy extends Model
                 for child in item.value.children
                     item.addChild @createItem child.key, child, item
             delete item.unfetched
+            
+    layout: (item) ->
+        log 'layout', item.visibleIndex
+        
+        @root.updateCounters()
+        
+        @trigger 'didLayout', item
                         
     ###
     00000000  000   000  00000000    0000000   000   000  0000000  
@@ -101,7 +106,10 @@ class Proxy extends Model
                 
             if recursive
                 for child in item.children
-                    @expand child, recursive
+                    @expand child, recursive + 1
+                
+            if recursive == true or recursive == false
+                @layout item
                 
     collapse: (item, recursive=false) ->
         
@@ -109,25 +117,28 @@ class Proxy extends Model
             
             if recursive
                 for child in item.children
-                    @collapse child, recursive
+                    @collapse child, recursive + 1
                 
             if item.expanded
                 item.expanded = false
                 @trigger 'didCollapse', item
 
+            if recursive == true or recursive == false
+                @layout item
+
     expandItems: (items) -> 
         for item in items
-            @expand item
+            @expand item, 0
 
     expandLeaves: -> @expandItems @leafItems()
 
     collapseLeaves: (recursive=false) -> 
         for leaf in @leafItems()
-            @collapse leaf, recursive
+            @collapse leaf, recursive and 1 or 0
             
     collapseTop: (recursive=false) -> 
         for child in @root.children
-            @collapse child, recursive
+            @collapse child, recursive and 1 or 0
     
     isLeaf: (item) ->
         if item.isExpandable() 
