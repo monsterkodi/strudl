@@ -21,6 +21,8 @@ wins   = {}
 
 loadPreferences = () ->
 
+    prefs.debug = false
+    
     p = prefs.init "/Users/kodi/Projects/strudl/prefs.json", # "#{app.getPath('userData')}/prefs.json", 
         open: []
         recent: []
@@ -32,8 +34,6 @@ loadPreferences = () ->
     for f in p.open
         loadFile f
         
-    prefs.set 'windows', {}
-
 loadFile = (p) ->
     
     if wins[p]?
@@ -79,12 +79,12 @@ openFile = ->
             loadFile f
 
 saveStateAndExit = ->
-    
-    dict = prefs.get 'windows'
+    bounds = {}
     for k, w of wins
-        dict[k] = w.getBounds()
-    prefs.set 'windows', dict
-    app.exit 0
+        bounds[k] = w.getBounds()
+        w.removeAllListeners 'close'
+    prefs.set 'windows', bounds
+    app.quit()
     
 app.on 'will-finish-launching', ->
         

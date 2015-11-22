@@ -71,8 +71,8 @@ class View extends Proxy
         @scrollMax = @treeHeight - @linesHeight
         
         @scroll += delta
-        @scroll = Math.max @scroll, 0
         @scroll = Math.min @scroll, @scrollMax
+        @scroll = Math.max @scroll, 0
         
         @update() if @topIndex != parseInt @scroll / @lineHeight
 
@@ -113,7 +113,7 @@ class View extends Proxy
         @topIndex = parseInt(@scroll / @lineHeight)
         @botIndex = Math.min(@topIndex + viewLines, numLines-1)
         
-        log 'view.update', @topIndex, @botIndex        
+        log 'view.update', @topIndex, @scroll
                                 
         @root.children = []
         @root.keyIndex = {}

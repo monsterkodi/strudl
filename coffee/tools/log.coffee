@@ -8,11 +8,10 @@
 
 str = require './str'
 fs  = require 'fs'
-    
-stream = fs.createWriteStream('strudl.log', flags: 'a', encoding: 'utf8')
-stream.closeOnExit = true
-        
+            
 module.exports = -> 
     msg = (str(a) for a in arguments).join(' ')
     console.log msg
+    stream = fs.createWriteStream('strudl.log', flags: 'a', encoding: 'utf8')
     stream.write msg + "\n"
+    stream.end()

@@ -27,7 +27,7 @@ prxy    = null
 view    = null
 
 win.on 'loadFile', (path) ->
-    log 'on loadFile', path
+    # log 'on loadFile', path
     data = new Data()
     prxy = new Proxy data
     view = new View prxy, $('tree')
@@ -43,9 +43,7 @@ win.on 'loadFile', (path) ->
 0000000   0000000   000   000  0000000    00000000  0000000  
 ###
 
-document.addEventListener 'DOMContentLoaded', () ->
-    log 'win dom loaded'
-    win.emit 'domLoaded'
+document.addEventListener 'DOMContentLoaded', () -> win.emit 'domLoaded'
         
 win.on 'close',      (event) -> 
 win.on 'focus',      (event) -> 
