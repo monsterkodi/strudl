@@ -19,20 +19,25 @@ log    = require './coffee/tools/log'
 prefs  = require './coffee/tools/prefs'
 wins   = {}
 
+prefs.debug = false
+
+prefs.init "/Users/kodi/Projects/strudl/prefs.json", # "#{app.getPath('userData')}/prefs.json", 
+    open: []
+    recent: []
+    windows: []
+
 loadPreferences = () ->
-
-    prefs.debug = false
     
-    p = prefs.init "/Users/kodi/Projects/strudl/prefs.json", # "#{app.getPath('userData')}/prefs.json", 
-        open: []
-        recent: []
-        windows: []
-
-    for f in p.recent
+    p = prefs.load()
+    
+    for f in  p.recent
         app.addRecentDocument f
         
     for f in p.open
         loadFile f
+        
+preloadFile = (p) ->
+    prefs.one 'open', p
         
 loadFile = (p) ->
     
@@ -49,19 +54,18 @@ loadFile = (p) ->
         frame: true
         show: true
         center: false
+
+    wd = prefs.get 'windows'
+    w.setBounds wd[p] if wd[p]?
         
     w.on 'domLoaded', -> w.emit 'loadFile', p
     
     w.on 'close', (event) -> 
-        log 'wins', Object.keys wins
+        log 'windows closed'
         delete wins[_.findKey(wins, event.sender)]
-        log 'wins', Object.keys wins
         prefs.del 'open', p
 
     w.loadURL "file://#{cwd}/../win.html"
-
-    wd = prefs.get 'windows'
-    w.setBounds wd[p] if wd[p]?
 
     wins[p] = w
 
@@ -69,37 +73,47 @@ loadFile = (p) ->
     prefs.one 'recent', p
 
 openFile = ->
-    
+
+    # log 'openFile'
     p = dialog.showOpenDialog
         properties: [ 'openFile']
-        filters:    [ name: 'data', extensions: ['json', 'cson'] ]
+        filters:    [ name: 'data', extensions: ['json', 'cson', 'plist'] ]
         properties: [ 'openFile', 'multiSelections' ]
-    for f in p 
-        if fs.existsSync f
-            loadFile f
+        
+    if p?.length?
+        for f in p
+            if fs.existsSync f
+                loadFile f
 
 saveStateAndExit = ->
+    log 'save state'
     bounds = {}
     for k, w of wins
         bounds[k] = w.getBounds()
         w.removeAllListeners 'close'
     prefs.set 'windows', bounds
-    app.quit()
-    
-app.on 'will-finish-launching', ->
-        
-app.on 'window-all-closed', -> app.exit 0
+    # app.quit()
+
+app.on 'quit', -> log 'on quit'    
+app.on 'before-quit', -> saveStateAndExit()
+app.on 'will-quit', -> log 'on will-quit'
+app.on 'window-all-closed', -> log 'on window-all-closed'
+app.on 'will-finish-launching', -> log 'on will-finish-launching'
+app.on 'open-file', (e,p) -> preloadFile p
     
 app.on 'ready', ->
 
-    console.log 'app ready'
+    log 'app ready'
+    
+    app.removeAllListeners 'open-file'
+    app.on 'open-file', (e,p) -> loadFile p
     
     menu = [
         label: 'strudl'   
         submenu: [     
             label: 'Quit'
             accelerator: 'Command+Q'
-            click: saveStateAndExit
+            click: app.quit #saveStateAndExit
         ]
     ,
         label: 'File'

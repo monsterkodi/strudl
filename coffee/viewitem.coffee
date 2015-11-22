@@ -159,6 +159,8 @@ class ViewItem extends ProxyItem
         
         if @elem != document.activeElement
             @elem.focus()
+            
+        @model()->itemSelected @
                                                         
     selectLeft: (event) -> 
         if event.metaKey

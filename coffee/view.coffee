@@ -113,8 +113,6 @@ class View extends Proxy
         @topIndex = parseInt(@scroll / @lineHeight)
         @botIndex = Math.min(@topIndex + viewLines, numLines-1)
         
-        log 'view.update', @topIndex, @scroll
-                                
         @root.children = []
         @root.keyIndex = {}
         @tree.innerHTML = "" # proper destruction needed?
@@ -187,6 +185,9 @@ class View extends Proxy
     ###
     
     selectedItem: () -> @root.children[parseInt(document.activeElement.id)]
+    itemSelected: (item) ->
+        log item
+        $('path').innerHTML = @item.dataItem().keyPath()
     
     selectLines: (lineDelta) ->
         if @selectedItem()?

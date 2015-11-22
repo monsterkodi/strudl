@@ -27,10 +27,14 @@ class DataModel extends Model
         @trigger 'didReload'
 
     parseString: (stringData) ->
-        if path.extname(@filePath) == '.cson'
-            require('CSON').parse stringData
-        else
-            JSON.parse stringData
+        # log 'parseString', stringData.toString 'utf8'
+        switch path.extname(@filePath) 
+            when '.cson'
+                require('CSON').parse stringData
+            when '.plist'
+                require('plist').parse stringData.toString 'utf8'
+            else
+                JSON.parse stringData
 
     ###
     000  000000000  00000000  00     00

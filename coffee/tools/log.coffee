@@ -12,6 +12,9 @@ fs  = require 'fs'
 module.exports = -> 
     msg = (str(a) for a in arguments).join(' ')
     console.log msg
-    stream = fs.createWriteStream('strudl.log', flags: 'a', encoding: 'utf8')
-    stream.write msg + "\n"
-    stream.end()
+    try
+        stream = fs.createWriteStream('strudl.log', flags: 'a+', encoding: 'utf8')
+        stream.write msg + "\n"
+        stream.end()
+    catch
+        console.log msg

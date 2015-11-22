@@ -55,7 +55,7 @@ class Prefs
 
     @save: (values) ->
         json = JSON.stringify(values, null, "    ")
-        log 'prefs.save', Prefs.path, json if Prefs.debug?
+        log 'prefs.save', Prefs.path, json if Prefs.debug
         fs.writeFileSync Prefs.path, json, encoding:'utf8'
 
 module.exports = Prefs

@@ -26,14 +26,19 @@ data    = null
 prxy    = null
 view    = null
 
-win.on 'loadFile', (path) ->
+win.on 'loadFile', (p) ->
     # log 'on loadFile', path
     data = new Data()
     prxy = new Proxy data
     view = new View prxy, $('tree')
         
-    log "\nloading data from file #{path}" 
-    data.load path  
+    log "\nloading data from file #{p}" 
+    data.load p  
+    
+    win.setRepresentedFilename p
+    title = path.basename(p) + " - " + path.dirname(p)
+    win.setTitle title
+    # win.setDocumentEdited true
 
 ###
 000       0000000    0000000   0000000    00000000  0000000  
