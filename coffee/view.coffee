@@ -26,19 +26,15 @@ class View extends Proxy
         @botIndex = 0
         @scroll   = 0
         @scrollLeft = @tree.parentElement.getElementsByClassName('scroll left')[0]
-        # log 'View scrollLeft', @scrollLeft
         
         tmp = document.createElement 'div'
         tmp.className = 'tree-item'
         @tree.appendChild tmp
         @lineHeight = tmp.offsetHeight
         tmp.remove()
-        log 'View', @lineHeight
         
     setBase: (base) ->
         super base
-        # @base.on "didExpand",   @onDidExpand
-        # @base.on "didCollapse", @onDidCollapse
         @base.on "didLayout",   @onDidLayout
 
     viewHeight: -> @tree.clientHeight
@@ -177,17 +173,18 @@ class View extends Proxy
     onDidLayout:   (baseItem) => @update()
     
     ###
-    000   000  00000000  000   000  0000000     0000000   000   000  000   000
-    000  000   000        000 000   000   000  000   000  000 0 000  0000  000
-    0000000    0000000     00000    000   000  000   000  000000000  000 0 000
-    000  000   000          000     000   000  000   000  000   000  000  0000
-    000   000  00000000     000     0000000     0000000   00     00  000   000
+     0000000  00000000  000      00000000   0000000  000000000
+    000       000       000      000       000          000   
+    0000000   0000000   000      0000000   000          000   
+         000  000       000      000       000          000   
+    0000000   00000000  0000000  00000000   0000000     000   
     ###
     
     selectedItem: () -> @root.children[parseInt(document.activeElement.id)]
+    
     itemSelected: (item) ->
-        log item
-        $('path').innerHTML = @item.dataItem().keyPath()
+        keyPath = item.dataItem().keyPath().join '.'
+        $('path').innerHTML = keyPath
     
     selectLines: (lineDelta) ->
         if @selectedItem()?
@@ -213,6 +210,14 @@ class View extends Proxy
         if not @selectedItem().nextItem()? or event.shiftKey or @partiallyVisible @selectedItem().nextItem()
             @scrollLines 1
         @selectedItem().nextItem()?.select()
+    
+    ###
+    000   000  00000000  000   000  0000000     0000000   000   000  000   000
+    000  000   000        000 000   000   000  000   000  000 0 000  0000  000
+    0000000    0000000     00000    000   000  000   000  000000000  000 0 000
+    000  000   000          000     000   000  000   000  000   000  000  0000
+    000   000  00000000     000     0000000     0000000   00     00  000   000
+    ###
     
     onKeyDown: (event) =>
         keycode = keyname.keycode event
