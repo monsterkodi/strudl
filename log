@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+rm -f strudl.log 
+touch strudl.log 
+tail -f strudl.log
