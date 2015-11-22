@@ -37,8 +37,8 @@ class View extends Proxy
         
     setBase: (base) ->
         super base
-        @base.on "didExpand",   @onDidExpand
-        @base.on "didCollapse", @onDidCollapse
+        # @base.on "didExpand",   @onDidExpand
+        # @base.on "didCollapse", @onDidCollapse
         @base.on "didLayout",   @onDidLayout
 
     viewHeight: -> @tree.clientHeight
@@ -97,6 +97,7 @@ class View extends Proxy
     ###
         
     update: ->
+        
         doProfile = false
         numLines = @numVisibleLines()
         viewLines = @numViewLines()
@@ -111,6 +112,8 @@ class View extends Proxy
         
         @topIndex = parseInt(@scroll / @lineHeight)
         @botIndex = Math.min(@topIndex + viewLines, numLines-1)
+        
+        log 'view.update', @topIndex, @botIndex        
                                 
         @root.children = []
         @root.keyIndex = {}
@@ -171,8 +174,8 @@ class View extends Proxy
     00000000  000   000  000        000   000  000   000  0000000  
     ###
 
-    onDidExpand:   (baseItem) => 
-    onDidCollapse: (baseItem) => 
+    # onDidExpand:   (baseItem) => 
+    # onDidCollapse: (baseItem) => 
     onDidLayout:   (baseItem) => @update()
     
     ###

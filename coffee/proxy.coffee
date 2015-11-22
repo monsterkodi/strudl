@@ -109,7 +109,7 @@ class Proxy extends Model
             if not item.expanded
                 @fetchItem item
                 item.expanded = true
-                @trigger 'didExpand', item
+                # @trigger 'didExpand', item
                 
             if recursive
                 for child in item.children
@@ -128,7 +128,7 @@ class Proxy extends Model
                 
             if item.expanded
                 item.expanded = false
-                @trigger 'didCollapse', item
+                # @trigger 'didCollapse', item
 
             if recursive == true or recursive == false
                 @layout item

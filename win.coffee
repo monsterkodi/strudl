@@ -19,32 +19,21 @@ View    = require './js/coffee/view'
 app     = remote.require 'app'
 win     = remote.getCurrentWindow()
 
+debugMenu = require 'debug-menu'
+debugMenu.install()
+
 data    = null
 prxy    = null
 view    = null
 
-loadData = () ->
+win.on 'loadFile', (path) ->
+    log 'on loadFile', path
     data = new Data()
     prxy = new Proxy data
     view = new View prxy, $('tree')
-    
-    app.addRecentDocument '/Users/kodi/Projects/strudl/data/data.json'
-    app.addRecentDocument '/Users/kodi/Projects/strudl/data/cards.json'
-    app.addRecentDocument '/Users/kodi/Projects/strudl/data/test.json'
-    
-    app.on 'open-file', (event, p) -> 
-
-        win.setRepresentedFilename p
-        title = path.basename(p) + " - " + path.dirname(p)
-        win.setTitle title
-        # win.setDocumentEdited true
-        data.load p
-    
-    log '\nloading data' 
-    data.load 'data/data.json'
-    # data.load 'data/cards.json'
-    # data.load 'data/darwin.cson'
-    
+        
+    log "\nloading data from file #{path}" 
+    data.load path  
 
 ###
 000       0000000    0000000   0000000    00000000  0000000  
@@ -54,9 +43,11 @@ loadData = () ->
 0000000   0000000   000   000  0000000    00000000  0000000  
 ###
 
-document.addEventListener 'DOMContentLoaded', loadData
+document.addEventListener 'DOMContentLoaded', () ->
+    log 'win dom loaded'
+    win.emit 'domLoaded'
         
-win.on 'close',      (event) -> app.quit()
+win.on 'close',      (event) -> 
 win.on 'focus',      (event) -> 
 win.on 'blur',       (event) -> 
 win.on 'maximize',   (event) -> 
