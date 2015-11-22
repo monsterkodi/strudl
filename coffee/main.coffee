@@ -9,6 +9,7 @@
 _       = require 'lodash'
 fs      = require 'fs'
 ipc     = require 'ipc'
+path    = require 'path'
 remote  = require 'remote'
 log     = require './tools/log'
 keyname = require './tools/keyname'
@@ -26,6 +27,19 @@ loadData = () ->
     data = new Data()
     prxy = new Proxy data
     view = new View prxy, $('tree')
+    
+    app.addRecentDocument '/Users/kodi/Projects/strudl/data/data.json'
+    app.addRecentDocument '/Users/kodi/Projects/strudl/data/cards.json'
+    app.addRecentDocument '/Users/kodi/Projects/strudl/data/test.json'
+    
+    app.on 'open-file', (event, p) -> 
+
+        win.setRepresentedFilename p
+        title = path.basename(p) + " - " + path.dirname(p)
+        win.setTitle title
+        # win.setDocumentEdited true
+        data.load path
+    
     log '\nloading data' 
     data.load 'data/data.json'
     # data.load 'data/cards.json'
