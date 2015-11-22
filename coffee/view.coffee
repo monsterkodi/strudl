@@ -28,15 +28,21 @@ class View extends Proxy
         @scrollLeft = @tree.parentElement.getElementsByClassName('scroll left')[0]
         # log 'View scrollLeft', @scrollLeft
         
+        tmp = document.createElement 'div'
+        tmp.className = 'tree-item'
+        @tree.appendChild tmp
+        @lineHeight = tmp.offsetHeight
+        tmp.remove()
+        log 'View', @lineHeight
+        
     setBase: (base) ->
         super base
         @base.on "didExpand",   @onDidExpand
         @base.on "didCollapse", @onDidCollapse
         @base.on "didLayout",   @onDidLayout
 
-    lineHeight: -> @root?.children[0]?.elem.offsetHeight or 24
     viewHeight: -> @tree.clientHeight
-    numViewLines: -> Math.floor(@viewHeight() / @lineHeight())
+    numViewLines: -> Math.floor @viewHeight() / @lineHeight
     numVisibleLines: -> @base.root.numVisible
 
     ###
@@ -47,39 +53,40 @@ class View extends Proxy
     0000000    0000000  000   000   0000000   0000000  0000000
     ###
         
-    scrollLines: (lineDelta) -> @scrollBy lineDelta * @lineHeight()
+    scrollLines: (lineDelta) -> @scrollBy lineDelta * @lineHeight
 
     scrollFactor: (event) ->
         f  = 1 
-        f *= 1 + 9 * event.shiftKey
         f *= 1 + 9 * event.metaKey
-        f *= 1 + 9 * event.ctrlKey
-        f *= 1 + 9 * event.altKey        
+        f *= 1 + 99 * event.altKey        
+        f *= 1 + 999 * event.ctrlKey
 
     onWheel: (event) => 
         @scrollBy event.deltaY * @scrollFactor event
     
-    scrollBy: (delta) ->
-        l = @lineHeight()
-        treeHeight = @numVisibleLines() * l
-        linesHeight = @numViewLines() * l
-        maxScroll = treeHeight - linesHeight
+    scrollBy: (delta) -> 
+
+        @treeHeight = @numVisibleLines() * @lineHeight
+        @linesHeight = @numViewLines() * @lineHeight
+        @scrollMax = @treeHeight - @linesHeight
         
         @scroll += delta
         @scroll = Math.max @scroll, 0
-        @scroll = Math.min @scroll, maxScroll
+        @scroll = Math.min @scroll, @scrollMax
         
-        scrollTop = parseInt (@scroll / treeHeight) * @viewHeight()
-        scrollHeight = parseInt (linesHeight / treeHeight) * @viewHeight()
-        scrollHeight = Math.max scrollHeight, parseInt l/4
+        @update() if @topIndex != parseInt @scroll / @lineHeight
+
+    updateScroll: ->
+        scrollTop = parseInt (@scroll / @treeHeight) * @viewHeight()
+        scrollTop = Math.max 0, scrollTop
+        scrollHeight = parseInt (@linesHeight / @treeHeight) * @viewHeight()
+        scrollHeight = Math.max scrollHeight, parseInt @lineHeight/4
         
-        @scrollLeft.style.top = "#{scrollTop}.px"
+        @scrollLeft.classList.toggle 'flashy', (scrollHeight < @lineHeight)
+        
+        @scrollLeft.style.top    = "#{scrollTop}.px"
         @scrollLeft.style.height = "#{scrollHeight}.px"
-        
-        # log 'scrollBy', scrollTop, @scrollLeft.style.top
-        # log 'scrollBy', scrollHeight, @scrollLeft.style.height
-        
-        @update() if @topIndex != parseInt @scroll / l
+                          
 
     ###
     000   000  00000000   0000000     0000000   000000000  00000000
@@ -91,13 +98,19 @@ class View extends Proxy
         
     update: ->
         doProfile = false
-        profile "update #{@numVisibleLines()}" if doProfile
+        numLines = @numVisibleLines()
+        viewLines = @numViewLines()
+
+        profile "update #{numLines}" if doProfile
 
         selIndex = @selectedItem()?.value.visibleIndex
 
-        numlines = @numViewLines()
-        @topIndex = parseInt(@scroll / @lineHeight())
-        @botIndex = Math.min(@topIndex + numlines, @numVisibleLines()-1)
+        @lineHeight
+        @treeHeight = numLines * @lineHeight
+        @linesHeight = viewLines * @lineHeight
+        
+        @topIndex = parseInt(@scroll / @lineHeight)
+        @botIndex = Math.min(@topIndex + viewLines, numLines-1)
                                 
         @root.children = []
         @root.keyIndex = {}
@@ -105,20 +118,26 @@ class View extends Proxy
                                         
         for i in [@topIndex..@botIndex]
             baseItem = @base.visibleItems[i]
-            @root.keyIndex[baseItem.key] = @numVisibleLines()
+            @root.keyIndex[baseItem.key] = numLines
             item = @createItem baseItem.key, baseItem, @root
             @root.children.push item
             item.createElement()     
-            if baseItem.visibleIndex == selIndex
+            if baseItem.visibleIndex == selIndex and not @partiallyVisible item
                 item.select()
                     
         if not @selectedItem()?
-            if selIndex > @botIndex
-                _.last(@root.children).select()
+            if selIndex >= @botIndex
+                last = _.last(@root.children)
+                if @partiallyVisible last
+                    last = last.prevItem()
+                last.select()
             else
                 _.first(@root.children).select()
+                
+        @updateScroll()
+                
         profile "" if doProfile
-                          
+        
     ###
     00000000   00000000  000       0000000    0000000   0000000  
     000   000  000       000      000   000  000   000  000   000
@@ -141,7 +160,8 @@ class View extends Proxy
     000     000     00000000  000   000
     ###
         
-    newItem: (key, value, parent) -> new ViewItem key, value, parent        
+    newItem: (key, value, parent) -> new ViewItem key, value, parent     
+    partiallyVisible: (item) -> (item.elem.offsetTop + item.elem.offsetHeight) > @viewHeight()
                     
     ###
     00000000  000   000  00000000    0000000   000   000  0000000  
@@ -166,10 +186,9 @@ class View extends Proxy
     selectedItem: () -> @root.children[parseInt(document.activeElement.id)]
     
     selectLines: (lineDelta) ->
-        if @selectedItem?
-            idx = @selected.value.visibleIndex
-            @scrollLines lineDelta
-            
+        if @selectedItem()?
+            idx = @selectedItem().value.visibleIndex
+        @scrollLines lineDelta
         
     selectUp: (event) -> 
 
@@ -187,7 +206,7 @@ class View extends Proxy
             @selectLines f
             return
         
-        if not @selectedItem().nextItem()? or event.shiftKey
+        if not @selectedItem().nextItem()? or event.shiftKey or @partiallyVisible @selectedItem().nextItem()
             @scrollLines 1
         @selectedItem().nextItem()?.select()
     
@@ -209,7 +228,7 @@ class View extends Proxy
                 @scrollLines(keycode == 'page up' and -n or n)
                 first = _.first @root.children
                 last  = _.last @root.children
-                if last.value?.visibleIndex == @numVisibleLines()-1
+                if last.value.visibleIndex == @numVisibleLines()-1
                     last.select()
                 else
                     first.select()

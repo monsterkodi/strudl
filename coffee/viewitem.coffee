@@ -76,6 +76,14 @@ class ViewItem extends ProxyItem
             
             @root().elem.appendChild @elem            
             
+    ###
+    000   000  00000000   0000000     0000000   000000000  00000000
+    000   000  000   000  000   000  000   000     000     000     
+    000   000  00000000   000   000  000000000     000     0000000 
+    000   000  000        000   000  000   000     000     000     
+     0000000   000        0000000    000   000     000     00000000
+    ###
+            
     update: ->
         if @isParent()
             vis = @getElem("tree-item-vis")
@@ -126,10 +134,10 @@ class ViewItem extends ProxyItem
     clicked: (event, toggle=false) =>
 
         toggle = true if @hasClass 'selected'
+        
         @select event
         
-        if toggle
-            @toggle()
+        @toggle() if toggle
 
         event.stopPropagation()
         
