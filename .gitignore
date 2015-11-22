@@ -1,5 +1,6 @@
 node_modules
 data
+js
 *-darwin-x64
 *.log
 style/bright.css
