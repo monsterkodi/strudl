@@ -34,6 +34,36 @@ body
     color:            clr.gray-bright
     
 /*
+*  00000000    0000000   000000000  000   000
+*  000   000  000   000     000     000   000
+*  00000000   000000000     000     000000000
+*  000        000   000     000     000   000
+*  000        000   000     000     000   000
+*/
+
+oddColor = clr.gray-bright
+evenColor = clr.gray-very-bright
+
+.pathText
+    color:              clr.gray-dark
+    
+.pathText.odd
+    background-color:   oddColor
+.pathText.even
+    background-color:   evenColor
+    
+.pathArrow.odd
+    border-left-color:  oddColor
+    background-color:   evenColor
+
+.pathArrow.even
+    border-left-color:  evenColor
+    background-color:   oddColor
+    
+.pathArrow.last
+    background-color:   inherit
+        
+/*
 *   0000000   0000000  00000000    0000000   000      000    
 *  000       000       000   000  000   000  000      000    
 *  0000000   000       0000000    000   000  000      000    
@@ -42,7 +72,7 @@ body
 */
 
 .scroll
-    background-color:   clr.gray
+    background-color:   oddColor
     
 .scroll.flashy
     background-color:   clr.black

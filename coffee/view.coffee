@@ -11,6 +11,7 @@ log      = require './tools/log'
 Model    = require './model'
 Proxy    = require './proxy'
 Item     = require './item'
+Path     = require './path'
 profile  = require './tools/profile'
 ViewItem = require './viewitem'
 keyname  = require './tools/keyname'
@@ -26,6 +27,8 @@ class View extends Proxy
         @botIndex = 0
         @scroll   = 0
         @scrollLeft = @tree.parentElement.getElementsByClassName('scroll left')[0]
+        
+        @keyPath = new Path $('path')
         
         tmp = document.createElement 'div'
         tmp.className = 'tree-item'
@@ -190,8 +193,8 @@ class View extends Proxy
     selectedItem: () -> @root.children[parseInt(document.activeElement.id)]
     
     itemSelected: (item) ->
-        keyPath = item.dataItem().keyPath().join '.'
-        $('path').innerHTML = keyPath
+        # keyPath = item.dataItem().keyPath().join '.'
+        @keyPath.set item.dataItem().keyPath()
     
     selectLines: (lineDelta) ->
         if @selectedItem()?

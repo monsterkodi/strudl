@@ -39,6 +39,34 @@ body
 ::selection
     color:              clr.yellow
 
+
+/*
+*  00000000    0000000   000000000  000   000
+*  000   000  000   000     000     000   000
+*  00000000   000000000     000     000000000
+*  000        000   000     000     000   000
+*  000        000   000     000     000   000
+*/
+
+.pathText
+    color:              clr.gray-bright
+    
+.pathText.odd
+    background-color:   clr.gray-dark
+.pathText.even
+    background-color:   clr.gray-super-dark
+    
+.pathArrow.odd
+    border-left-color:  clr.gray-dark
+    background-color:   clr.gray-super-dark
+
+.pathArrow.even
+    border-left-color:  clr.gray-super-dark
+    background-color:   clr.gray-dark
+    
+.pathArrow.last
+    background-color:   inherit
+    
 /*
 *   0000000   0000000  00000000    0000000   000      000    
 *  000       000       000   000  000   000  000      000    
@@ -52,7 +80,6 @@ body
     
 .scroll.flashy
     background-color:   clr.orange-bright
-
 
 /*
 *  000000000  00000000   00000000  00000000

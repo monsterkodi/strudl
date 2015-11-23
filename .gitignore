@@ -2,7 +2,7 @@ node_modules
 data
 js
 *-darwin-x64
-*.log
+strudl.log
 style/bright.css
 style/dark.css
 style/fixed.css
