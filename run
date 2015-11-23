@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-electron .
+# electron-build/Electron.app/Contents/MacOS/Electron .
+open Strudl.app

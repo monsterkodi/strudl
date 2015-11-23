@@ -159,6 +159,15 @@ class View extends Proxy
         
     newItem: (key, value, parent) -> new ViewItem key, value, parent     
     partiallyVisible: (item) -> (item.elem.offsetTop + item.elem.offsetHeight) > @viewHeight()
+    
+    closestItemForVisibleIndex: (index) ->
+        if index <= _.first(@root.children).value.visibleIndex
+            return _.first(@root.children)
+        if index >= _.last(@root.children).value.visibleIndex
+            return _.last(@root.children)
+        for item in @root.children
+            if item.value.visibleIndex == index
+                return item
                     
     ###
     00000000  000   000  00000000    0000000   000   000  0000000  
@@ -168,8 +177,6 @@ class View extends Proxy
     00000000  000   000  000        000   000  000   000  0000000  
     ###
 
-    # onDidExpand:   (baseItem) => 
-    # onDidCollapse: (baseItem) => 
     onDidLayout:   (baseItem) => @update()
     
     ###
@@ -189,7 +196,10 @@ class View extends Proxy
     selectLines: (lineDelta) ->
         if @selectedItem()?
             idx = @selectedItem().value.visibleIndex
-        @scrollLines lineDelta
+            @scrollLines lineDelta
+            @closestItemForVisibleIndex(idx+lineDelta)?.select()
+        else
+            @scrollLines lineDelta
         
     selectUp: (event) -> 
 
@@ -230,8 +240,10 @@ class View extends Proxy
                         @base.expandTop true
                 else
                     @selectedItem()?["select#{_.capitalize(keycode)}"] event
-            when 'up'  then @selectUp event
-            when 'down'then @selectDown event
+            when 'home' then @selectLines -@numVisibleLines()
+            when 'end'  then @selectLines  @numVisibleLines()
+            when 'up'   then @selectUp event
+            when 'down' then @selectDown event
             when 'page up', 'page down'
                 n = event.shiftKey and @numVisibleLines() or @numViewLines()
                 @scrollLines(keycode == 'page up' and -n or n)
@@ -241,5 +253,7 @@ class View extends Proxy
                     last.select()
                 else
                     first.select()
+            else
+                log keycode
         
 module.exports = View

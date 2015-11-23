@@ -92,7 +92,6 @@ saveStateAndExit = ->
         bounds[k] = w.getBounds()
         w.removeAllListeners 'close'
     prefs.set 'windows', bounds
-    # app.quit()
 
 app.on 'quit', -> log 'on quit'    
 app.on 'before-quit', -> saveStateAndExit()
@@ -108,12 +107,14 @@ app.on 'ready', ->
     app.removeAllListeners 'open-file'
     app.on 'open-file', (e,p) -> loadFile p
     
+    #!! menu
+    
     menu = [
-        label: 'strudl'   
+        label: 'Strudl'   
         submenu: [     
             label: 'Quit'
             accelerator: 'Command+Q'
-            click: app.quit #saveStateAndExit
+            click: app.quit
         ]
     ,
         label: 'File'

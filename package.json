@@ -1,51 +1,44 @@
 {
-  "name": "strudl",
-  "version": "0.1.0",
-  "description": "i like strudel!",
-  "author": "monsterkodi",
-  "license": "Unlicense",
-  "bin": {
-    "strudl": "./bin/strudl"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/monsterkodi/strudl.git"
-  },
-  "main": "./js/app.js",
-  "dependencies": {
-    "backbone-events-standalone": "^0.2.7",
-    "chalk": "^1.1.1",
-    "coffee-script": "^1.10.0",
-    "cson": "^3.0.2",
-    "electron-debug": "^0.5.1",
-    "keycode": "^2.1.0",
-    "lodash": "^3.10.1",
-    "nomnom": "^1.8.1",
-    "performance-now": "^0.2.0",
-    "plist": "^1.2.0",
-    "underscore": "^1.8.3",
-    "underscore.string": "^3.2.2",
-    "uuid": "^2.0.1"
-  },
-  "devDependencies": {
-    "debug-menu": "^0.2.0",
-    "electron-packager": "^5.1.1",
-    "electron-prebuilt": "^0.35.0",
-    "grunt": "^0.4.5",
-    "grunt-contrib-stylus": "^0.22.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-external-daemon": "^1.1.0",
-    "grunt-pepper": "^0.5.7",
-    "grunt-shell": "^1.1.2",
-    "gulp": "^3.9.0",
-    "gulp-coffee": "^2.3.1",
-    "gulp-debug": "^2.1.2",
-    "gulp-grunt": "^0.5.3",
-    "gulp-run": "^1.6.11",
-    "gulp-salt": "^0.1.4",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-stylus": "^2.1.0",
-    "gulp-watch": "^4.3.5",
-    "lame": "^1.2.3"
-  }
+    "name": "Strudl",
+    "version": "0.1.0",
+    "description": "I like strudel!",
+    "author": "monsterkodi",
+    "license": "Unlicense",
+    "bin": {
+        "strudl": "./bin/strudl"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/monsterkodi/strudl.git"
+    },
+    "main": "./js/app.js",
+    "dependencies": {
+        "backbone-events-standalone": "^0.2.7",
+        "chalk": "^1.1.1",
+        "coffee-script": "^1.10.0",
+        "cson": "^3.0.2",
+        "electron-debug": "^0.5.1",
+        "keycode": "^2.1.0",
+        "lodash": "^3.10.1",
+        "nomnom": "^1.8.1",
+        "performance-now": "^0.2.0",
+        "plist": "^1.2.0",
+        "underscore.string": "^3.2.2",
+        "uuid": "^2.0.1"
+    },
+    "devDependencies": {
+        "debug-menu": "^0.2.0",
+        "gulp": "^3.9.0",
+        "gulp-atom-electron": "^1.0.0",
+        "gulp-coffee": "^2.3.1",
+        "gulp-debug": "^2.1.2",
+        "gulp-grunt": "^0.5.3",
+        "gulp-run": "^1.6.11",
+        "gulp-salt": "^0.1.4",
+        "gulp-sourcemaps": "^1.6.0",
+        "gulp-stylus": "^2.1.0",
+        "gulp-symdest": "^1.0.0",
+        "gulp-util": "^3.0.7",
+        "gulp-watch": "^4.3.5"
+    }
 }

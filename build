@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
-echo electron-packager
-node_modules/electron-packager/cli.js . strudl --overwrite --platform=darwin --arch=x64 --version=0.35.1 --app-version=0.1.0 --app-bundle-id=net.monsterkodi.strudl --ignore=node_modules/electron-prebuild --icon=img/strudl.icns
-echo remove app
-rm -rf strudl.app
+echo rm app
+rm -rf app
+rm -rf Strudl.app
+echo gulp app
+gulp app
 echo mv app
-mv strudl-darwin-x64/strudl.app .
-echo clear build
-rm -rf strudl-darwin-x64
-echo mv file icons
-cp img/file.icns strudl.app/Contents/Resources
-echo mv info.plist
-cp Info.plist strudl.app/Contents/Resources
+mv app/Strudl.app .
+echo link modules
+ln -s ../../../../node_modules ./Strudl.app/Contents/Resources/app/node_modules
+echo link js
+rm -rf ./Strudl.app/Contents/Resources/app/js
+ln -s ../../../../js ./Strudl.app/Contents/Resources/app/js
+echo clean
+rm -rf app
 echo done
