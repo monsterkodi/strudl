@@ -51,7 +51,6 @@ textarea
 */
 
 #path
-    height              treeItemHeight
     min-height          treeItemHeight
     width               100%
     
@@ -84,14 +83,16 @@ textarea
 
 #treeContainer
     overflow            hidden
-    position            absolute
     width               100%
-    top                 treeItemHeight
-    bottom              0
+    height              100%
+
+#treeScroll
+    overflow            hidden
+    width               100%
+    height              100%
 
 #tree
     width               100%
-    height              100%
 
 .tree-item
     display             block

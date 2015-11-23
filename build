@@ -14,6 +14,9 @@ ln -s ../../../../js ./Strudl.app/Contents/Resources/app/js
 echo link style
 rm -rf ./Strudl.app/Contents/Resources/app/style
 ln -s ../../../../style ./Strudl.app/Contents/Resources/app/style
+echo link html
+rm -f ./Strudl.app/Contents/Resources/app/win.html
+ln -s ../../../../win.html ./Strudl.app/Contents/Resources/app/win.html
 echo clean
 rm -rf app
 echo done

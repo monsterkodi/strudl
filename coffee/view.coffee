@@ -40,8 +40,8 @@ class View extends Proxy
         super base
         @base.on "didLayout",   @onDidLayout
 
-    viewHeight: -> @tree.clientHeight
-    numViewLines: -> Math.floor @viewHeight() / @lineHeight
+    viewHeight: -> @tree.parentElement.clientHeight
+    numViewLines: -> Math.floor(@viewHeight() / @lineHeight)-1
     numVisibleLines: -> @base.root.numVisible
 
     ###
@@ -76,6 +76,7 @@ class View extends Proxy
         @update() if @topIndex != parseInt @scroll / @lineHeight
 
     updateScroll: ->
+        
         scrollTop = parseInt (@scroll / @treeHeight) * @viewHeight()
         scrollTop = Math.max 0, scrollTop
         scrollHeight = parseInt (@linesHeight / @treeHeight) * @viewHeight()
@@ -110,11 +111,13 @@ class View extends Proxy
         @linesHeight = viewLines * @lineHeight
         
         @topIndex = parseInt(@scroll / @lineHeight)
-        @botIndex = Math.min(@topIndex + viewLines, numLines-1)
+        @botIndex = Math.min(parseInt((@scroll + @linesHeight) / @lineHeight), numLines-1)
         
         @root.children = []
         @root.keyIndex = {}
         @tree.innerHTML = "" # proper destruction needed?
+                
+        log 'view.update', @topIndex, @botIndex, viewLines, numLines
                                         
         for i in [@topIndex..@botIndex]
             baseItem = @base.visibleItems[i]

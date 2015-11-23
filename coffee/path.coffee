@@ -13,26 +13,27 @@ class Path
     constructor: (@elem) ->
     
     set: (@keys) ->
-        log @keys.join '.'
+
         @elem.innerHTML = ""
         odd = true
         idx = 0
         for key in @keys
+            
+            oddOrEven = odd and 'odd' or 'even'
+            
             txt = document.createElement 'span'
             @elem.appendChild txt
             txt.className = "pathText"
-            txt.classList.add(odd and 'odd' or 'even')
+            txt.classList.add oddOrEven
             txt.innerHTML = key
             
             arr = document.createElement 'span'
             @elem.appendChild arr
             arr.className = "pathArrow"
-            arr.classList.add(odd and 'odd' or 'even')
-            log idx, @keys.length-1, idx == @keys.length-1
+            arr.classList.add oddOrEven
             arr.classList.add 'last' if idx == @keys.length-1
             
             odd = not odd
             idx += 1
-            
 
 module.exports = Path
