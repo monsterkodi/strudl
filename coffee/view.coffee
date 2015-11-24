@@ -25,7 +25,7 @@ class View extends Proxy
         @tree.tabIndex = -1
         @topIndex = 0
         @botIndex = 0
-        @selIndex = 0
+        @selIndex = -1
         @scroll   = 0
         @scrollLeft = @tree.parentElement.getElementsByClassName('scroll left')[0]
         
@@ -39,7 +39,7 @@ class View extends Proxy
         
     setBase: (base) ->
         super base
-        @base.on "didLayout",   @onDidLayout
+        @base.on "didLayout", @onDidLayout
 
     viewHeight: -> @tree.parentElement.parentElement.offsetHeight - $('path').offsetHeight
     numViewLines: -> Math.ceil(@viewHeight() / @lineHeight)
@@ -53,19 +53,7 @@ class View extends Proxy
          000  000       000   000  000   000  000      000    
     0000000    0000000  000   000   0000000   0000000  0000000
     ###
-        
-    updateScroll: ->
-        
-        scrollTop = parseInt (@scroll / @treeHeight) * @viewHeight()
-        scrollTop = Math.max 0, scrollTop
-        scrollHeight = parseInt (@linesHeight / @treeHeight) * @viewHeight()
-        scrollHeight = Math.max scrollHeight, parseInt @lineHeight/4
-        
-        @scrollLeft.classList.toggle 'flashy', (scrollHeight < @lineHeight)
-        
-        @scrollLeft.style.top    = "#{scrollTop}.px"
-        @scrollLeft.style.height = "#{scrollHeight}.px"
-        
+                
     scrollLines: (lineDelta) -> @scrollBy lineDelta * @lineHeight
 
     scrollFactor: (event) ->
@@ -89,17 +77,15 @@ class View extends Proxy
         @scroll = Math.max @scroll, 0
         
         top = parseInt @scroll / @lineHeight
-        bot = Math.min(parseInt((@scroll + @linesHeight) / @lineHeight), numLines-1)
+        bot = Math.min(@topIndex + viewLines - 1, numLines-1)
 
         if @topIndex != top or @botIndex != bot
             if @selIndex < top
                 @selectIndex top
-            else if @selIndex > bot
-                @scroll = Math.max(0, bot - viewLines) * @lineHeight
-                @selectIndex bot
-            else
+            else if @selIndex >= top + @numFullLines()
+                @selectIndex top + @numFullLines() - 1
+            else 
                 @update() 
-                @selectedItem().focus()
             
     ###
      0000000  00000000  000      00000000   0000000  000000000
@@ -114,10 +100,8 @@ class View extends Proxy
     selectIndex: (index) ->
         @selIndex = index
         @selIndex = Math.max(0, Math.min @selIndex, @numVisibleLines()-1)
-        log 'selectIndex', @selIndex
-        @keyPath.set @selectedItem().dataItem().keyPath()
+        @keyPath.set @base.visibleItems[@selIndex].dataItem().keyPath()
         @update()
-        @selectedItem().focus()
     
     selectDelta: (lineDelta) -> @selectIndex @selIndex + lineDelta
         
@@ -134,36 +118,33 @@ class View extends Proxy
     ###
         
     update: ->
-        
+
         doProfile = false
+        profile "update #{numLines}" if doProfile
+        
         numLines  = @numVisibleLines()
         viewLines = @numViewLines()
-
-        profile "update #{numLines}" if doProfile
 
         @treeHeight = numLines * @lineHeight
         @linesHeight = viewLines * @lineHeight
 
         @topIndex = parseInt @scroll / @lineHeight
-        @botIndex = Math.min(parseInt((@scroll + @linesHeight) / @lineHeight), numLines-1)
+        @botIndex = Math.min(@topIndex + viewLines - 1, numLines-1)
 
         if @selIndex < @topIndex
             @topIndex = @selIndex
             @botIndex = Math.min(@topIndex + viewLines - 1, numLines-1)
             @scroll = @topIndex * @lineHeight
-        else if @selIndex > @topIndex + @numFullLines() - 1 
-            @botIndex = @selIndex
-            @topIndex = Math.max(0, @botIndex - @numFullLines() + 1)
+        else if @selIndex >= @topIndex + @numFullLines()
+            @topIndex = @selIndex - @numFullLines() + 1
+            @topIndex = Math.max(0, @topIndex)
+            @botIndex = Math.min(@topIndex + viewLines - 1, numLines-1)
             @scroll = @topIndex * @lineHeight
-        
-        log 'update after', @selIndex, @botIndex - @topIndex
-        
+                
         @root.children = []
         @root.keyIndex = {}
         @tree.innerHTML = "" # proper destruction needed?
-                
-        # log 'view.update', viewLines, numLines, @viewHeight()
-                                        
+                                                        
         for i in [@topIndex..@botIndex]
             baseItem = @base.visibleItems[i]
             @root.keyIndex[baseItem.key] = numLines
@@ -173,7 +154,25 @@ class View extends Proxy
                 
         @updateScroll()
                 
+        selItem = @closestItemForVisibleIndex @selIndex
+        selItem.focus()
+        if selItem.value.visibleIndex != @selIndex
+            @selIndex = selItem.value.visibleIndex
+            # update path here?
+                
         profile "" if doProfile
+        
+    updateScroll: ->
+        
+        scrollTop = parseInt (@scroll / @treeHeight) * @viewHeight()
+        scrollTop = Math.max 0, scrollTop
+        scrollHeight = parseInt (@linesHeight / @treeHeight) * @viewHeight()
+        scrollHeight = Math.max scrollHeight, parseInt @lineHeight/4
+        
+        @scrollLeft.classList.toggle 'flashy', (scrollHeight < @lineHeight)
+        
+        @scrollLeft.style.top    = "#{scrollTop}.px"
+        @scrollLeft.style.height = "#{scrollHeight}.px"        
         
     ###
     00000000   00000000  000       0000000    0000000   0000000  
@@ -190,6 +189,20 @@ class View extends Proxy
             @root.elem = @tree
             
     ###
+    000       0000000   000   000   0000000   000   000  000000000
+    000      000   000   000 000   000   000  000   000     000   
+    000      000000000    00000    000   000  000   000     000   
+    000      000   000     000     000   000  000   000     000   
+    0000000  000   000     000      0000000    0000000      000   
+    ###
+
+    onDidLayout: (baseItem) => 
+        if @selIndex < 0
+            @selectIndex 0
+        else
+            @update()
+            
+    ###
     000  000000000  00000000  00     00
     000     000     000       000   000
     000     000     0000000   000000000
@@ -201,24 +214,15 @@ class View extends Proxy
     partiallyVisible: (item) -> (item.elem.offsetTop + item.elem.offsetHeight) > @viewHeight()
     
     closestItemForVisibleIndex: (index) ->
-        if index <= _.first(@root.children).value.visibleIndex
-            return _.first(@root.children)
-        if index >= _.last(@root.children).value.visibleIndex
-            return _.last(@root.children)
-        for item in @root.children
-            if item.value.visibleIndex == index
-                return item
-                    
-    ###
-    00000000  000   000  00000000    0000000   000   000  0000000  
-    000        000 000   000   000  000   000  0000  000  000   000
-    0000000     00000    00000000   000000000  000 0 000  000   000
-    000        000 000   000        000   000  000  0000  000   000
-    00000000  000   000  000        000   000  000   000  0000000  
-    ###
-
-    onDidLayout: (baseItem) => @update()
-        
+        if @root.children.length
+            if index <= _.first(@root.children).value.visibleIndex
+                return _.first(@root.children)
+            if index >= _.last(@root.children).value.visibleIndex
+                return _.last(@root.children)
+            for item in @root.children
+                if item.value.visibleIndex == index
+                    return item
+                            
     ###
     000   000  00000000  000   000  0000000     0000000   000   000  000   000
     000  000   000        000 000   000   000  000   000  000 0 000  0000  000

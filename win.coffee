@@ -36,7 +36,7 @@ win.on 'loadFile', (p) ->
     data.load p  
     
     win.setRepresentedFilename p
-    title = path.basename(p) + " - " + path.dirname(p)
+    title = path.basename(p) # + " - " + path.dirname(p)
     win.setTitle title
     # win.setDocumentEdited true
 

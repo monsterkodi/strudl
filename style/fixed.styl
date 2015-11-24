@@ -86,24 +86,28 @@ textarea
 */
 
 #treeScroll
+    position            relative
     display             block
-    overflow            hidden
+    overflow-y          hidden
+    overflow-x          auto
     width               100%
 
 #tree
     position            relative
+    overflow            visible
     width               100%
+    display             table
 
 .tree-item
     display             block
     box-sizing          border-box
-    width               100%
+    // width               100%
     padding             0
     margin              0
     spacing             0
     height              treeItemHeight
     line-height         treeItemHeight
-    overflow            hidden   
+    overflow            visible
     -webkit-user-select none
     cursor              pointer
     white-space         nowrap

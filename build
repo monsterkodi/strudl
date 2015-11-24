@@ -2,8 +2,8 @@
 echo rm app
 rm -rf app
 rm -rf Strudl.app
-echo gulp app
-gulp app
+echo gulp build
+gulp build
 echo mv app
 mv app/Strudl.app .
 echo link modules
