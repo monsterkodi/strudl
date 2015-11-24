@@ -25,6 +25,7 @@ class View extends Proxy
         @tree.tabIndex = -1
         @topIndex = 0
         @botIndex = 0
+        @selIndex = 0
         @scroll   = 0
         @scrollLeft = @tree.parentElement.getElementsByClassName('scroll left')[0]
         
@@ -41,7 +42,8 @@ class View extends Proxy
         @base.on "didLayout",   @onDidLayout
 
     viewHeight: -> @tree.parentElement.parentElement.offsetHeight - $('path').offsetHeight
-    numViewLines: -> Math.floor(@viewHeight() / @lineHeight)
+    numViewLines: -> Math.ceil(@viewHeight() / @lineHeight)
+    numFullLines: -> Math.floor(@viewHeight() / @lineHeight)
     numVisibleLines: -> @base.root.numVisible
 
     ###
@@ -52,34 +54,6 @@ class View extends Proxy
     0000000    0000000  000   000   0000000   0000000  0000000
     ###
         
-    scrollLines: (lineDelta) -> @scrollBy lineDelta * @lineHeight
-
-    scrollFactor: (event) ->
-        f  = 1 
-        f *= 1 + 9 * event.metaKey
-        f *= 1 + 99 * event.altKey        
-        f *= 1 + 999 * event.ctrlKey
-
-    onWheel: (event) => @scrollBy event.deltaY * @scrollFactor event
-    
-    layout: -> @scrollBy 0
-    scrollBy: (delta) -> 
-
-        numLines = @numVisibleLines()
-        @treeHeight = numLines * @lineHeight
-        @linesHeight = @numViewLines() * @lineHeight
-        @scrollMax = @treeHeight - @linesHeight
-        
-        @scroll += delta
-        @scroll = Math.min @scroll, @scrollMax
-        @scroll = Math.max @scroll, 0
-        
-        top = parseInt @scroll / @lineHeight
-        bot = Math.min(parseInt((@scroll + @linesHeight) / @lineHeight), numLines-1)
-
-        if @topIndex != top or @botIndex != bot
-            @update() 
-
     updateScroll: ->
         
         scrollTop = parseInt (@scroll / @treeHeight) * @viewHeight()
@@ -91,6 +65,65 @@ class View extends Proxy
         
         @scrollLeft.style.top    = "#{scrollTop}.px"
         @scrollLeft.style.height = "#{scrollHeight}.px"
+        
+    scrollLines: (lineDelta) -> @scrollBy lineDelta * @lineHeight
+
+    scrollFactor: (event) ->
+        f  = 1 
+        f *= 1 + 9 * event.metaKey
+        f *= 1 + 99 * event.altKey        
+        f *= 1 + 999 * event.ctrlKey
+
+    onWheel: (event) => @scrollBy event.deltaY * @scrollFactor event
+    
+    scrollBy: (delta) -> 
+
+        numLines = @numVisibleLines()
+        viewLines = @numViewLines()
+        @treeHeight = numLines * @lineHeight
+        @linesHeight = viewLines * @lineHeight
+        @scrollMax = @treeHeight - @linesHeight
+        
+        @scroll += delta
+        @scroll = Math.min @scroll, @scrollMax
+        @scroll = Math.max @scroll, 0
+        
+        top = parseInt @scroll / @lineHeight
+        bot = Math.min(parseInt((@scroll + @linesHeight) / @lineHeight), numLines-1)
+
+        if @topIndex != top or @botIndex != bot
+            if @selIndex < top
+                @selectIndex top
+            else if @selIndex > bot
+                @scroll = Math.max(0, bot - viewLines) * @lineHeight
+                @selectIndex bot
+            else
+                @update() 
+                @selectedItem().focus()
+            
+    ###
+     0000000  00000000  000      00000000   0000000  000000000
+    000       000       000      000       000          000   
+    0000000   0000000   000      0000000   000          000   
+         000  000       000      000       000          000   
+    0000000   00000000  0000000  00000000   0000000     000   
+    ###
+    
+    selectedItem: () -> @closestItemForVisibleIndex @selIndex
+    
+    selectIndex: (index) ->
+        @selIndex = index
+        @selIndex = Math.max(0, Math.min @selIndex, @numVisibleLines()-1)
+        log 'selectIndex', @selIndex
+        @keyPath.set @selectedItem().dataItem().keyPath()
+        @update()
+        @selectedItem().focus()
+    
+    selectDelta: (lineDelta) -> @selectIndex @selIndex + lineDelta
+        
+    selectUp: (event) -> @selectDelta -@scrollFactor event
+        
+    selectDown: (event) -> @selectDelta @scrollFactor event
 
     ###
     000   000  00000000   0000000     0000000   000000000  00000000
@@ -103,18 +136,27 @@ class View extends Proxy
     update: ->
         
         doProfile = false
-        numLines = @numVisibleLines()
+        numLines  = @numVisibleLines()
         viewLines = @numViewLines()
 
         profile "update #{numLines}" if doProfile
 
-        selIndex = @selectedItem()?.value.visibleIndex
-
         @treeHeight = numLines * @lineHeight
         @linesHeight = viewLines * @lineHeight
-        
+
         @topIndex = parseInt @scroll / @lineHeight
         @botIndex = Math.min(parseInt((@scroll + @linesHeight) / @lineHeight), numLines-1)
+
+        if @selIndex < @topIndex
+            @topIndex = @selIndex
+            @botIndex = Math.min(@topIndex + viewLines - 1, numLines-1)
+            @scroll = @topIndex * @lineHeight
+        else if @selIndex > @topIndex + @numFullLines() - 1 
+            @botIndex = @selIndex
+            @topIndex = Math.max(0, @botIndex - @numFullLines() + 1)
+            @scroll = @topIndex * @lineHeight
+        
+        log 'update after', @selIndex, @botIndex - @topIndex
         
         @root.children = []
         @root.keyIndex = {}
@@ -128,17 +170,6 @@ class View extends Proxy
             item = @createItem baseItem.key, baseItem, @root
             @root.children.push item
             item.createElement()     
-            if baseItem.visibleIndex == selIndex and not @partiallyVisible item
-                item.select()
-                    
-        if not @selectedItem()?
-            if selIndex >= @botIndex
-                last = _.last @root.children
-                if @partiallyVisible last
-                    last = last.prevItem()
-                last.select()
-            else
-                _.first(@root.children).select()
                 
         @updateScroll()
                 
@@ -186,60 +217,8 @@ class View extends Proxy
     00000000  000   000  000        000   000  000   000  0000000  
     ###
 
-    onDidLayout:   (baseItem) => @update()
-    
-    ###
-     0000000  00000000  000      00000000   0000000  000000000
-    000       000       000      000       000          000   
-    0000000   0000000   000      0000000   000          000   
-         000  000       000      000       000          000   
-    0000000   00000000  0000000  00000000   0000000     000   
-    ###
-    
-    selectedItem: () -> @root.children[parseInt(document.activeElement.id)]
-    
-    itemWillSelect: (item) ->
-        # @keyPath.set item.dataItem().keyPath()
-        # @layout()
-        # @updateScroll()
-    itemDidSelect: (item) ->
-        # @keyPath.set item.dataItem().keyPath()
-        @keyPath.set item.dataItem().keyPath()
-        # @layout()
-    
-    selectLines: (lineDelta) ->
-        if @selectedItem()?
-            idx = @selectedItem().value.visibleIndex
-            @scrollLines lineDelta
-            @closestItemForVisibleIndex(idx+lineDelta)?.select()
-        else
-            @scrollLines lineDelta
+    onDidLayout: (baseItem) => @update()
         
-    selectUp: (event) -> 
-
-        if 1 < f = @scrollFactor event
-            @selectLines -f
-            return
-        
-        if not @selectedItem().prevItem()? or event.shiftKey
-            @scrollLines -1
-        @selectedItem().prevItem()?.select()
-        
-    selectDown: (event) -> 
-        if 1 < f = @scrollFactor event
-            @selectLines f
-            log 'f'
-            return
-        
-        if not @selectedItem().nextItem()? or event.shiftKey or @partiallyVisible @selectedItem().nextItem()
-            log 'selectDown scroll'
-            @scrollLines 1
-        while not @selectedItem().nextItem()?
-            log 'repeat'
-            @scrollLines 1
-        log 'down', @selectedItem().nextItem().value.visibleIndex
-        @selectedItem().nextItem().select()
-    
     ###
     000   000  00000000  000   000  0000000     0000000   000   000  000   000
     000  000   000        000 000   000   000  000   000  000 0 000  0000  000
@@ -259,8 +238,8 @@ class View extends Proxy
                         @base.expandTop true
                 else
                     @selectedItem()?["select#{_.capitalize(keycode)}"] event
-            when 'home' then @selectLines -@numVisibleLines()
-            when 'end'  then @selectLines  @numVisibleLines()
+            when 'home' then @selectDelta -@numVisibleLines()
+            when 'end'  then @selectDelta  @numVisibleLines()
             when 'up'   then @selectUp event
             when 'down' then @selectDown event
             when 'page up', 'page down'
