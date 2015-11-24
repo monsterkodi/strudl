@@ -157,10 +157,12 @@ class ViewItem extends ProxyItem
         
         @ownClass "selected"
         
+        @model().itemWillSelect @
+        
         if @elem != document.activeElement
             @elem.focus()
             
-        @model().itemSelected @
+        @model().itemDidSelect @
                                                         
     selectLeft: (event) -> 
         if event.metaKey

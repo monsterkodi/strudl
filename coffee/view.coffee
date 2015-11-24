@@ -40,8 +40,8 @@ class View extends Proxy
         super base
         @base.on "didLayout",   @onDidLayout
 
-    viewHeight: -> @tree.parentElement.clientHeight
-    numViewLines: -> Math.floor(@viewHeight() / @lineHeight)-1
+    viewHeight: -> @tree.parentElement.parentElement.offsetHeight - $('path').offsetHeight
+    numViewLines: -> Math.floor(@viewHeight() / @lineHeight)
     numVisibleLines: -> @base.root.numVisible
 
     ###
@@ -60,12 +60,13 @@ class View extends Proxy
         f *= 1 + 99 * event.altKey        
         f *= 1 + 999 * event.ctrlKey
 
-    onWheel: (event) => 
-        @scrollBy event.deltaY * @scrollFactor event
+    onWheel: (event) => @scrollBy event.deltaY * @scrollFactor event
     
+    layout: -> @scrollBy 0
     scrollBy: (delta) -> 
 
-        @treeHeight = @numVisibleLines() * @lineHeight
+        numLines = @numVisibleLines()
+        @treeHeight = numLines * @lineHeight
         @linesHeight = @numViewLines() * @lineHeight
         @scrollMax = @treeHeight - @linesHeight
         
@@ -73,7 +74,11 @@ class View extends Proxy
         @scroll = Math.min @scroll, @scrollMax
         @scroll = Math.max @scroll, 0
         
-        @update() if @topIndex != parseInt @scroll / @lineHeight
+        top = parseInt @scroll / @lineHeight
+        bot = Math.min(parseInt((@scroll + @linesHeight) / @lineHeight), numLines-1)
+
+        if @topIndex != top or @botIndex != bot
+            @update() 
 
     updateScroll: ->
         
@@ -86,7 +91,6 @@ class View extends Proxy
         
         @scrollLeft.style.top    = "#{scrollTop}.px"
         @scrollLeft.style.height = "#{scrollHeight}.px"
-                          
 
     ###
     000   000  00000000   0000000     0000000   000000000  00000000
@@ -106,18 +110,17 @@ class View extends Proxy
 
         selIndex = @selectedItem()?.value.visibleIndex
 
-        @lineHeight
         @treeHeight = numLines * @lineHeight
         @linesHeight = viewLines * @lineHeight
         
-        @topIndex = parseInt(@scroll / @lineHeight)
+        @topIndex = parseInt @scroll / @lineHeight
         @botIndex = Math.min(parseInt((@scroll + @linesHeight) / @lineHeight), numLines-1)
         
         @root.children = []
         @root.keyIndex = {}
         @tree.innerHTML = "" # proper destruction needed?
                 
-        log 'view.update', @topIndex, @botIndex, viewLines, numLines
+        # log 'view.update', viewLines, numLines, @viewHeight()
                                         
         for i in [@topIndex..@botIndex]
             baseItem = @base.visibleItems[i]
@@ -130,7 +133,7 @@ class View extends Proxy
                     
         if not @selectedItem()?
             if selIndex >= @botIndex
-                last = _.last(@root.children)
+                last = _.last @root.children
                 if @partiallyVisible last
                     last = last.prevItem()
                 last.select()
@@ -195,9 +198,14 @@ class View extends Proxy
     
     selectedItem: () -> @root.children[parseInt(document.activeElement.id)]
     
-    itemSelected: (item) ->
-        # keyPath = item.dataItem().keyPath().join '.'
+    itemWillSelect: (item) ->
+        # @keyPath.set item.dataItem().keyPath()
+        # @layout()
+        # @updateScroll()
+    itemDidSelect: (item) ->
+        # @keyPath.set item.dataItem().keyPath()
         @keyPath.set item.dataItem().keyPath()
+        # @layout()
     
     selectLines: (lineDelta) ->
         if @selectedItem()?
@@ -218,14 +226,19 @@ class View extends Proxy
         @selectedItem().prevItem()?.select()
         
     selectDown: (event) -> 
-        
         if 1 < f = @scrollFactor event
             @selectLines f
+            log 'f'
             return
         
         if not @selectedItem().nextItem()? or event.shiftKey or @partiallyVisible @selectedItem().nextItem()
+            log 'selectDown scroll'
             @scrollLines 1
-        @selectedItem().nextItem()?.select()
+        while not @selectedItem().nextItem()?
+            log 'repeat'
+            @scrollLines 1
+        log 'down', @selectedItem().nextItem().value.visibleIndex
+        @selectedItem().nextItem().select()
     
     ###
     000   000  00000000  000   000  0000000     0000000   000   000  000   000

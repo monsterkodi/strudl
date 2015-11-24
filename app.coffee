@@ -61,7 +61,8 @@ loadFile = (p) ->
     w.on 'domLoaded', -> w.emit 'loadFile', p
     
     w.on 'close', (event) -> 
-        log 'windows closed'
+        log 'on window close'
+        saveBounds()
         delete wins[_.findKey(wins, event.sender)]
         prefs.del 'open', p
 
@@ -85,17 +86,20 @@ openFile = ->
             if fs.existsSync f
                 loadFile f
 
-saveStateAndExit = ->
-    log 'save state'
-    bounds = {}
+saveBounds = ->
+    log 'save bounds'
+    bounds = prefs.get 'windows'
     for k, w of wins
         bounds[k] = w.getBounds()
-        w.removeAllListeners 'close'
     prefs.set 'windows', bounds
 
-app.on 'quit', -> log 'on quit'    
-app.on 'before-quit', -> saveStateAndExit()
+app.on 'before-quit', -> 
+    saveBounds()
+    for k, w of wins
+        w.removeAllListeners 'close'
+        
 app.on 'will-quit', -> log 'on will-quit'
+app.on 'quit', -> log 'on quit'    
 app.on 'window-all-closed', -> log 'on window-all-closed'
 app.on 'will-finish-launching', -> log 'on will-finish-launching'
 app.on 'open-file', (e,p) -> preloadFile p
@@ -107,7 +111,13 @@ app.on 'ready', ->
     app.removeAllListeners 'open-file'
     app.on 'open-file', (e,p) -> loadFile p
     
-    #!! menu
+    ###
+    00     00  00000000  000   000  000   000
+    000   000  000       0000  000  000   000
+    000000000  0000000   000 0 000  000   000
+    000 0 000  000       000  0000  000   000
+    000   000  00000000  000   000   0000000 
+    ###
     
     menu = [
         label: 'Strudl'   

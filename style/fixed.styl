@@ -17,15 +17,17 @@ body
     pointer-events      all
     font-size           14px
     overflow            hidden
+
+input 
+textarea
+    outline             none
+    
+#container
     position            absolute
     top                 0
     bottom              0
     left                0
     right               0
-
-input 
-textarea
-    outline             none
     
 /*
 *   0000000   0000000  00000000    0000000   000      000    
@@ -51,7 +53,9 @@ textarea
 */
 
 #path
-    min-height          treeItemHeight
+    display             block
+    min-height          treeItemHeight !important
+    top                 0px !important
     width               100%
     
 .pathText
@@ -81,17 +85,13 @@ textarea
 *     000     000   000  00000000  00000000
 */
 
-#treeContainer
-    overflow            hidden
-    width               100%
-    height              100%
-
 #treeScroll
+    display             block
     overflow            hidden
     width               100%
-    height              100%
 
 #tree
+    position            relative
     width               100%
 
 .tree-item
