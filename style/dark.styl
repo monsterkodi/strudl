@@ -89,34 +89,33 @@ body
 *     000     000   000  00000000  00000000
 */
 
-.tree-item
+.tree-line
     border-top:         1px solid clr.gray-super-dark
     border-bottom:      1px solid clr.gray-pitch-dark
+    &.selected
+        background-color:   clr.gray-super-dark
+        -webkit-box-shadow  none
 
-.tree-item-idx
+.tree-item.idx
     color:              clr.gray-dark
 
-.tree-item-spc
-    color:              clr.gray-medium
-
-.tree-item.selected
-    background-color:   clr.gray-super-dark
-    -webkit-box-shadow  none
-    
-.tree-item-key.array-index
+.tree-value.spc
     color:              clr.gray-medium
     
-.tree-item-key
+.tree-value.key.array-index
+    color:              clr.gray-medium
+    
+.tree-value.key
     color:              clr.gray
 
-.tree-item-value.type-object
+.tree-item.value.type-object
     color:              clr.gray-bright
 
-.tree-item-vis
+.tree-value.vis
     color:              clr.gray-medium
 
-.tree-item-chd
+.tree-value.chd
     color:              clr.gray-dark
 
-.tree-item-dsc
+.tree-value.dsc
     color:              clr.gray-very-dark

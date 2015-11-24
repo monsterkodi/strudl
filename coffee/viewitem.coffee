@@ -25,57 +25,70 @@ class ViewItem extends ProxyItem
     createElement: ->
         
         if @key != -1
-            @elem = document.createElement 'div'
 
-            @elem.addEventListener 'click', (event) => @clicked event
-            @elem.classList.add 'tree-item'
+            @idx = document.createElement 'div'
+            @idx.className = "tree-item idx"
+            @idx.innerHTML = "#{@value.visibleIndex} "
+            @idx.id = "#{@indexInParent()}"
             
-            @elem.id = "#{@indexInParent()}"
-            @elem.tabIndex = -1
+            
+            @lin = document.createElement 'div'
+            @lin.className = 'tree-line'
+            @idx.appendChild @lin
+            @idx.addEventListener 'click', (event) => @clicked event
 
-            idx = document.createElement 'span'
-            idx.className = "tree-item-idx"
-            idx.innerHTML = "#{@value.visibleIndex} "
-            @elem.appendChild idx
+            @elm = document.createElement 'div'
+            @elm.className = "tree-item key"
+            @elm.tabIndex = -1
         
             spc = document.createElement 'span'
             spc.addEventListener 'click', (event) => @clicked event, true
-            spc.className = "tree-item-spc"
+            spc.className = "tree-value spc"
             spc.style.minWidth = "#{@depth()*30}.px"
             spc.innerHTML = "&nbsp;"
             if @isExpandable()
                 spc.classList.add @isExpanded() and "expanded" or "collapsed"
-            @elem.appendChild spc
+            @elm.appendChild spc
             
             key = document.createElement 'span'
-            key.addEventListener 'click', (event) => @clicked event, true
-            key.className = "tree-item-key type-" + @typeName().toLowerCase()
+            # key.addEventListener 'click', (event) => @clicked event
+            key.className = "tree-value key " + @typeName().toLowerCase()
             key.innerHTML = @key
             if @parent.type == Item.arrayType
                 @addClass 'array-index', key
-            @elem.appendChild key
+            @elm.appendChild key
             
-            val = document.createElement 'span'
-            val.className = "tree-item-value type-" + @typeName().toLowerCase()
-            @elem.appendChild val
+            @val = document.createElement 'div'
+            @val.className = "tree-item val " + @typeName().toLowerCase()
+            # @val.addEventListener 'click', (event) => @clicked event
+            @val.tabIndex = -1
 
+            @num = document.createElement 'div'
+            @num.className = "tree-item num"
+                
             if @isParent()
                 dsc = document.createElement 'span'
-                dsc.className = "tree-item-dsc"
-                @elem.appendChild dsc
-
-                chd = document.createElement 'span'
-                chd.className = "tree-item-chd"
-                @elem.appendChild chd
-
-                vis = document.createElement 'span'
-                vis.className = "tree-item-vis"
-                @elem.appendChild vis
+                dsc.className = "tree-value dsc"
             
+                chd = document.createElement 'span'
+                chd.className = "tree-value chd"
+            
+                vis = document.createElement 'span'
+                vis.className = "tree-value vis"
+                
+                @num.appendChild dsc
+                @num.appendChild chd
+                @num.appendChild vis
+            
+            @col('idx').appendChild @idx
+            @col('key').appendChild @elm         
+            @col('val').appendChild @val
+            @col('num').appendChild @num
+                        
             @update()
             
-            @root().elem.appendChild @elem            
-            
+    col: (name) -> @getElem name, @root().elem
+                                    
     ###
     000   000  00000000   0000000     0000000   000000000  00000000
     000   000  000   000  000   000  000   000     000     000     
@@ -85,24 +98,26 @@ class ViewItem extends ProxyItem
     ###
             
     update: ->
+        
         if @isParent()
-            vis = @getElem("tree-item-vis")
-            chd = @getElem("tree-item-chd")
-            dsc = @getElem("tree-item-dsc")
+            vis = @getElem "vis", @num
+            chd = @getElem "chd", @num
+            dsc = @getElem "dsc", @num
             vis.innerHTML = (@isExpanded() and "#{@value.numVisible}" or "")
             chd.innerHTML = "#{@dataItem().children.length}"
             dsc.innerHTML = "#{@dataItem().numDescendants-1}"
 
-        val = @getElem("tree-item-value")
         switch @type
             when Item.objectType
-                val.innerHTML = @getValue()["name"] or ""
+                @val.innerHTML = @getValue()["name"] or ""
             when Item.valueType
-                val.innerHTML = @getValue()
+                @val.innerHTML = @getValue()
                     
     removeElement: ->
-        @elem.remove()
-        @elem = null
+        @elm.remove()
+        @idx.remove()
+        @val.remove()
+        @num.remove()
     
     delChild: (child) ->
         child.removeElement()
@@ -133,7 +148,7 @@ class ViewItem extends ProxyItem
     
     clicked: (event, toggle=false) =>
 
-        toggle = true if @hasClass 'selected'
+        toggle = true if @hasClass 'selected', @lin
         
         @select event
         
@@ -150,7 +165,7 @@ class ViewItem extends ProxyItem
     ###
         
     deselect: -> 
-        @delClass "selected"
+        @delClass "selected", @lin
         @root().elem.focus()
         
     select: (event) ->
@@ -159,10 +174,10 @@ class ViewItem extends ProxyItem
         @model().selectIndex @value.visibleIndex
         
     focus: (event) ->
-        @ownClass "selected"
+        @ownClass "selected", @lin
         
-        if @elem != document.activeElement
-            @elem.focus()        
+        if @elm != document.activeElement
+            @elm.focus()        
                                                         
     selectLeft: (event) -> 
         if event.metaKey
@@ -190,12 +205,12 @@ class ViewItem extends ProxyItem
      0000000  0000000  0000000   0000000 
     ###
         
-    getElem:  (clss,e=@elem) -> e.getElementsByClassName(clss)[0]
-    hasClass: (clss,e=@elem) -> e.classList.contains clss
-    delClass: (clss,e=@elem) -> e.classList.remove clss
-    addClass: (clss,e=@elem) -> e.classList.add clss
-    toggleClass: (clss,e=@elem) -> if e.classList.contains clss then e.classList.remove clss else e.classList.add clss
-    swapClass: (delClss, addClss, e=@elem) -> 
+    getElem:  (clss,e=@elm) -> e.getElementsByClassName(clss)[0]
+    hasClass: (clss,e=@elm) -> e.classList.contains clss
+    delClass: (clss,e=@elm) -> e.classList.remove clss
+    addClass: (clss,e=@elm) -> e.classList.add clss
+    toggleClass: (clss,e=@elm) -> if e.classList.contains clss then e.classList.remove clss else e.classList.add clss
+    swapClass: (delClss, addClss, e=@elm) -> 
         @delClass delClss, e
         @addClass addClss, e
         
@@ -203,9 +218,9 @@ class ViewItem extends ProxyItem
         while document.getElementsByClassName(clss).length
             document.getElementsByClassName(clss)[0].classList.remove clss
             
-    ownClass: (clss) ->
+    ownClass: (clss,e=@elm) ->
         @clrClass clss
-        @elem?.classList.add clss
+        e?.classList.add clss
         
         
 module.exports = ViewItem

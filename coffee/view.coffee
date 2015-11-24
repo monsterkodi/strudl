@@ -23,6 +23,7 @@ class View extends Proxy
         @tree.addEventListener 'keydown', @onKeyDown
         @tree.addEventListener 'wheel', @onWheel
         @tree.tabIndex = -1
+                
         @topIndex = 0
         @botIndex = 0
         @selIndex = -1
@@ -30,7 +31,6 @@ class View extends Proxy
         @scrollLeft = @tree.parentElement.getElementsByClassName('scroll left')[0]
         
         @keyPath = new Path $('path')
-        
         tmp = document.createElement 'div'
         tmp.className = 'tree-item'
         @tree.appendChild tmp
@@ -41,7 +41,21 @@ class View extends Proxy
         super base
         @base.on "didLayout", @onDidLayout
 
-    viewHeight: -> @tree.parentElement.parentElement.offsetHeight - $('path').offsetHeight
+    ###
+    00000000   00000000  000       0000000    0000000   0000000  
+    000   000  000       000      000   000  000   000  000   000
+    0000000    0000000   000      000   000  000000000  000   000
+    000   000  000       000      000   000  000   000  000   000
+    000   000  00000000  0000000   0000000   000   000  0000000  
+    ###
+        
+    onWillReload: => @root = null
+    onDidReload: =>
+        if @base?
+            @root = @createItem -1, @base.root, @
+            @root.elem = @tree
+            
+    viewHeight: -> document.getElementById('container').offsetHeight - document.getElementById('path').offsetHeight
     numViewLines: -> Math.ceil(@viewHeight() / @lineHeight)
     numFullLines: -> Math.floor(@viewHeight() / @lineHeight)
     numVisibleLines: -> @base.root.numVisible
@@ -119,12 +133,12 @@ class View extends Proxy
         
     update: ->
 
-        doProfile = false
-        profile "update #{numLines}" if doProfile
-        
+        doProfile = true
         numLines  = @numVisibleLines()
         viewLines = @numViewLines()
-
+        
+        profile "update #{numLines}" if doProfile
+        
         @treeHeight = numLines * @lineHeight
         @linesHeight = viewLines * @lineHeight
 
@@ -143,8 +157,10 @@ class View extends Proxy
                 
         @root.children = []
         @root.keyIndex = {}
-        @tree.innerHTML = "" # proper destruction needed?
-                                                        
+                
+        for child in @tree.children
+            child.innerHTML = "" # proper destruction needed?
+                                                                    
         for i in [@topIndex..@botIndex]
             baseItem = @base.visibleItems[i]
             @root.keyIndex[baseItem.key] = numLines
@@ -160,6 +176,8 @@ class View extends Proxy
             @selIndex = selItem.value.visibleIndex
             # update path here?
                 
+        @tree.children[1].scrollLeft = selItem.elm.scrollWidth - @tree.children[1].clientWidth
+                
         profile "" if doProfile
         
     updateScroll: ->
@@ -173,20 +191,6 @@ class View extends Proxy
         
         @scrollLeft.style.top    = "#{scrollTop}.px"
         @scrollLeft.style.height = "#{scrollHeight}.px"        
-        
-    ###
-    00000000   00000000  000       0000000    0000000   0000000  
-    000   000  000       000      000   000  000   000  000   000
-    0000000    0000000   000      000   000  000000000  000   000
-    000   000  000       000      000   000  000   000  000   000
-    000   000  00000000  0000000   0000000   000   000  0000000  
-    ###
-        
-    onWillReload: => @root = null
-    onDidReload: =>
-        if @base?
-            @root = @createItem -1, @base.root, @
-            @root.elem = @tree
             
     ###
     000       0000000   000   000   0000000   000   000  000000000
@@ -211,7 +215,7 @@ class View extends Proxy
     ###
         
     newItem: (key, value, parent) -> new ViewItem key, value, parent     
-    partiallyVisible: (item) -> (item.elem.offsetTop + item.elem.offsetHeight) > @viewHeight()
+    partiallyVisible: (item) -> (item.key.offsetTop + item.key.offsetHeight) > @viewHeight()
     
     closestItemForVisibleIndex: (index) ->
         if @root.children.length
@@ -242,6 +246,7 @@ class View extends Proxy
                         @base.expandTop true
                 else
                     @selectedItem()?["select#{_.capitalize(keycode)}"] event
+                event.preventDefault()
             when 'home' then @selectDelta -@numVisibleLines()
             when 'end'  then @selectDelta  @numVisibleLines()
             when 'up'   then @selectUp event

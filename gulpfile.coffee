@@ -45,11 +45,11 @@ gulp.task 'app', ->
 
 gulp.task 'default', ->
                 
-    gulp.watch ['win.coffee', 'app.coffee', 'coffee/**/*.coffee', 'style/*.styl'], (e) -> 
-        gulp.src e.path, base: '.'
-        .pipe salt()
-        .pipe debug()
-        .pipe gulp.dest '.'
+    # gulp.watch ['win.coffee', 'app.coffee', 'coffee/**/*.coffee', 'style/*.styl'], (e) -> 
+    #     gulp.src e.path, base: '.'
+    #     .pipe salt()
+    #     .pipe debug()
+    #     .pipe gulp.dest '.'
 
     gulp.watch ['win.coffee', 'app.coffee','coffee/**/*.coffee'], (e) -> 
         gulp.src(e.path, base: '.')
