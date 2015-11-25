@@ -24,11 +24,17 @@ class Item
             @mdl = prt
         else
             @parent = prt
+        
+        # log "#{@key}"    
+        # log "no value? #{@key} #{@parent?.keyPath()}" if not @value?
             
-        @type = switch @value.constructor.name
-                when 'Array'  then Item.arrayType
-                when 'Object' then Item.objectType
-                else @value.type ? Item.valueType
+        if @value?
+            @type = switch @value.constructor.name
+                    when 'Array'  then Item.arrayType
+                    when 'Object' then Item.objectType
+                    else @value.type ? Item.valueType
+        else
+            @type = Item.valueType
                                         
         @children = [] if @isParent()
         @keyIndex = {} if @isObject()

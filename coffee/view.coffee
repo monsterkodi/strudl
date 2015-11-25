@@ -133,7 +133,7 @@ class View extends Proxy
         
     update: ->
 
-        doProfile = true
+        doProfile = false
         numLines  = @numVisibleLines()
         viewLines = @numViewLines()
         
@@ -181,16 +181,19 @@ class View extends Proxy
         profile "" if doProfile
         
     updateScroll: ->
-        
-        scrollTop = parseInt (@scroll / @treeHeight) * @viewHeight()
-        scrollTop = Math.max 0, scrollTop
-        scrollHeight = parseInt (@linesHeight / @treeHeight) * @viewHeight()
+        vh           = @viewHeight()
+        scrollTop    = parseInt (@scroll / @treeHeight) * vh
+        scrollTop    = Math.max 0, scrollTop
+        scrollHeight = parseInt (@linesHeight / @treeHeight) * vh
         scrollHeight = Math.max scrollHeight, parseInt @lineHeight/4
+        scrollTop    = Math.min scrollTop, vh-scrollHeight-1
         
         @scrollLeft.classList.toggle 'flashy', (scrollHeight < @lineHeight)
         
+        log scrollTop, vh, @linesHeight
+        
         @scrollLeft.style.top    = "#{scrollTop}.px"
-        @scrollLeft.style.height = "#{scrollHeight}.px"        
+        @scrollLeft.style.height = "#{scrollHeight}.px"
             
     ###
     000       0000000   000   000   0000000   000   000  000000000

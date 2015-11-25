@@ -34,8 +34,9 @@ class ViewItem extends ProxyItem
             
             @lin = document.createElement 'div'
             @lin.className = 'tree-line'
+            @lin.addEventListener 'click', (event) => @clicked event
+            @lin.tabIndex = -1
             @idx.appendChild @lin
-            @idx.addEventListener 'click', (event) => @clicked event
 
             @elm = document.createElement 'div'
             @elm.className = "tree-item key"
@@ -51,7 +52,6 @@ class ViewItem extends ProxyItem
             @elm.appendChild spc
             
             key = document.createElement 'span'
-            # key.addEventListener 'click', (event) => @clicked event
             key.className = "tree-value key " + @typeName().toLowerCase()
             key.innerHTML = @key
             if @parent.type == Item.arrayType
@@ -60,8 +60,6 @@ class ViewItem extends ProxyItem
             
             @val = document.createElement 'div'
             @val.className = "tree-item val " + @typeName().toLowerCase()
-            # @val.addEventListener 'click', (event) => @clicked event
-            @val.tabIndex = -1
 
             @num = document.createElement 'div'
             @num.className = "tree-item num"
@@ -111,7 +109,7 @@ class ViewItem extends ProxyItem
             when Item.objectType
                 @val.innerHTML = @getValue()["name"] or ""
             when Item.valueType
-                @val.innerHTML = @getValue()
+                @val.innerHTML = @getValue() ? "null"
                     
     removeElement: ->
         @elm.remove()
