@@ -10,7 +10,7 @@ class Sizer
 
     constructor: (@view) ->
         
-        @elem = @view.tree.nextElementSibling.nextElementSibling.getElementsByClassName('sizer')[0]
+        @elem = @view.tree.nextElementSibling.getElementsByClassName('sizer')[0]
         @elem.draggable = true
         
         @elem.addEventListener 'drag',      @onDrag
@@ -33,7 +33,7 @@ class Sizer
                 
     onDrag: (event) => 
         if @view.onResizeColumn @x, event.clientX - @x
-            @elem.style.left = "#{event.clientX - @elem.offsetWidth/2}px" if event.clientX
+            @elem.style.left = "#{event.clientX + @elem.offsetWidth}px" if event.clientX
         @dot.style.opacity = 0
         @x = event.clientX
         

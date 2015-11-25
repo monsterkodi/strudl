@@ -32,7 +32,7 @@ class ViewItem extends ProxyItem
             @idx.id = "#{@indexInParent()}"
             
             
-            @lin = document.createElement 'div'
+            @lin = document.createElement 'span'
             @lin.className = 'tree-line'
             @lin.addEventListener 'click', (event) => @clicked event
             @lin.tabIndex = -1
