@@ -12,6 +12,7 @@ Model    = require './model'
 Proxy    = require './proxy'
 Item     = require './item'
 Path     = require './path'
+Sizer    = require './sizer'
 profile  = require './tools/profile'
 ViewItem = require './viewitem'
 keyname  = require './tools/keyname'
@@ -23,7 +24,6 @@ class View extends Proxy
         @tree.addEventListener 'keydown', @onKeyDown
         @tree.addEventListener 'wheel', @onWheel
         @tree.tabIndex = -1
-                
         @topIndex = 0
         @botIndex = 0
         @selIndex = -1
@@ -190,8 +190,6 @@ class View extends Proxy
         
         @scrollLeft.classList.toggle 'flashy', (scrollHeight < @lineHeight)
         
-        log scrollTop, vh, @linesHeight
-        
         @scrollLeft.style.top    = "#{scrollTop}.px"
         @scrollLeft.style.height = "#{scrollHeight}.px"
             
@@ -202,12 +200,36 @@ class View extends Proxy
     000      000   000     000     000   000  000   000     000   
     0000000  000   000     000      0000000    0000000      000   
     ###
+    
+    getWidth: (e) -> parseInt(window.getComputedStyle(e).width)
+    setWidth: (e,w) -> e.style.width = "#{w}px"
+    getElem: (clss,e=@tree) -> e.getElementsByClassName(clss)[0]
+    col: (name) -> @getElem name
+
+    onResizeColumn: (x, dx) ->
+        [kc,vc] = [@col('key'), @col('val')]
+        [kx,kw] = [kc.offsetLeft, @getWidth kc]
+        [vx,vw] = [vc.offsetLeft, @getWidth vc]
+        [kr,vr] = [kx+kw, vx+vw]
+        [sx,sr] = [x-kx+dx, vw-x-dx+vx]
+
+        if sx <= 100 or sr <= 100
+            return false
+        else
+            @setWidth kc, sx
+            @setWidth vc, (kw+vw) - sx
+            
+        @update()
+        true
 
     onDidLayout: (baseItem) => 
         if @selIndex < 0
             @selectIndex 0
         else
             @update()
+            
+        if not @sizer
+            @sizer = new Sizer @
             
     ###
     000  000000000  00000000  00     00

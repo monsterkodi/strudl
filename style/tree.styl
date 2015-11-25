@@ -1,0 +1,120 @@
+/*
+*  000000000  00000000   00000000  00000000
+*     000     000   000  000       000     
+*     000     0000000    0000000   0000000 
+*     000     000   000  000       000     
+*     000     000   000  00000000  00000000
+*/
+
+#treeScroll
+    position            relative
+    display             block
+    width               100%
+    overflow-y          hidden
+    overflow-x          auto
+
+#tree
+    position            relative
+    overflow            hidden
+    width               100%
+    padding             0
+    display             table
+
+.tree-col
+    float               left
+    overflow            hidden
+    border-left         1px solid red
+    &.idx
+        width           40px
+        overflow        visible
+    &.key
+        overflow-x      auto
+        overflow-y      hidden
+        min-width       100px
+        width           500px
+        padding-right   10px
+    &.val
+        overflow-x      auto
+        overflow-y      hidden
+        min-width       100px
+        width           300px
+        padding-left    10px
+    &.num
+        width           120px
+
+.tree-line
+    pointer-events      all
+    position            absolute
+    width               2000px
+    left                0
+    top                 0
+    bottom              0
+    cursor              pointer
+    outline             none
+    -webkit-box-shadow  none
+
+.tree-item
+    position            relative
+    background-color    transparent
+    display             block
+    box-sizing          border-box
+    margin              0
+    spacing             0
+    height              treeItemHeight
+    line-height         treeItemHeight
+    overflow            visible
+    -webkit-user-select none
+    pointer-events      none
+    white-space         nowrap
+    outline             none
+    
+.tree-value
+    background-color    transparent
+    display             inline-block
+    white-space         nowrap  
+    outline             none
+
+.tree-item.idx
+    text-align          right
+    min-width           33px
+    font-size           12px
+    margin-left         8px
+
+.tree-value.spc
+    text-align          right
+    pointer-events      all
+
+    &.collapsed::after
+        content         '►'
+
+    &.expanded::after
+        content         '▽'
+    
+    &.collapsed::after
+    &.expanded::after
+        margin-right    6px
+
+.tree-value.key
+    margin-right        6px
+
+    &.type-array
+        text-shadow     none
+
+.tree-item.val
+    min-width           100px
+    white-space         nowrap
+
+.tree-item.num
+    .vis
+    .dsc
+    .chd
+        text-align      right
+        min-width       35x
+        font-size       12px
+        margin-right    4px
+        float           right
+        position        relative
+
+    .dsc
+        margin-right    16px
+    

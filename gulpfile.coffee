@@ -11,7 +11,7 @@ electron = require 'gulp-atom-electron'
 onError = (err) -> gutil.log err
 
 gulp.task 'coffee', ->
-    gulp.src ['win.coffee', 'app.coffee','coffee/**/*.coffee'], base: './'
+    gulp.src ['win.coffee', 'app.coffee','coffee/**/*.coffee'], base: '.'
         .pipe source.init()
         .pipe coffee(bare: true).on('error', onError)
         .pipe source.write('./')
@@ -23,6 +23,12 @@ gulp.task 'style', ->
         .pipe stylus()
         .pipe debug()
         .pipe gulp.dest 'style'
+        
+gulp.task 'salt', ->
+    gulp.src ['win.coffee', 'app.coffee', 'coffee/**/*.coffee', 'style/*.styl'], base: '.'
+        .pipe salt()
+        .pipe debug()
+        .pipe gulp.dest '.'
 
 gulp.task 'build', ['style', 'coffee', 'app']
 
@@ -59,8 +65,4 @@ gulp.task 'default', ->
         .pipe debug()
         .pipe gulp.dest 'js/'
         
-    gulp.watch 'style/*.styl', (e) -> 
-        gulp.src e.path
-        .pipe stylus()
-        .pipe debug()
-        .pipe gulp.dest 'style'
+    gulp.watch 'style/*.styl', ['style']
