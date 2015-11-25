@@ -207,6 +207,7 @@ class View extends Proxy
     col: (name) -> @getElem name
 
     onResizeColumn: (x, dx) ->
+
         [kc,vc] = [@col('key'), @col('val')]
         [kx,kw] = [kc.offsetLeft, @getWidth kc]
         [vx,vw] = [vc.offsetLeft, @getWidth vc]
