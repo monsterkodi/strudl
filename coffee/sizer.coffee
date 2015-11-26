@@ -20,7 +20,6 @@ class Sizer extends Drag
         if dx
             if @view.onResizeColumn @x, dx
                 @elem.style.left = "#{event.clientX}px" if event.clientX
-            @dot.style.opacity = 0
             super
         
 module.exports = Sizer

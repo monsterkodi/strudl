@@ -92,7 +92,7 @@ class View extends Proxy
         viewLines = @numViewLines()
         @treeHeight = numLines * @lineHeight
         @linesHeight = viewLines * @lineHeight
-        @scrollMax = @treeHeight - @linesHeight
+        @scrollMax = @treeHeight - @linesHeight + @lineHeight
         
         @scroll += delta
         @scroll = Math.min @scroll, @scrollMax
