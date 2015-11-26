@@ -29,9 +29,15 @@ class View extends Proxy
         @botIndex = 0
         @selIndex = -1
         @scroll   = 0
-        @scrollLeft = @tree.parentElement.getElementsByClassName('scroll left')[0]
-        @leftDrag = new Drag @scrollLeft
+        
+        tp = @tree.parentElement
+        @scrollLeft = @getElem 'scroll left', tp
+        @leftDrag = new Drag @getElem 'scrollbar left', tp
         @leftDrag.on 'drag', @onScrollDrag 
+
+        @scrollRight = @getElem 'scroll right', tp
+        @rightDrag = new Drag @getElem 'scrollbar right', tp
+        @rightDrag.on 'drag', @onScrollDrag 
         
         @keyPath = new Path $('path')
         tmp = document.createElement 'div'
@@ -205,9 +211,12 @@ class View extends Proxy
         scrollTop    = Math.min scrollTop, @numFullLines()*@lineHeight-scrollHeight-1
         
         @scrollLeft.classList.toggle 'flashy', (scrollHeight < @lineHeight)
-        
         @scrollLeft.style.top    = "#{scrollTop}.px"
         @scrollLeft.style.height = "#{scrollHeight}.px"
+
+        @scrollRight.classList.toggle 'flashy', (scrollHeight < @lineHeight)
+        @scrollRight.style.top    = "#{scrollTop}.px"
+        @scrollRight.style.height = "#{scrollHeight}.px"
             
     ###
     000       0000000   000   000   0000000   000   000  000000000
@@ -217,9 +226,6 @@ class View extends Proxy
     0000000  000   000     000      0000000    0000000      000   
     ###
     
-    getWidth: (e) -> parseInt(window.getComputedStyle(e).width)
-    setWidth: (e,w) -> e.style.width = "#{w}px"
-    getElem: (clss,e=@tree) -> e.getElementsByClassName(clss)[0]
     col: (name) -> @getElem name
 
     onResizeColumn: (x, dx) ->
@@ -268,6 +274,18 @@ class View extends Proxy
             for item in @root.children
                 if item.value.visibleIndex == index
                     return item
+        
+    ###
+    00000000  000      00000000  00     00
+    000       000      000       000   000
+    0000000   000      0000000   000000000
+    000       000      000       000 0 000
+    00000000  0000000  00000000  000   000
+    ###
+        
+    getWidth: (e) -> parseInt(window.getComputedStyle(e).width)
+    setWidth: (e,w) -> e.style.width = "#{w}px"
+    getElem: (clss,e=@tree) -> e.getElementsByClassName(clss)[0]        
                             
     ###
     000   000  00000000  000   000  0000000     0000000   000   000  000   000

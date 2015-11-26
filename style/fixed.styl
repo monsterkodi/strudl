@@ -10,6 +10,8 @@ nodrag()
     -webkit-app-region  no-drag
 
 treeItemHeight = 24px
+idxColumnWidth = 40px
+numColumnWidth = 100px
 
 body
     margin              0px
@@ -68,13 +70,27 @@ textarea
 *  0000000    0000000  000   000   0000000   0000000  0000000
 */
 
+.scrollbar
+    position            absolute
+    top                 0
+    bottom              0
+    cursor              ns-resize
+    &.left
+        left            0
+        width           idxColumnWidth
+    &.right
+        right           0
+        width           numColumnWidth
+
 .scroll
     position            absolute
-    width               16px
+    width               6px
     height              20%
-    top                 0px
-    left                0px
-    cursor              ns-resize
+    top                 0
+    &.left
+        left            0
+    &.right
+        right           0
 
 /*
 *  00000000    0000000   000000000  000   000
