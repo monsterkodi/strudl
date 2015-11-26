@@ -61,6 +61,10 @@ class ViewItem extends ProxyItem
             @val = document.createElement 'div'
             @val.className = "tree-item val " + @typeName().toLowerCase()
 
+            val = document.createElement 'span'
+            val.className = "tree-value val " + @typeName().toLowerCase()
+            @val.appendChild val
+
             @num = document.createElement 'div'
             @num.className = "tree-item num"
                 
@@ -107,9 +111,9 @@ class ViewItem extends ProxyItem
 
         switch @type
             when Item.objectType
-                @val.innerHTML = @getValue()["name"] or ""
+                @val.firstElementChild.innerHTML = @getValue()["name"] or ""
             when Item.valueType
-                @val.innerHTML = @getValue() ? "null"
+                @val.firstElementChild.innerHTML = @getValue() ? "null"
                     
     removeElement: ->
         @elm.remove()

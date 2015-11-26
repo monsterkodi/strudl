@@ -168,6 +168,7 @@ class View extends Proxy
             @root.children.push item
             item.createElement()     
                 
+        @updateSize()
         @updateScroll()
                 
         selItem = @closestItemForVisibleIndex @selIndex
@@ -179,6 +180,14 @@ class View extends Proxy
         @tree.children[1].scrollLeft = selItem.elm.scrollWidth - @tree.children[1].clientWidth
                 
         profile "" if doProfile
+        
+    updateSize: ->
+        [ic,kc,vc,nc] = [@col('idx'), @col('key'), @col('val'), @col('num')]
+        [ix,kx,vx,nx] = [ic.offsetLeft, kc.offsetLeft, vc.offsetLeft, nc.offsetLeft]
+        [iw,kw,vw,nw] = [ic.offsetWidth, kc.offsetWidth, vc.offsetWidth, nc.offsetWidth]
+        # log [iw,kw,vw,nw], iw+kw+vw+nw, @getWidth(@tree)
+        vd = vw - @getWidth vc
+        @setWidth vc, -vd+@getWidth(@tree) - nw - kw - iw
         
     updateScroll: ->
         vh           = @viewHeight()

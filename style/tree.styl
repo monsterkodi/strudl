@@ -34,13 +34,14 @@
         width           500px
         padding-right   10px
     &.val
-        overflow-x      auto
-        overflow-y      hidden
+        // overflow-x      auto
+        // overflow-y      hidden
         min-width       100px
         width           300px
         padding-left    10px
     &.num
-        width           120px
+        width           100px
+        padding-right   10px
 
 .tree-line
     box-sizing          border-box
@@ -67,12 +68,22 @@
     -webkit-user-select none
     pointer-events      none
     outline             none
+    &.value
+        // overflow        auto
+        pointer-events  all
     
 .tree-value
     background-color    transparent
     display             inline-block
-    white-space         nowrap  
     outline             none
+    &.vis
+    &.dsc
+    &.chd
+        box-sizing      border-box
+        text-align      right
+        width           30px
+        font-size       11px
+        padding-left    5px
 
 .tree-item.idx
     text-align          right
@@ -94,27 +105,5 @@
     &.expanded::after
         margin-right    6px
 
-.tree-value.key
-    margin-right        6px
 
-    &.type-array
-        text-shadow     none
-
-.tree-item.val
-    min-width           100px
-    white-space         nowrap
-
-.tree-item.num
-    .vis
-    .dsc
-    .chd
-        text-align      right
-        min-width       35x
-        font-size       12px
-        margin-right    4px
-        float           right
-        position        relative
-
-    .dsc
-        margin-right    16px
     
