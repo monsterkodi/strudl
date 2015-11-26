@@ -60,9 +60,15 @@ class ViewItem extends ProxyItem
             
             @val = document.createElement 'div'
             @val.className = "tree-item val " + @typeName().toLowerCase()
+            @val.addEventListener 'wheel',     @onWheel
+            @val.addEventListener 'dragstart', @onDragStart
+            @val.addEventListener 'drag',      @onDrag
+            @val.addEventListener 'dragend',   @onDragEnd
+
+            @val.draggable = true
 
             val = document.createElement 'span'
-            val.className = "tree-value val " + @typeName().toLowerCase()
+            val.className = "tree-value val"
             @val.appendChild val
 
             @num = document.createElement 'div'
@@ -157,6 +163,49 @@ class ViewItem extends ProxyItem
         @toggle() if toggle
 
         event.stopPropagation()
+        
+    ###
+     0000000   0000000  00000000    0000000   000      000    
+    000       000       000   000  000   000  000      000    
+    0000000   000       0000000    000   000  000      000    
+         000  000       000   000  000   000  000      000    
+    0000000    0000000  000   000   0000000   0000000  0000000
+    ###
+    
+    getLeft: (e) -> parseInt window.getComputedStyle(e).left
+    setLeft: (e,w) -> e.style.left = "#{w}px"
+    
+    onDragStart: (event) => 
+        @dot = document.createElement "div"
+        @dot.className = "sizerDot"
+        @dot.offsetLeft = event.screenX
+        @dot.offsetTop = event.screenY
+        document.body.appendChild @dot
+        event.dataTransfer.dropEffect = 'none'
+        event.dataTransfer.effectAllowed = 'none'
+        event.dataTransfer.setDragImage @dot, @dot.offsetWidth/2, @dot.offsetHeight/2
+        @startx = event.clientX
+
+    onDrag: (event) => 
+        if event.clientX
+            delta = @startx - event.clientX
+            @startx = event.clientX
+            @scrollBy delta
+
+    onDragEnd: (event) => @dot.remove()
+    
+    onWheel: (event) =>
+        scrollable = @val.clientWidth < @val.firstElementChild.clientWidth
+        if scrollable and Math.abs(event.deltaX) > Math.abs(event.deltaY)
+            @scrollBy event.deltaX
+            event.stopPropagation()
+            
+    scrollBy: (delta) ->
+            v = @val.firstElementChild
+            left = @getLeft(v) - delta
+            left = Math.min 0, left
+            left = Math.max left, -v.offsetWidth
+            @setLeft v, left
         
     ###
      0000000  00000000  000      00000000   0000000  000000000
