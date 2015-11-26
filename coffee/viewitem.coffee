@@ -8,6 +8,7 @@
 
 log       = require './tools/log'
 Item      = require './item'
+Drag      = require './drag'
 ProxyItem = require './proxyitem'
 
 class ViewItem extends ProxyItem
@@ -34,7 +35,7 @@ class ViewItem extends ProxyItem
             
             @lin = document.createElement 'span'
             @lin.className = 'tree-line'
-            @lin.addEventListener 'click', (event) => @clicked event
+            @lin.addEventListener 'click', @clicked
             @lin.tabIndex = -1
             @idx.appendChild @lin
 
@@ -61,11 +62,9 @@ class ViewItem extends ProxyItem
             @val = document.createElement 'div'
             @val.className = "tree-item val " + @typeName().toLowerCase()
             @val.addEventListener 'wheel',     @onWheel
-            @val.addEventListener 'dragstart', @onDragStart
-            @val.addEventListener 'drag',      @onDrag
-            @val.addEventListener 'dragend',   @onDragEnd
-
-            @val.draggable = true
+            @val.addEventListener 'click',     @clicked
+            @valDrag = new Drag @val
+            @valDrag.on 'drag', @onValDrag
 
             val = document.createElement 'span'
             val.className = "tree-value val"
@@ -175,31 +174,16 @@ class ViewItem extends ProxyItem
     getLeft: (e) -> parseInt window.getComputedStyle(e).left
     setLeft: (e,w) -> e.style.left = "#{w}px"
     
-    onDragStart: (event) => 
-        @dot = document.createElement "div"
-        @dot.className = "sizerDot"
-        @dot.offsetLeft = event.screenX
-        @dot.offsetTop = event.screenY
-        document.body.appendChild @dot
-        event.dataTransfer.dropEffect = 'none'
-        event.dataTransfer.effectAllowed = 'none'
-        event.dataTransfer.setDragImage @dot, @dot.offsetWidth/2, @dot.offsetHeight/2
-        @startx = event.clientX
+    onValDrag: (drag) => 
+            if @scrollable()
+                @scrollBy drag.dx
 
-    onDrag: (event) => 
-        if event.clientX
-            delta = @startx - event.clientX
-            @startx = event.clientX
-            @scrollBy delta
-
-    onDragEnd: (event) => @dot.remove()
-    
     onWheel: (event) =>
-        scrollable = @val.clientWidth < @val.firstElementChild.clientWidth
-        if scrollable and Math.abs(event.deltaX) > Math.abs(event.deltaY)
+        if @scrollable() and Math.abs(event.deltaX) > Math.abs(event.deltaY)
             @scrollBy event.deltaX
             event.stopPropagation()
             
+    scrollable: -> @val.clientWidth < @val.firstElementChild.clientWidth
     scrollBy: (delta) ->
             v = @val.firstElementChild
             left = @getLeft(v) - delta

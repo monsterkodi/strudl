@@ -12,6 +12,7 @@ Model    = require './model'
 Proxy    = require './proxy'
 Item     = require './item'
 Path     = require './path'
+Drag     = require './drag'
 Sizer    = require './sizer'
 profile  = require './tools/profile'
 ViewItem = require './viewitem'
@@ -29,6 +30,8 @@ class View extends Proxy
         @selIndex = -1
         @scroll   = 0
         @scrollLeft = @tree.parentElement.getElementsByClassName('scroll left')[0]
+        @leftDrag = new Drag @scrollLeft
+        @leftDrag.on 'drag', @onScrollDrag 
         
         @keyPath = new Path $('path')
         tmp = document.createElement 'div'
@@ -78,6 +81,11 @@ class View extends Proxy
 
     onWheel: (event) => @scrollBy event.deltaY * @scrollFactor event
     
+    onScrollDrag: (drag) =>
+        delta = -(drag.dy / @linesHeight) * @treeHeight
+        log delta
+        @scrollBy delta
+    
     scrollBy: (delta) -> 
 
         numLines = @numVisibleLines()
@@ -91,7 +99,7 @@ class View extends Proxy
         @scroll = Math.max @scroll, 0
         
         top = parseInt @scroll / @lineHeight
-        bot = Math.min(@topIndex + viewLines - 1, numLines-1)
+        bot = Math.min(@topIndex + viewLines - 1, numLines - 1)
 
         if @topIndex != top or @botIndex != bot
             if @selIndex < top
@@ -185,17 +193,16 @@ class View extends Proxy
         [ic,kc,vc,nc] = [@col('idx'), @col('key'), @col('val'), @col('num')]
         [ix,kx,vx,nx] = [ic.offsetLeft, kc.offsetLeft, vc.offsetLeft, nc.offsetLeft]
         [iw,kw,vw,nw] = [ic.offsetWidth, kc.offsetWidth, vc.offsetWidth, nc.offsetWidth]
-        # log [iw,kw,vw,nw], iw+kw+vw+nw, @getWidth(@tree)
         vd = vw - @getWidth vc
         @setWidth vc, -vd+@getWidth(@tree) - nw - kw - iw
         
     updateScroll: ->
-        vh           = @viewHeight()
+        vh           = Math.min @linesHeight, @viewHeight()
         scrollTop    = parseInt (@scroll / @treeHeight) * vh
         scrollTop    = Math.max 0, scrollTop
         scrollHeight = parseInt (@linesHeight / @treeHeight) * vh
         scrollHeight = Math.max scrollHeight, parseInt @lineHeight/4
-        scrollTop    = Math.min scrollTop, vh-scrollHeight-1
+        scrollTop    = Math.min scrollTop, @numFullLines()*@lineHeight-scrollHeight-1
         
         @scrollLeft.classList.toggle 'flashy', (scrollHeight < @lineHeight)
         
