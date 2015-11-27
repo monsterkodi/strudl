@@ -1,0 +1,27 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset='utf-8')
+        title Strudl
+        script(src='./lib/prototype.js')
+        link(rel='stylesheet' href='style/font-awesome.css')
+        link(rel='stylesheet' href='style/dark.css' type='text/css' id='style-link')
+        link(rel='stylesheet' href='style/fixed.css' type='text/css')
+        script(src='./js/win.js')
+
+    body
+        div#container
+            div#path
+            div#treeScroll
+                div#tree
+                    span.tree-col.idx
+                    span.tree-col.key
+                    span.tree-col.val
+                    span.tree-col.num
+                div.sizers
+                    div.sizer
+                        div.vline
+                div.scrollbar.left
+                    div.scroll.left
+                div.scrollbar.right
+                    div.scroll.right
