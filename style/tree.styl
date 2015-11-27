@@ -43,7 +43,6 @@
 
 .tree-line
     box-sizing          border-box
-    pointer-events      all
     position            absolute
     width               5000px
     left                0
@@ -64,12 +63,10 @@
     line-height         treeItemHeight
     overflow            visible
     -webkit-user-select none
-    pointer-events      none
     outline             none
-    &.val
-        pointer-events  all
     
 .tree-value
+    // border 1px solid red
     background-color    transparent
     display             inline-block
     outline             none
@@ -94,7 +91,6 @@
 
 .tree-value.spc
     text-align          right
-    pointer-events      all
 
     &.collapsed::after
         content         '►'

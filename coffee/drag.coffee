@@ -16,11 +16,9 @@ class Drag extends EventEmitter
         @elem.addEventListener 'mousedown', @onDragStart
                             
     onDragStart: (event) =>
-        log 'start', event.target.className, @elem.className
         if event.target != @elem 
-            # event.preventDefault
-            evemt.stopImmediatePropagation
             return
+        log 'onDragStart', event.target.className, @elem.className
         window.addEventListener 'mousemove', @onDrag
         window.addEventListener 'mouseup',   @onDragEnd
 

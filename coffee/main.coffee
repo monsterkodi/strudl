@@ -1,0 +1,121 @@
+###
+00     00   0000000   000  000   000
+000   000  000   000  000  0000  000
+000000000  000000000  000  000 0 000
+000 0 000  000   000  000  000  0000
+000   000  000   000  000  000   000
+###
+
+_        = require 'lodash'
+fs       = require 'fs'
+app      = require 'app'
+dialog   = require 'dialog'
+Window   = require 'browser-window'
+MainMenu = require './mainmenu'
+log      = require './tools/log'
+prefs    = require './tools/prefs'
+
+class Main
+    
+    @app = null
+    @init: -> Main.app = new Main()
+    
+    constructor: ->
+
+        @wins     = {}
+        app.on 'before-quit'          , -> Main.app.beforeQuit()
+        app.on 'will-quit'            , -> log 'on will-quit'
+        app.on 'quit'                 , -> log 'on quit'
+        app.on 'window-all-closed'    , -> log 'on window-all-closed'
+        app.on 'will-finish-launching', -> log 'on will-finish-launching'
+
+        app.on 'open-file', (e,p) -> prefs.one 'open', p
+            
+        app.on 'ready', ->
+
+            log 'app ready'
+            
+            app.removeAllListeners 'open-file'
+            app.on 'open-file', (e,p) -> Main.app.loadFile p
+
+            MainMenu.init Main.app
+            Main.app.loadPreferences()
+        
+    loadPreferences: ->
+        
+        p = prefs.load()
+        
+        for f in  p.recent
+            app.addRecentDocument f
+            
+        for f in p.open
+            @loadFile f
+            
+    loadFile: (p) ->
+        
+        if @wins[p]?
+            @wins[p].focus()
+            return
+        
+        cwd = __dirname
+
+        w = new Window
+            dir:           cwd
+            preloadWindow: true
+            resizable:     true
+            frame:         true
+            show:          true
+            center:        false
+        
+        wd = prefs.get 'windows'
+        w.setBounds wd[p] if wd[p]?
+                
+        w.on 'close', (event) => 
+            log 'on window close'
+            @saveBounds()
+            k = _.findKey @wins, event.sender
+            @wins[k].removeAllListeners()
+            delete @wins[k]
+            prefs.del 'open', p
+
+        w.filePath = p
+        w.loadURL "file://#{cwd}/../../win.html"
+
+        @wins[p] = w
+
+        prefs.one 'open', p
+        prefs.one 'recent', p
+
+    openFile: ->
+
+        p = dialog.showOpenDialog
+            properties: [ 'openFile']
+            filters:    [ name: 'data', extensions: ['json', 'cson', 'plist'] ]
+            properties: [ 'openFile', 'multiSelections' ]
+            
+        if p?.length?
+            for f in p
+                if fs.existsSync f
+                    @loadFile f
+
+    beforeQuit: ->
+        @saveBounds()
+        for k, w of @wins
+            w.removeAllListeners 'close'
+
+    saveBounds: ->
+        log 'save bounds'
+        bounds = prefs.get 'windows'
+        for k, w of @wins
+            bounds[k] = w.getBounds()
+        prefs.set 'windows', bounds
+
+    reload: (win) -> win?.emit 'reloadFile'
+        
+    fullscreen: (item, win) -> win?.setFullScreen !win.isFullScreen()
+        
+    quit: ->
+        log 'quit'
+        app.quit()
+
+module.exports = Main

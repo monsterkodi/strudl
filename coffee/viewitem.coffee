@@ -35,7 +35,7 @@ class ViewItem extends ProxyItem
             
             @lin = document.createElement 'span'
             @lin.className = 'tree-line'
-            @lin.addEventListener 'click', @clicked
+            @lin.addEventListener 'click', @onClick
             @lin.tabIndex = -1
             @idx.appendChild @lin
 
@@ -47,7 +47,7 @@ class ViewItem extends ProxyItem
                 .on 'drag', @model().onDrag 
         
             spc = document.createElement 'span'
-            spc.addEventListener 'click', (event) => @clicked event, true
+            spc.addEventListener 'click', (event) => @onClick event, true
             spc.className = "tree-value spc"
             spc.style.minWidth = "#{@depth()*30}.px"
             spc.innerHTML = "&nbsp;"
@@ -58,10 +58,12 @@ class ViewItem extends ProxyItem
             if @isExpandable()
                 spc.classList.add @isExpanded() and "expanded" or "collapsed"
             @elm.appendChild spc
+            @elm.addEventListener 'click', @onClick
             
             key = document.createElement 'span'
             key.className = "tree-value key " + @typeName().toLowerCase()
             key.innerHTML = @key
+            key.addEventListener 'click', @onClick
             if @parent.type == Item.arrayType
                 @addClass 'array-index', key
             @elm.appendChild key
@@ -69,7 +71,7 @@ class ViewItem extends ProxyItem
             @val = document.createElement 'div'
             @val.className = "tree-item val " + @typeName().toLowerCase()
             @val.addEventListener 'wheel', @onWheel
-            @val.addEventListener 'click', @clicked
+            @val.addEventListener 'click', @onClick
             @valDrag = new Drag @val
             @valDrag.on 'drag', @onValDrag
 
@@ -141,34 +143,19 @@ class ViewItem extends ProxyItem
     prevItem: () -> @parent.children[@indexInParent()-1]
         
     ###
-    00000000  000   000  00000000    0000000   000   000  0000000  
-    000        000 000   000   000  000   000  0000  000  000   000
-    0000000     00000    00000000   000000000  000 0 000  000   000
-    000        000 000   000        000   000  000  0000  000   000
-    00000000  000   000  000        000   000  000   000  0000000  
+     0000000  000      000   0000000  000   000
+    000       000      000  000       000  000 
+    000       000      000  000       0000000  
+    000       000      000  000       000  000 
+     0000000  0000000  000   0000000  000   000
     ###
         
-    expand: (recursive=false) ->
-        super
-        if @isExpandable()
-            @swapClass "collapsed", "expanded", @getElem 'tree-item-spc'
-            @update()
-            
-    collapse: (recursive=false) ->
-        super
-        if @isExpandable()
-            @swapClass "expanded", "collapsed", @getElem 'tree-item-spc'
-            @update()
-    
-    clicked: (event, toggle=false) =>
-
+    onClick: (event, toggle=false) =>
         toggle = true if @hasClass 'selected', @lin
-        
+        if toggle
+            @toggle()
         @select event
-        
-        @toggle() if toggle
-
-        # event.stopPropagation()
+        event.stopPropagation()
         
     ###
      0000000   0000000  00000000    0000000   000      000    
@@ -209,7 +196,7 @@ class ViewItem extends ProxyItem
         
     select: (event) ->
         
-        log 'select', @value.visibleIndex
+        log 'viewitem.select', @value.visibleIndex, event.target.className
         @model().selectIndex @value.visibleIndex
         
     focus: (event) ->

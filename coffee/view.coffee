@@ -39,7 +39,7 @@ class View extends Proxy
         @rightDrag = new Drag @getElem 'scrollbar right', tp
         @rightDrag.on 'drag', @onScrollDrag 
                 
-        @keyPath = new Path $('path')
+        @keyPath = new Path document.getElementById 'path'
         tmp = document.createElement 'div'
         tmp.className = 'tree-item'
         @tree.appendChild tmp
