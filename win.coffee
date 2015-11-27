@@ -26,7 +26,9 @@ data    = null
 prxy    = null
 view    = null
 
-win.on 'reloadFile', -> log 'reload file'
+win.on 'reloadFile', -> 
+    log 'reload file', win.filePath
+    loadFile win.filePath
 
 loadFile = (p) ->
     log 'on loadFile', path

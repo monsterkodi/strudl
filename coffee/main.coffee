@@ -109,10 +109,6 @@ class Main
         for k, w of @wins
             bounds[k] = w.getBounds()
         prefs.set 'windows', bounds
-
-    reload: (win) -> win?.emit 'reloadFile'
-        
-    fullscreen: (item, win) -> win?.setFullScreen !win.isFullScreen()
         
     quit: ->
         log 'quit'

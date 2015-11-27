@@ -30,7 +30,7 @@ class MainMenu
             ,
                 label: 'Reload'
                 accelerator: 'CmdOrCtrl+R'
-                click: (item, win) -> main.reload win
+                click: (i,win) -> win?.reload()
             ]
         , 
 
@@ -38,7 +38,7 @@ class MainMenu
             submenu: [
                 label: 'Toggle Full Screen'
                 accelerator: process.platform == 'darwin' and 'Ctrl+Command+F' or 'F11'
-                click: -> main.fullscreen()
+                click: (i,win) -> win?.setFullScreen !win.isFullScreen()
             ,
                 label: 'Minimize'
                 accelerator: 'CmdOrCtrl+M'
