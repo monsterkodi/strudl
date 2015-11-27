@@ -38,7 +38,7 @@ class View extends Proxy
         @scrollRight = @getElem 'scroll right', tp
         @rightDrag = new Drag @getElem 'scrollbar right', tp
         @rightDrag.on 'drag', @onScrollDrag 
-        
+                
         @keyPath = new Path $('path')
         tmp = document.createElement 'div'
         tmp.className = 'tree-item'
@@ -89,8 +89,9 @@ class View extends Proxy
     
     onScrollDrag: (drag) =>
         delta = -(drag.dy / @linesHeight) * @treeHeight
-        log delta
         @scrollBy delta
+
+    onDrag: (drag) => @scrollBy drag.dy
     
     scrollBy: (delta) -> 
 

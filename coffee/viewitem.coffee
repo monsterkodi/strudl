@@ -42,12 +42,19 @@ class ViewItem extends ProxyItem
             @elm = document.createElement 'div'
             @elm.className = "tree-item key"
             @elm.tabIndex = -1
+            
+            new Drag @elm
+                .on 'drag', @model().onDrag 
         
             spc = document.createElement 'span'
             spc.addEventListener 'click', (event) => @clicked event, true
             spc.className = "tree-value spc"
             spc.style.minWidth = "#{@depth()*30}.px"
             spc.innerHTML = "&nbsp;"
+            
+            new Drag spc
+                .on 'drag', @model().onDrag 
+
             if @isExpandable()
                 spc.classList.add @isExpanded() and "expanded" or "collapsed"
             @elm.appendChild spc
@@ -61,8 +68,8 @@ class ViewItem extends ProxyItem
             
             @val = document.createElement 'div'
             @val.className = "tree-item val " + @typeName().toLowerCase()
-            @val.addEventListener 'wheel',     @onWheel
-            @val.addEventListener 'click',     @clicked
+            @val.addEventListener 'wheel', @onWheel
+            @val.addEventListener 'click', @clicked
             @valDrag = new Drag @val
             @valDrag.on 'drag', @onValDrag
 
@@ -161,7 +168,7 @@ class ViewItem extends ProxyItem
         
         @toggle() if toggle
 
-        event.stopPropagation()
+        # event.stopPropagation()
         
     ###
      0000000   0000000  00000000    0000000   000      000    
@@ -170,10 +177,7 @@ class ViewItem extends ProxyItem
          000  000       000   000  000   000  000      000    
     0000000    0000000  000   000   0000000   0000000  0000000
     ###
-    
-    getLeft: (e) -> parseInt window.getComputedStyle(e).left
-    setLeft: (e,w) -> e.style.left = "#{w}px"
-    
+        
     onValDrag: (drag) => 
             if @scrollable()
                 @scrollBy drag.dx
@@ -239,6 +243,9 @@ class ViewItem extends ProxyItem
     000       000           000       000
      0000000  0000000  0000000   0000000 
     ###
+        
+    getLeft: (e) -> parseInt window.getComputedStyle(e).left
+    setLeft: (e,w) -> e.style.left = "#{w}px"
         
     getElem:  (clss,e=@elm) -> e.getElementsByClassName(clss)[0]
     hasClass: (clss,e=@elm) -> e.classList.contains clss

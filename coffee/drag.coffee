@@ -12,12 +12,15 @@ class Drag extends EventEmitter
 
     constructor: (@elem) ->
         super        
-
         @elem.style.pointerEvents = 'all'
         @elem.addEventListener 'mousedown', @onDragStart
                             
     onDragStart: (event) =>
-        
+        log 'start', event.target.className, @elem.className
+        if event.target != @elem 
+            # event.preventDefault
+            evemt.stopImmediatePropagation
+            return
         window.addEventListener 'mousemove', @onDrag
         window.addEventListener 'mouseup',   @onDragEnd
 
@@ -34,7 +37,6 @@ class Drag extends EventEmitter
             [ox, oy] = [@rx, @ry]
             [@rx, @ry] = [event.clientX - @sx, event.clientY - @sy]
             [@dx, @dy] = [ox-@rx, oy-@ry]
-            log @x, @y, @dx, @dy, @rx, @ry
             @emit 'drag', @
                 
     onDragEnd: (event) => 

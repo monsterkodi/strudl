@@ -2,6 +2,7 @@ gulp     = require 'gulp'
 stylus   = require 'gulp-stylus'
 coffee   = require 'gulp-coffee'
 salt     = require 'gulp-salt'
+jade     = require 'gulp-jade'
 gutil    = require 'gulp-util'
 debug    = require 'gulp-debug'
 source   = require 'gulp-sourcemaps'
@@ -23,6 +24,12 @@ gulp.task 'style', ->
         .pipe stylus()
         .pipe debug()
         .pipe gulp.dest 'style'
+
+gulp.task 'jade', ->
+    gulp.src '*.jade', base: '.'
+        .pipe jade pretty: true
+        .pipe debug()
+        .pipe gulp.dest '.'
         
 gulp.task 'salt', ->
     gulp.src ['win.coffee', 'app.coffee', 'coffee/**/*.coffee', 'style/*.styl'], base: '.'
@@ -66,3 +73,4 @@ gulp.task 'default', ->
         .pipe gulp.dest 'js/'
         
     gulp.watch 'style/*.styl', ['style']
+    gulp.watch '*.jade', ['jade']
