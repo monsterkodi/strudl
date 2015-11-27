@@ -40,6 +40,14 @@ class Main
         MainMenu.init @
         @loadPreferences()
         
+    ###
+    00000000   00000000   00000000  00000000   0000000
+    000   000  000   000  000       000       000     
+    00000000   0000000    0000000   000000    0000000 
+    000        000   000  000       000            000
+    000        000   000  00000000  000       0000000 
+    ###
+        
     loadPreferences: ->
         
         p = prefs.load()
@@ -50,6 +58,14 @@ class Main
         app.clearRecentDocuments()
         # for f in  p.recent
         #     app.addRecentDocument f
+            
+    ###
+    00000000  000  000      00000000
+    000       000  000      000     
+    000000    000  000      0000000 
+    000       000  000      000     
+    000       000  0000000  00000000
+    ###
             
     loadFile: (p) ->
         
@@ -98,17 +114,33 @@ class Main
                 if fs.existsSync f
                     @loadFile f
 
-    beforeQuit: ->
-        @saveBounds()
-        for k, w of @wins
-            w.removeAllListeners 'close'
-
+    ###
+    0000000     0000000   000   000  000   000  0000000     0000000
+    000   000  000   000  000   000  0000  000  000   000  000     
+    0000000    000   000  000   000  000 0 000  000   000  0000000 
+    000   000  000   000  000   000  000  0000  000   000       000
+    0000000     0000000    0000000   000   000  0000000    0000000 
+    ###
+    
     saveBounds: ->
         log 'save bounds'
         bounds = prefs.get 'windows'
         for k, w of @wins
             bounds[k] = w.getBounds()
         prefs.set 'windows', bounds
+
+    ###
+     0000000   000   000  000  000000000
+    000   000  000   000  000     000   
+    000 00 00  000   000  000     000   
+    000 0000   000   000  000     000   
+     00000 00   0000000   000     000   
+    ###
+    
+    beforeQuit: ->
+        @saveBounds()
+        for k, w of @wins
+            w.removeAllListeners 'close'
         
     quit: ->
         log 'quit'

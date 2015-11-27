@@ -11,7 +11,7 @@ Item   = require './item'
 log    = require './tools/log'
 
 class Model
-    
+        
     Events.mixin Model.prototype
     
     constructor: (@name='model') -> @lastID = -1
