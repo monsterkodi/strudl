@@ -23,33 +23,33 @@ class Main
     constructor: ->
 
         @wins     = {}
+        app.on 'ready', @onReady
+        app.on 'open-file', (e,p) -> prefs.one 'open', p
         app.on 'before-quit'          , -> Main.app.beforeQuit()
         app.on 'will-quit'            , -> log 'on will-quit'
         app.on 'quit'                 , -> log 'on quit'
         app.on 'window-all-closed'    , -> log 'on window-all-closed'
         app.on 'will-finish-launching', -> log 'on will-finish-launching'
 
-        app.on 'open-file', (e,p) -> prefs.one 'open', p
-            
-        app.on 'ready', ->
+    onReady: =>
+        log 'app ready'
+        
+        app.removeAllListeners 'open-file'
+        app.on 'open-file', (e,p) => @loadFile p
 
-            log 'app ready'
-            
-            app.removeAllListeners 'open-file'
-            app.on 'open-file', (e,p) -> Main.app.loadFile p
-
-            MainMenu.init Main.app
-            Main.app.loadPreferences()
+        MainMenu.init @
+        @loadPreferences()
         
     loadPreferences: ->
         
         p = prefs.load()
-        
-        for f in  p.recent
-            app.addRecentDocument f
-            
+                    
         for f in p.open
             @loadFile f
+        
+        app.clearRecentDocuments()
+        # for f in  p.recent
+        #     app.addRecentDocument f
             
     loadFile: (p) ->
         

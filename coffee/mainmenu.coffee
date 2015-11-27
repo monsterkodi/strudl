@@ -9,10 +9,11 @@
 Menu = require 'menu'
 
 class MainMenu
-
-    @init: (main) ->
     
-        menu = [
+    @init: (main) -> 
+        
+        Menu.setApplicationMenu Menu.buildFromTemplate [
+            
             label: 'Strudl'   
             submenu: [     
                 label: 'Quit'
@@ -45,7 +46,5 @@ class MainMenu
                 role: 'minimize'
             ]
         ]
-
-        Menu.setApplicationMenu Menu.buildFromTemplate menu
 
 module.exports = MainMenu

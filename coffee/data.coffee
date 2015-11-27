@@ -18,7 +18,10 @@ class DataModel extends Model
 
     load: (@filePath) ->
         @trigger 'willReload'
-        @data = @parseString fs.readFileSync @filePath
+        if path.extname(@filePath) == '.plist'
+            @data = require('simple-plist').readFileSync @filePath
+        else
+            @data = @parseString fs.readFileSync @filePath
         profile "create tree"
         @root = @createItem -1, @data, @
         @root.updateDescendants()
@@ -27,12 +30,9 @@ class DataModel extends Model
         @trigger 'didReload'
 
     parseString: (stringData) ->
-        # log 'parseString', stringData.toString 'utf8'
         switch path.extname(@filePath) 
             when '.cson'
                 require('CSON').parse stringData
-            when '.plist'
-                require('plist').parse stringData.toString 'utf8'
             else
                 JSON.parse stringData
 
