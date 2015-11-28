@@ -95,5 +95,4 @@ class DataModel extends Model
         else
             a == b
 
-        
 module.exports = DataModel

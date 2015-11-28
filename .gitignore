@@ -1,11 +1,10 @@
-*-darwin-x64
 data
-electron-build
+electron*
 img/*.pxm
 js
 node_modules
 prefs.json
-strudl.app
+*.app
 strudl.log
 style/bright.css
 style/dark.css

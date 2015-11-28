@@ -31,6 +31,7 @@ win.on 'reloadFile', ->
     loadFile win.filePath
 
 loadFile = (p) ->
+    
     log 'on loadFile', path
     data = new Data()
     prxy = new Proxy data
@@ -40,6 +41,7 @@ loadFile = (p) ->
     data.load p  
     
     win.setRepresentedFilename p
+    app.addRecentDocument p
     title = path.basename p
     win.setTitle title
 

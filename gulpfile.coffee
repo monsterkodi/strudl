@@ -1,5 +1,6 @@
 path     = require 'path'
 gulp     = require 'gulp'
+del      = require 'del'
 stylus   = require 'gulp-stylus'
 coffee   = require 'gulp-coffee'
 salt     = require 'gulp-salt'
@@ -25,7 +26,7 @@ gulp.task 'coffee', ['salt'], ->
         
 gulp.task 'style', ['salt'], ->
     gulp.src 'style/*.styl'
-        .pipe inplace()
+        .pipe changed 'style', extension: '.css'
         .pipe stylus()
         .pipe debug title: 'style'
         .pipe gulp.dest 'style'
@@ -44,18 +45,30 @@ gulp.task 'salt', ->
         .pipe salt()
         .pipe gulp.dest '.'
 
-gulp.task 'build', ['style', 'coffee', 'app']
+gulp.task 'clean', ->
+    del [
+        'js'
+        '*.log'
+        'Strudl*.app'
+        'style/*.css'
+        '!style/font-awesome.css'
+    ]
+
+gulp.task 'package', ['style', 'coffee', 'app']
 
 gulp.task 'app', ->
     
-    electron.dest 'electron-build', { version: '0.35.1', platform: 'darwin' }
+    #electron.dest 'electron-build', { version: '0.35.1', platform: 'darwin' }
 
     gulp.src ['./package.json', './win.html', './js/**', './style/**', './lib/**'], base: '.'
         .pipe debug()
         .pipe electron 
+            name: 'Strudl'
+            role: 'Viewer'
             version: '0.35.1'
             platform: 'darwin'
             darwinIcon: 'img/strudl.icns'
+            extensions: ['json', 'cson', 'plist']
             darwinBundleDocumentTypes: [
                 name: 'Strudl'
                 extensions: ['json', 'cson', 'plist']
@@ -65,20 +78,6 @@ gulp.task 'app', ->
 
 gulp.task 'default', ->
                 
-    # gulp.watch ['win.coffee', 'app.coffee', 'coffee/**/*.coffee', 'style/*.styl'], (e) -> 
-    #     gulp.src e.path, base: '.'
-    #     .pipe salt()
-    #     .pipe debug()
-    #     .pipe gulp.dest '.'
-
-    # gulp.watch ['win.coffee', 'app.coffee','coffee/**/*.coffee'], (e) -> 
-    #     gulp.src(e.path, base: '.')
-    #     .pipe source.init()
-    #     .pipe coffee(bare: true).on('error', onError)
-    #     .pipe source.write('./')
-    #     .pipe debug()
-    #     .pipe gulp.dest 'js/'
-        
     gulp.watch ['win.coffee', 'app.coffee','coffee/**/*.coffee'], ['coffee']
     gulp.watch 'style/*.styl', ['style']
     gulp.watch '*.jade', ['jade']

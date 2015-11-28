@@ -1,22 +1,24 @@
 #!/usr/bin/env bash
+APP=`sds package.json -k "name" -f "#v"`
+RES="./$APP.app/Contents/Resources/app"
 echo rm app
 rm -rf app
-rm -rf Strudl.app
-echo gulp build
-gulp build
+rm -rf "$APP.app"
+echo gulp package
+gulp package
 echo mv app
-mv app/Strudl.app .
+mv app/"$APP.app" .
 echo link modules
-ln -s ../../../../node_modules ./Strudl.app/Contents/Resources/app/node_modules
+ln -s ../../../../node_modules "$RES/node_modules"
 echo link js
-rm -rf ./Strudl.app/Contents/Resources/app/js
-ln -s ../../../../js ./Strudl.app/Contents/Resources/app/js
+rm -rf "$RES/js"
+ln -s ../../../../js "$RES/js"
 echo link style
-rm -rf ./Strudl.app/Contents/Resources/app/style
-ln -s ../../../../style ./Strudl.app/Contents/Resources/app/style
+rm -rf "$RES/style"
+ln -s ../../../../style "$RES/style"
 echo link html
-rm -f ./Strudl.app/Contents/Resources/app/win.html
-ln -s ../../../../win.html ./Strudl.app/Contents/Resources/app/win.html
+rm -f "$RES/win.html"
+ln -s ../../../../win.html "$RES/win.html"
 echo clean
 rm -rf app
 echo done

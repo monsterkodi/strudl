@@ -12,6 +12,7 @@ app      = require 'app'
 dialog   = require 'dialog'
 Window   = require 'browser-window'
 MainMenu = require './mainmenu'
+DockMenu = require './dockmenu'
 log      = require './tools/log'
 prefs    = require './tools/prefs'
 
@@ -29,16 +30,16 @@ class Main
         app.on 'will-quit'            , -> log 'on will-quit'
         app.on 'quit'                 , -> log 'on quit'
         app.on 'window-all-closed'    , -> log 'on window-all-closed'
-        app.on 'will-finish-launching', -> log 'on will-finish-launching'
+        app.on 'will-finish-launching', -> 
 
     onReady: =>
         log 'app ready'
-        
+
         app.removeAllListeners 'open-file'
         app.on 'open-file', (e,p) => @loadFile p
-
+        
         MainMenu.init @
-        @loadPreferences()
+        DockMenu.init @
         
     ###
     00000000   00000000   00000000  00000000   0000000
@@ -51,13 +52,14 @@ class Main
     loadPreferences: ->
         
         p = prefs.load()
+
+        for f in  p.recent
+            app.addRecentDocument f
                     
         for f in p.open
             @loadFile f
         
-        app.clearRecentDocuments()
-        # for f in  p.recent
-        #     app.addRecentDocument f
+        # app.clearRecentDocuments()
             
     ###
     00000000  000  000      00000000
