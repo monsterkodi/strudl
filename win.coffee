@@ -81,7 +81,7 @@ document.addEventListener 'keydown', (event) ->
     switch key
         when 'command+i'  then toggleStyle()
         when 'command+w'  then win.close()
-        else log "main.keydown", key, e
+        # else log "main.keydown", key, e
 
 ###
  0000000  000000000  000   000  000      00000000

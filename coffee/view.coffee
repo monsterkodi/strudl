@@ -167,6 +167,8 @@ class View extends Proxy
         if @selIndex < @topIndex
             @topIndex = @selIndex
             @botIndex = Math.min(@topIndex + viewLines - 1, numLines-1)
+            if @botIndex - @topIndex < Math.min(viewLines, numLines) - 1
+                @topIndex = @botIndex - Math.min(viewLines, numLines) + 1
             @scroll = @topIndex * @lineHeight
         else if @selIndex >= @topIndex + @numFullLines()
             @topIndex = @selIndex - @numFullLines() + 1
@@ -179,7 +181,7 @@ class View extends Proxy
                 
         for child in @tree.children
             child.innerHTML = "" # proper destruction needed?
-                                                                    
+            
         for i in [@topIndex..@botIndex]
             baseItem = @base.visibleItems[i]
             @root.keyIndex[baseItem.key] = numLines
@@ -251,8 +253,11 @@ class View extends Proxy
         true
 
     onDidLayout: (baseItem) => 
+        
         if @selIndex < 0
             @selectIndex 0
+        else if @selIndex >= @numViewLines()
+            @selectIndex @numViewLines() - 1 
         else
             @update()
             
@@ -325,7 +330,7 @@ class View extends Proxy
                     last.select()
                 else
                     first.select()
-            else
-                log keycode
+            # else
+            #     log keycode
         
 module.exports = View

@@ -115,7 +115,6 @@ class Proxy extends Model
                     @expand child, recursive + 1
             
             if typeof(recursive) == 'boolean'
-                log 'layout'
                 @layout item
                 
     collapse: (item, recursive=false) ->
@@ -130,7 +129,6 @@ class Proxy extends Model
                 item.expanded = false
                 
             if typeof(recursive) == 'boolean'
-                log 'layout'
                 @layout item
 
     expandItems: (items, recursive=false) -> 

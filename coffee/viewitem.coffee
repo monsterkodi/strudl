@@ -194,9 +194,8 @@ class ViewItem extends ProxyItem
         @delClass "selected", @lin
         @root().elem.focus()
         
-    select: (event) ->
-        
-        log 'viewitem.select', @value.visibleIndex, event.target.className
+    select: ->
+        log 'viewitem.select', @value.visibleIndex
         @model().selectIndex @value.visibleIndex
         
     focus: (event) ->
