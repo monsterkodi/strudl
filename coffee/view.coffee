@@ -40,6 +40,8 @@ class View extends Proxy
         @rightDrag.on 'drag', @onScrollDrag 
                 
         @keyPath = new Path document.getElementById 'path'
+        @keyPath.on 'keypath', @onKeyPath
+        
         tmp = document.createElement 'div'
         tmp.className = 'tree-item'
         @tree.appendChild tmp
@@ -137,6 +139,8 @@ class View extends Proxy
     selectUp: (event) -> @selectDelta -@scrollFactor event
         
     selectDown: (event) -> @selectDelta @scrollFactor event
+
+    onKeyPath: (keypath) => @selectIndex @base.itemAt(keypath).visibleIndex
 
     ###
     000   000  00000000   0000000     0000000   000000000  00000000

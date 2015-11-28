@@ -103,7 +103,9 @@ textarea
 #path
     display             block
     min-height          treeItemHeight
-    top                 0px
+    padding             0
+    margin              0
+    top                 0
     width               100%
     
 .pathText
@@ -114,14 +116,17 @@ textarea
     padding-top         3px
     padding-left        8px
     padding-right       4px
+    cursor              pointer
 
 .pathArrow 
     display             inline-block
-    width 0
-    height 0
+    width               0
+    height              0
     border-top          (treeItemHeight / 2px) solid transparent
     border-bottom       (treeItemHeight / 2px) solid transparent
     border-left-width   (treeItemHeight / 2px)
     border-left-style   solid
+    margin-bottom       -2px
+    cursor              pointer
 
 @import 'tree'

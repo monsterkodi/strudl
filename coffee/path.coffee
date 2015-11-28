@@ -6,11 +6,18 @@
 000        000   000     000     000   000
 ###
 
-log = require './tools/log'
+log     = require './tools/log'
+Emitter = require 'events'
 
-class Path
+class Path extends Emitter
 
     constructor: (@elem) ->
+        
+        @elem.addEventListener 'click', @onClick
+        
+    onClick: (event) => 
+        idx = event.target.idx
+        @emit 'keypath', @keys.slice(0,idx+1) if idx?
     
     set: (@keys) ->
 
@@ -26,12 +33,14 @@ class Path
             txt.className = "pathText"
             txt.classList.add oddOrEven
             txt.innerHTML = key
+            txt.idx = idx
             
             arr = document.createElement 'span'
             @elem.appendChild arr
             arr.className = "pathArrow"
             arr.classList.add oddOrEven
             arr.classList.add 'last' if idx == @keys.length-1
+            arr.idx = idx
             
             odd = not odd
             idx += 1
