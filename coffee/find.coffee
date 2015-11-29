@@ -14,11 +14,17 @@ class Find extends Emitter
     constructor: (@tree, @elem) ->
         @key = @getElem('input-key')
         @val = @getElem('input-val')
-        @key.on 'change', @onChanged
-        @val.on 'change', @onChanged
+        @key.on 'input', @onChanged
+        @val.on 'input', @onChanged
         @val.addEventListener 'blur', => @emit 'blur'
             
     onChanged: (event) => 
+        if @timer?
+            clearTimeout @timer
+        @timer = setTimeout @applyFilter, 500
+        
+    applyFilter: =>
+        @timer = null
         key = @key.value
         val = @val.value
         @tree.data().setFilter key, val
