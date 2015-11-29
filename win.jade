@@ -9,8 +9,13 @@ html(lang="en")
         link(rel='stylesheet' href='style/fixed.css' type='text/css')
         script(src='./js/win.js')
 
-    body
+    body#body
         div#container
+            div#find
+                span.key
+                    input.input.input-key(type='input')
+                span.val
+                    input.input.input-val(type='input')
             div#path
             div#treeScroll
                 div#tree

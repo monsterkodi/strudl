@@ -33,6 +33,84 @@ textarea
     bottom              0
     left                0
     right               0
+
+/*
+*  00000000  000  000   000  0000000  
+*  000       000  0000  000  000   000
+*  000000    000  000 0 000  000   000
+*  000       000  000  0000  000   000
+*  000       000  000   000  0000000  
+*/
+
+#find
+    position relative
+    display block
+    height              treeItemHeight
+    width   100%
+    
+    .key
+        box-sizing      border-box
+        position        absolute
+        left            0
+        top             0
+        height          treeItemHeight
+        display         inline-block
+        width           50%
+    .val
+        box-sizing      border-box
+        position        absolute
+        right           0
+        top             0
+        height          treeItemHeight
+        display         inline-block
+        width           50%
+
+.input
+    font-family         Verdana, Arial, sans-serif
+    font-size           16px
+    padding-left        6px
+    padding-right       6px
+    width               100%
+    box-sizing          border-box
+    text-align          left
+    height              treeItemHeight
+
+/*
+*  00000000    0000000   000000000  000   000
+*  000   000  000   000     000     000   000
+*  00000000   000000000     000     000000000
+*  000        000   000     000     000   000
+*  000        000   000     000     000   000
+*/
+
+#path
+    display             block
+    min-height          treeItemHeight
+    padding             0
+    margin              0
+    top                 0
+    width               100%
+    
+.pathText
+    vertical-align      top
+    box-sizing          border-box
+    height              treeItemHeight
+    display             inline-block
+    padding-top         3px
+    padding-left        8px
+    padding-right       4px
+    cursor              pointer
+
+.pathArrow 
+    display             inline-block
+    width               0
+    height              0
+    border-top          (treeItemHeight / 2px) solid transparent
+    border-bottom       (treeItemHeight / 2px) solid transparent
+    border-left-width   (treeItemHeight / 2px)
+    border-left-style   solid
+    margin-bottom       -2px
+    cursor              pointer
     
 /*
 *   0000000  000  0000000  00000000  00000000 
@@ -91,42 +169,5 @@ textarea
         left            0
     &.right
         right           0
-
-/*
-*  00000000    0000000   000000000  000   000
-*  000   000  000   000     000     000   000
-*  00000000   000000000     000     000000000
-*  000        000   000     000     000   000
-*  000        000   000     000     000   000
-*/
-
-#path
-    display             block
-    min-height          treeItemHeight
-    padding             0
-    margin              0
-    top                 0
-    width               100%
-    
-.pathText
-    vertical-align      top
-    box-sizing          border-box
-    height              treeItemHeight
-    display             inline-block
-    padding-top         3px
-    padding-left        8px
-    padding-right       4px
-    cursor              pointer
-
-.pathArrow 
-    display             inline-block
-    width               0
-    height              0
-    border-top          (treeItemHeight / 2px) solid transparent
-    border-bottom       (treeItemHeight / 2px) solid transparent
-    border-left-width   (treeItemHeight / 2px)
-    border-left-style   solid
-    margin-bottom       -2px
-    cursor              pointer
 
 @import 'tree'

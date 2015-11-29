@@ -12,6 +12,7 @@ Model    = require './model'
 Proxy    = require './proxy'
 Item     = require './item'
 Path     = require './path'
+Find     = require './find'
 Drag     = require './drag'
 Sizer    = require './sizer'
 profile  = require './tools/profile'
@@ -42,12 +43,15 @@ class View extends Proxy
         @keyPath = new Path document.getElementById 'path'
         @keyPath.on 'keypath', @onKeyPath
         
+        @find = new Find @, document.getElementById 'find'
+        @find.on 'blur', => setTimeout @focusSelected, 1
+        
         tmp = document.createElement 'div'
         tmp.className = 'tree-item'
         @tree.appendChild tmp
         @lineHeight = tmp.offsetHeight
         tmp.remove()
-        
+                        
     setBase: (base) ->
         super base
         @base.on "didLayout", @onDidLayout
@@ -117,7 +121,7 @@ class View extends Proxy
                 @selectIndex top + @numFullLines() - 1
             else 
                 @update() 
-            
+                        
     ###
      0000000  00000000  000      00000000   0000000  000000000
     000       000       000      000       000          000   
@@ -126,7 +130,7 @@ class View extends Proxy
     0000000   00000000  0000000  00000000   0000000     000   
     ###
     
-    selectedItem: () -> @closestItemForVisibleIndex @selIndex
+    selectedItem: -> @closestItemForVisibleIndex @selIndex
     
     selectIndex: (index) ->
         @selIndex = index
@@ -141,7 +145,11 @@ class View extends Proxy
     selectDown: (event) -> @selectDelta @scrollFactor event
 
     onKeyPath: (keypath) => @selectIndex @base.itemAt(keypath).visibleIndex
-
+        
+    focusSelected: () => 
+        if document.activeElement == document.body
+            @selectedItem().focus()        
+        
     ###
     000   000  00000000   0000000     0000000   000000000  00000000
     000   000  000   000  000   000  000   000     000     000     
@@ -306,6 +314,7 @@ class View extends Proxy
     ###
     
     onKeyDown: (event) =>
+                
         keycode = keyname.keycode event
         switch keycode
             when 'left', 'right'

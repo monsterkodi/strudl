@@ -14,6 +14,7 @@ class Path extends Emitter
     constructor: (@elem) ->
         
         @elem.addEventListener 'click', @onClick
+        @elem.tabIndex = -1
         
     onClick: (event) => 
         idx = event.target.idx

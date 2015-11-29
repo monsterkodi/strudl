@@ -76,8 +76,10 @@ win.on 'resize', () -> view.update()
 ###
     
 document.addEventListener 'keydown', (event) ->
+    
     key = keyname.ofEvent event
     e   = document.activeElement
+    
     switch key
         when 'command+i'  then toggleStyle()
         when 'command+w'  then win.close()

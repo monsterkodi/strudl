@@ -34,7 +34,9 @@ class Proxy extends Model
         @base.on "didReload",  @onDidReload
         @base.on "willRemove", @onWillRemove
         @base.on "didInsert",  @onDidInsert
-        @base.on "didChange",  @onDidChange        
+        @base.on "didChange",  @onDidChange     
+        
+    data: () -> @base.data?() ? @base
             
     onWillReload:() => 
         @trigger "willReload"

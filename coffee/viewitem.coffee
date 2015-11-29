@@ -32,7 +32,6 @@ class ViewItem extends ProxyItem
             @idx.innerHTML = "#{@value.visibleIndex} "
             @idx.id = "#{@indexInParent()}"
             
-            
             @lin = document.createElement 'span'
             @lin.className = 'tree-line'
             @lin.addEventListener 'click', @onClick
@@ -59,6 +58,8 @@ class ViewItem extends ProxyItem
                 spc.classList.add @isExpanded() and "expanded" or "collapsed"
             @elm.appendChild spc
             @elm.addEventListener 'click', @onClick
+            @elm.addEventListener 'blur', @onBlur
+            @elm.addEventListener 'focus', @onFocus
             
             key = document.createElement 'span'
             key.className = "tree-value key " + @typeName().toLowerCase()
@@ -192,17 +193,23 @@ class ViewItem extends ProxyItem
         
     deselect: -> 
         @delClass "selected", @lin
+        @delClass "focus", @lin
+        @elm.tabIndex = -1  
         @root().elem.focus()
         
     select: ->
         log 'viewitem.select', @value.visibleIndex
         @model().selectIndex @value.visibleIndex
         
+    onBlur: => @clrClass 'focus'
+    onFocus: => @ownClass "focus", @lin
+        
     focus: (event) ->
         @ownClass "selected", @lin
-        
+        @ownClass "focus", @lin
         if @elm != document.activeElement
-            @elm.focus()        
+            @elm.focus()   
+            @elm.tabIndex = 2     
                                                         
     selectLeft: (event) -> 
         if event.metaKey

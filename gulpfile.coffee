@@ -15,7 +15,7 @@ electron = require 'gulp-atom-electron'
  
 onError = (err) -> gutil.log err
 
-gulp.task 'coffee', ['salt'], ->
+gulp.task 'coffee', ->
     gulp.src ['win.coffee', 'app.coffee','coffee/**/*.coffee'], base: '.'
         .pipe changed 'js/', extension: '.js'
         .pipe debug title: 'coffee'
@@ -24,7 +24,7 @@ gulp.task 'coffee', ['salt'], ->
         .pipe source.write('./')
         .pipe gulp.dest 'js/'
         
-gulp.task 'style', ['salt'], ->
+gulp.task 'style', ->
     gulp.src 'style/*.styl'
         .pipe changed 'style', extension: '.css'
         .pipe stylus()
@@ -33,7 +33,7 @@ gulp.task 'style', ['salt'], ->
 
 gulp.task 'jade', ->
     gulp.src '*.jade', base: '.'
-        .pipe inplace()
+        .pipe changed '.', extension: '.html'
         .pipe jade pretty: true
         .pipe debug title: 'jade'
         .pipe gulp.dest '.'
@@ -78,6 +78,6 @@ gulp.task 'app', ->
 
 gulp.task 'default', ->
                 
-    gulp.watch ['win.coffee', 'app.coffee','coffee/**/*.coffee'], ['coffee']
-    gulp.watch 'style/*.styl', ['style']
+    gulp.watch ['win.coffee', 'app.coffee','coffee/**/*.coffee'], ['salt', 'coffee']
+    gulp.watch 'style/*.styl', ['salt', 'style']
     gulp.watch '*.jade', ['jade']

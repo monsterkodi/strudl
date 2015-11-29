@@ -40,6 +40,24 @@ body
     width               2px
     border-left:        1px solid clr.gray-pitch-dark
     border-right:       1px solid clr.gray-super-dark
+
+/*
+*  00000000  000  000   000  0000000  
+*  000       000  0000  000  000   000
+*  000000    000  000 0 000  000   000
+*  000       000  000  0000  000   000
+*  000       000  000   000  0000000  
+*/
+
+.input    
+    background-color: clr.gray-very-dark
+    color:            clr.gray
+    border:           1px solid clr.gray-very-dark
+    &.input-key
+        border-right:     1px solid clr.gray-pitch-dark
+    &:focus
+        background-color: clr.gray-dark
+        border:           1px solid clr.gray-medium
         
 /*
 *  00000000    0000000   000000000  000   000
@@ -95,6 +113,8 @@ body
     border-bottom:      1px solid clr.gray-pitch-dark
     &.selected
         background-color:   clr.gray-super-dark
+    &.focus
+        background-color:   clr.gray-dark        
 
 .tree-item.idx
     color:              clr.gray-dark

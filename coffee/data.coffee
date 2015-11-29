@@ -87,12 +87,11 @@ class DataModel extends Model
     findKey:      (key,        item=@root) -> item.traverse (i) => @match(i.key, key)
         
     match: (a,b) ->
-        if _.isString(a) and _.isString(b) and b.indexOf('*') >= 0
-            p = _.clone(b)
-            p = p.replace /\*/g, '.*'
-            p = "^"+p+"$"
-            a.match(new RegExp(p))?.length
-        else
-            a == b
+        sa = String a
+        sb = String b
+
+        sb = sb.replace /\*/g, '.*'
+        sb = "^"+sb+"$"
+        sa.match(new RegExp(sb))?.length
 
 module.exports = DataModel
