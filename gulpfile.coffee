@@ -26,7 +26,6 @@ gulp.task 'coffee', ->
         
 gulp.task 'style', ->
     gulp.src 'style/*.styl'
-        .pipe changed 'style', extension: '.css'
         .pipe stylus()
         .pipe debug title: 'style'
         .pipe gulp.dest 'style'
@@ -48,6 +47,7 @@ gulp.task 'salt', ->
 gulp.task 'clean', ->
     del [
         'js'
+        'win.html'
         '*.log'
         'Strudl*.app'
         'style/*.css'

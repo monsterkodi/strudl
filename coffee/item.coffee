@@ -25,9 +25,6 @@ class Item
         else
             @parent = prt
         
-        # log "#{@key}"    
-        # log "no value? #{@key} #{@parent?.keyPath()}" if not @value?
-            
         if @value?
             @type = switch @value.constructor.name
                     when 'Array'  then Item.arrayType

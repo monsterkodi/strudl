@@ -6,9 +6,11 @@
     0      000  00000000  00     00  000     000     00000000  000   000
 ###
 
+_         = require 'lodash'
 log       = require './tools/log'
 Item      = require './item'
 Drag      = require './drag'
+Path      = require './path'
 ProxyItem = require './proxyitem'
 
 class ViewItem extends ProxyItem
@@ -50,7 +52,7 @@ class ViewItem extends ProxyItem
             spc.className = "tree-value spc"
             spc.style.minWidth = "#{@depth()*30}.px"
             spc.innerHTML = "&nbsp;"
-            
+                        
             new Drag spc
                 .on 'drag', @model().onDrag 
 
@@ -61,12 +63,20 @@ class ViewItem extends ProxyItem
             @elm.addEventListener 'blur', @onBlur
             @elm.addEventListener 'focus', @onFocus
             
+            split = String(@key).split '►'
+            
             key = document.createElement 'span'
+            key.addEventListener 'click', @onClick            
             key.className = "tree-value key " + @typeName().toLowerCase()
-            key.innerHTML = @key
-            key.addEventListener 'click', @onClick
-            if @parent.type == Item.arrayType
-                @addClass 'array-index', key
+            
+            if split.length == 1
+                key.innerHTML = @key
+                if @parent.type == Item.arrayType
+                    @addClass 'array-index', key
+            else
+                @pth = new Path key
+                @pth.set split
+                
             @elm.appendChild key
             
             @val = document.createElement 'div'
@@ -117,18 +127,18 @@ class ViewItem extends ProxyItem
     update: ->
         
         if @isParent()
-            vis = @getElem "vis", @num
-            chd = @getElem "chd", @num
-            dsc = @getElem "dsc", @num
+            vis = @getElem 'vis', @num
+            chd = @getElem 'chd', @num
+            dsc = @getElem 'dsc', @num
             vis.innerHTML = (@isExpanded() and "#{@value.numVisible}" or "")
             chd.innerHTML = "#{@dataItem().children.length}"
             dsc.innerHTML = "#{@dataItem().numDescendants-1}"
 
         switch @type
             when Item.objectType
-                @val.firstElementChild.innerHTML = @getValue()["name"] or ""
+                @val.firstElementChild.innerHTML = @getValue()['name'] or ''
             when Item.valueType
-                @val.firstElementChild.innerHTML = @getValue() ? "null"
+                @val.firstElementChild.innerHTML = @getValue() ? 'null'
                     
     removeElement: ->
         @elm.remove()
@@ -153,6 +163,7 @@ class ViewItem extends ProxyItem
         
     onClick: (event, toggle=false) =>
         toggle = true if @hasClass 'selected', @lin
+        @focus()
         if toggle
             @toggle()
         @select event
@@ -192,8 +203,8 @@ class ViewItem extends ProxyItem
     ###
         
     deselect: -> 
-        @delClass "selected", @lin
-        @delClass "focus", @lin
+        @delClass 'selected', @lin
+        @delClass 'focus', @lin
         @elm.tabIndex = -1  
         @root().elem.focus()
         
@@ -202,11 +213,13 @@ class ViewItem extends ProxyItem
         @model().selectIndex @value.visibleIndex
         
     onBlur: => @clrClass 'focus'
-    onFocus: => @ownClass "focus", @lin
+    onFocus: => @ownClass 'focus', @lin
+    
+    hasFocus: => document.activeElement == @elm
         
     focus: (event) ->
-        @ownClass "selected", @lin
-        @ownClass "focus", @lin
+        @ownClass 'selected', @lin
+        @ownClass 'focus', @lin
         if @elm != document.activeElement
             @elm.focus()   
             @elm.tabIndex = 2     

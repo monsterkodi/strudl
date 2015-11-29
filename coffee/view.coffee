@@ -70,7 +70,7 @@ class View extends Proxy
             @root = @createItem -1, @base.root, @
             @root.elem = @tree
             
-    viewHeight: -> document.getElementById('container').offsetHeight - document.getElementById('path').offsetHeight
+    viewHeight: -> document.getElementById('container').offsetHeight - document.getElementById('path').offsetHeight  - document.getElementById('find').offsetHeight
     numViewLines: -> Math.ceil(@viewHeight() / @lineHeight)
     numFullLines: -> Math.floor(@viewHeight() / @lineHeight)
     numVisibleLines: -> @base.root.numVisible
@@ -166,6 +166,8 @@ class View extends Proxy
         
         profile "update #{numLines}" if doProfile
         
+        setFocus = document.activeElement.classList.contains 'tree-item'
+        
         @treeHeight = numLines * @lineHeight
         @linesHeight = viewLines * @lineHeight
 
@@ -201,7 +203,10 @@ class View extends Proxy
         @updateScroll()
                 
         selItem = @closestItemForVisibleIndex @selIndex
-        selItem.focus()
+        if setFocus 
+            selItem.focus()
+        else
+            selItem.ownClass "selected", selItem.lin
         if selItem.value.visibleIndex != @selIndex
             @selIndex = selItem.value.visibleIndex
             # update path here?

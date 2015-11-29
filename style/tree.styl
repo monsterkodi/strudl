@@ -66,7 +66,6 @@
     outline             none
     
 .tree-value
-    // border 1px solid red
     background-color    transparent
     display             inline-block
     outline             none
@@ -90,7 +89,10 @@
     padding-left        6px
 
 .tree-value.spc
+    box-sizing          border-box
     text-align          right
+    vertical-align      top
+    padding-right       6px
 
     &.collapsed::after
         content         '►'
@@ -98,9 +100,7 @@
     &.expanded::after
         content         '▽'
     
-    &.collapsed::after
-    &.expanded::after
-        margin-right    6px
+        
 
 
     

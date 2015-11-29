@@ -6,6 +6,7 @@
 000        000   000     000     000   000
 ###
 
+_       = require 'lodash'
 log     = require './tools/log'
 Emitter = require 'events'
 
@@ -22,10 +23,13 @@ class Path extends Emitter
     
     set: (@keys) ->
 
+        keys = String(@keys[0]).split('►')
+        keys.push.apply keys, @keys.slice(1)
+
         @elem.innerHTML = ""
         odd = true
         idx = 0
-        for key in @keys
+        for key in keys
             
             oddOrEven = odd and 'odd' or 'even'
             
@@ -40,7 +44,7 @@ class Path extends Emitter
             @elem.appendChild arr
             arr.className = "pathArrow"
             arr.classList.add oddOrEven
-            arr.classList.add 'last' if idx == @keys.length-1
+            arr.classList.add 'last' if idx == keys.length-1
             arr.idx = idx
             
             odd = not odd

@@ -91,7 +91,7 @@ textarea
     top                 0
     width               100%
     
-.pathText
+.pathText 
     vertical-align      top
     box-sizing          border-box
     height              treeItemHeight
@@ -111,6 +111,25 @@ textarea
     border-left-style   solid
     margin-bottom       -2px
     cursor              pointer
+
+pathItemHeight = treeItemHeight - 2px
+
+.tree-value.key
+    .pathText
+        font-size           12px
+        margin-top 1px
+        height              pathItemHeight
+        line-height         pathItemHeight
+        padding-top         0px
+        padding-left        8px
+        padding-right       4px
+
+    .pathArrow 
+        margin-top 1px
+        border-top          (pathItemHeight / 2px) solid transparent
+        border-bottom       (pathItemHeight / 2px) solid transparent
+        border-left-width   (pathItemHeight / 2px)
+        margin-bottom       -2px
     
 /*
 *   0000000  000  0000000  00000000  00000000 

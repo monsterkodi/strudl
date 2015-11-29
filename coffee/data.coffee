@@ -25,6 +25,7 @@ class DataModel extends Model
         profile "create tree"
         @root = @createItem -1, @data, @
         @root.updateDescendants()
+        @dataRoot = @root
         profile ""
         log "#{@lastID} items"
         @trigger 'didReload'
@@ -35,6 +36,27 @@ class DataModel extends Model
                 require('CSON').parse stringData
             else
                 JSON.parse stringData
+                
+    setFilter: (key, value) ->
+        @trigger 'willReload'
+        if key and value
+            @filtered = @findPathValue key, value
+        else if key
+            @filtered = @findPath key
+        else if value
+            @filtered = @findValue value
+        else
+            @filtered = null
+            @root = @dataRoot
+            @trigger 'didReload'
+            return
+            
+        f = {}
+        for i in @filtered
+            f[i.keyPath().join '►'] = i.value
+        @root = @createItem -1, f, @
+        @root.updateDescendants()
+        @trigger 'didReload'
 
     ###
     000  000000000  00000000  00     00
@@ -82,9 +104,11 @@ class DataModel extends Model
     000       000  000   000  0000000  
     ###
 
-    findKeyValue: (key, value, item=@root) -> item.traverse (i) => @match(i.key, key) and @match(i.getValue(), value)
-    findValue:    (     value, item=@root) -> item.traverse (i) => @match(i.getValue(), value)
-    findKey:      (key,        item=@root) -> item.traverse (i) => @match(i.key, key)
+    findKeyValue: (key, value, item=@dataRoot) -> item.traverse (i) => @match(i.key, key) and @match(i.getValue(), value)
+    findValue:    (     value, item=@dataRoot) -> item.traverse (i) => @match(i.getValue(), value)
+    findKey:      (key,        item=@dataRoot) -> item.traverse (i) => @match(i.key, key)
+    findPath:     (path,       item=@dataRoot) -> item.traverse (i) => @match(i.keyPath().join('.'), path)
+    findPathValue:(path, value,item=@dataRoot) -> item.traverse (i) => @match(i.keyPath().join('.'), path) and @match(i.getValue(), value)
         
     match: (a,b) ->
         sa = String a

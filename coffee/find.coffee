@@ -14,18 +14,15 @@ class Find extends Emitter
     constructor: (@tree, @elem) ->
         @key = @getElem('input-key')
         @val = @getElem('input-val')
-        @key.on 'change', @onKeyChanged
-        @val.on 'change', @onValChanged
+        @key.on 'change', @onChanged
+        @val.on 'change', @onChanged
         @val.addEventListener 'blur', => @emit 'blur'
             
-    onKeyChanged: (event) => 
-        log 'keychange', event.target.value
-        log (@tree.data().findKey event.target.value).length
-        
-    onValChanged: (event) => 
-        log 'valchange', event.target.value    
-        log (@tree.data().findValue event.target.value).length
-    
+    onChanged: (event) => 
+        key = @key.value
+        val = @val.value
+        @tree.data().setFilter key, val
+            
     ###
     00000000  000      00000000  00     00
     000       000      000       000   000
