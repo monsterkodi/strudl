@@ -39,13 +39,13 @@ class Proxy extends Model
     data: () -> @base.data?() ? @base
             
     onWillReload:() => 
-        @trigger "willReload"
+        @emit "willReload"
         @root = null
         
     onDidReload: () => 
         if @base?
             @root = @createItem -1, @baseItem ? @base.root, @
-            @trigger "didReload"
+            @emit "didReload"
             @expand @root
                 
     newItem: (key, value, parent) -> new ProxyItem key, value, parent
@@ -66,7 +66,7 @@ class Proxy extends Model
             
     layout: (item) ->
         @root.updateCounters()
-        @trigger 'didLayout', item
+        @emit 'didLayout'
         
     ###
     00000000  0000000    000  000000000
@@ -80,21 +80,22 @@ class Proxy extends Model
         for baseItem in baseItems
             item = @itemMap[baseItem.id]
             if item?
-                @trigger "willRemove", item
-                item.parent.delChild item
+                @remove item
+                @layout()
 
     onDidInsert: (baseItems) => 
         for baseItem in baseItems
             parent = @itemMap[baseItem.parent.id]
             if parent? and (not parent.unfetched)
+                index = baseItem.parent.children.indexOf baseItem
                 item = @createItem baseItem.key, baseItem, parent
-                parent.addChild item
-                @trigger "didInsert", item
+                parent.insertChild item, index
+                @layout()
         
     onDidChange: (baseItem, oldValue) => 
         item = @itemMap[baseItem.id]
         if item?
-            @trigger "didChange", item, oldValue    
+            @emit "didChange", item, oldValue    
                         
     ###
     00000000  000   000  00000000    0000000   000   000  0000000  

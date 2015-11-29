@@ -21,7 +21,7 @@ class Find extends Emitter
     onChanged: (event) => 
         if @timer?
             clearTimeout @timer
-        @timer = setTimeout @applyFilter, 500
+        @timer = setTimeout @applyFilter, 800
         
     applyFilter: =>
         @timer = null

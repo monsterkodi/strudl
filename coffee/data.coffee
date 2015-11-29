@@ -17,7 +17,7 @@ _       = require 'lodash'
 class DataModel extends Model
 
     load: (@filePath) ->
-        @trigger 'willReload'
+        @emit 'willReload'
         if path.extname(@filePath) == '.plist'
             @data = require('simple-plist').readFileSync @filePath
         else
@@ -28,7 +28,7 @@ class DataModel extends Model
         @dataRoot = @root
         profile ""
         log "#{@lastID} items"
-        @trigger 'didReload'
+        @emit 'didReload'
 
     parseString: (stringData) ->
         switch path.extname(@filePath) 
@@ -38,7 +38,7 @@ class DataModel extends Model
                 JSON.parse stringData
                 
     setFilter: (key, value) ->
-        @trigger 'willReload'
+        @emit 'willReload'
         if key and value
             @filtered = @findPathValue key, value
         else if key
@@ -48,7 +48,7 @@ class DataModel extends Model
         else
             @filtered = null
             @root = @dataRoot
-            @trigger 'didReload'
+            @emit 'didReload'
             return
             
         f = {}
@@ -56,7 +56,7 @@ class DataModel extends Model
             f[i.keyPath().join '►'] = i.value
         @root = @createItem -1, f, @
         @root.updateDescendants()
-        @trigger 'didReload'
+        @emit 'didReload'
 
     ###
     000  000000000  00000000  00     00
@@ -107,8 +107,11 @@ class DataModel extends Model
     findKeyValue: (key, value, item=@dataRoot) -> item.traverse (i) => @match(i.key, key) and @match(i.getValue(), value)
     findValue:    (     value, item=@dataRoot) -> item.traverse (i) => @match(i.getValue(), value)
     findKey:      (key,        item=@dataRoot) -> item.traverse (i) => @match(i.key, key)
-    findPath:     (path,       item=@dataRoot) -> item.traverse (i) => @match(i.keyPath().join('.'), path)
-    findPathValue:(path, value,item=@dataRoot) -> item.traverse (i) => @match(i.keyPath().join('.'), path) and @match(i.getValue(), value)
+    findPath:     (path,       item=@dataRoot) -> item.traverse (i) => @matchPath(i.keyPath(), path)
+    findPathValue:(path, value,item=@dataRoot) -> item.traverse (i) => @matchPath(i.keyPath(), path) and @match(i.getValue(), value)
+    
+    matchPath: (a, p) ->
+        @match a.join('.'), p
         
     match: (a,b) ->
         sa = String a

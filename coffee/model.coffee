@@ -6,14 +6,12 @@
 000   000   0000000   0000000    00000000  0000000
 ###
 
-Events = require 'backbone-events-standalone'
-Item   = require './item'
-log    = require './tools/log'
+Emitter = require 'events'
+Item    = require './item'
+log     = require './tools/log'
 
-class Model
+class Model extends Emitter
         
-    Events.mixin Model.prototype
-    
     constructor: (@name='model') -> @lastID = -1
 
     nextID: -> @lastID += 1
@@ -43,15 +41,16 @@ class Model
         if item.type == Item.valueType
             oldValue = item.value
             item.value = value
-            @trigger 'didChange', item, oldValue
+            @emit 'didChange', item, oldValue
         
     remove: (item) ->
-        @trigger 'willRemove', [item]
+        log 'will remove'
+        @emit 'willRemove', [item]
         item.parent.delChild item
         @root.updateDescendants()
         
     insert: (parent, key, value) ->
         @root.updateDescendants()
-        @trigger 'didInsert', [parent.childAt [key]]
+        @emit 'didInsert', [parent.childAt [key]]
                             
 module.exports = Model

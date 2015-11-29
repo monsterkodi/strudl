@@ -63,19 +63,20 @@ class ViewItem extends ProxyItem
             @elm.addEventListener 'blur', @onBlur
             @elm.addEventListener 'focus', @onFocus
             
-            split = String(@key).split '►'
+            @split = String(@key).split '►'
             
             key = document.createElement 'span'
             key.addEventListener 'click', @onClick            
             key.className = "tree-value key " + @typeName().toLowerCase()
             
-            if split.length == 1
+            if @split.length == 1
                 key.innerHTML = @key
                 if @parent.type == Item.arrayType
                     @addClass 'array-index', key
             else
                 @pth = new Path key
-                @pth.set split
+                @pth.set @split
+                @pth.on 'keypath', @onKeyPath
                 
             @elm.appendChild key
             
@@ -148,7 +149,7 @@ class ViewItem extends ProxyItem
     
     delChild: (child) ->
         child.removeElement()
-        super
+        super 
     
     nextItem: () -> @parent.children[@indexInParent()+1]
     prevItem: () -> @parent.children[@indexInParent()-1]
@@ -168,6 +169,10 @@ class ViewItem extends ProxyItem
             @toggle()
         @select event
         event.stopPropagation()
+    
+    onKeyPath: (keypath) => 
+        # log 'onKeyPath', keypath.join '.'
+        @model().data().setFilter keypath.join '.'
         
     ###
      0000000   0000000  00000000    0000000   000      000    

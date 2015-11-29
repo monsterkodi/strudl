@@ -133,6 +133,7 @@ class View extends Proxy
     selectedItem: -> @closestItemForVisibleIndex @selIndex
     
     selectIndex: (index) ->
+        log 'selectIndex', index
         @selIndex = index
         @selIndex = Math.max(0, Math.min @selIndex, @numVisibleLines()-1)
         @keyPath.set @base.visibleItems[@selIndex].dataItem().keyPath()
@@ -173,7 +174,7 @@ class View extends Proxy
 
         @topIndex = parseInt @scroll / @lineHeight
         @botIndex = Math.min(@topIndex + viewLines - 1, numLines-1)
-
+        
         if @selIndex < @topIndex
             @topIndex = @selIndex
             @botIndex = Math.min(@topIndex + viewLines - 1, numLines-1)
@@ -185,7 +186,7 @@ class View extends Proxy
             @topIndex = Math.max(0, @topIndex)
             @botIndex = Math.min(@topIndex + viewLines - 1, numLines-1)
             @scroll = @topIndex * @lineHeight
-                
+            
         @root.children = []
         @root.keyIndex = {}
                 
@@ -207,9 +208,13 @@ class View extends Proxy
             selItem.focus()
         else
             selItem.ownClass "selected", selItem.lin
+            
         if selItem.value.visibleIndex != @selIndex
             @selIndex = selItem.value.visibleIndex
-            # update path here?
+            
+        keypath = @base.visibleItems[@selIndex].dataItem().keyPath()
+        if @keyPath.key != keypath
+            @keyPath.set keypath
                 
         @tree.children[1].scrollLeft = selItem.elm.scrollWidth - @tree.children[1].clientWidth
                 
@@ -269,8 +274,8 @@ class View extends Proxy
         
         if @selIndex < 0
             @selectIndex 0
-        else if @selIndex >= @numViewLines()
-            @selectIndex @numViewLines() - 1 
+        else if @selIndex >= @numVisibleLines()
+            @selectIndex @numVisibleLines() - 1 
         else
             @update()
             
@@ -284,7 +289,7 @@ class View extends Proxy
     000     000     000       000 0 000
     000     000     00000000  000   000
     ###
-        
+                
     newItem: (key, value, parent) -> new ViewItem key, value, parent     
     partiallyVisible: (item) -> (item.key.offsetTop + item.key.offsetHeight) > @viewHeight()
     
@@ -297,7 +302,10 @@ class View extends Proxy
             for item in @root.children
                 if item.value.visibleIndex == index
                     return item
-        
+    
+    onWillRemove: (item) =>
+    onDidInsert: (baseItems) => @update()
+            
     ###
     00000000  000      00000000  00     00
     000       000      000       000   000

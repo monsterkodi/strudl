@@ -100,6 +100,9 @@ class Item
                 @children.length
             when Item.arrayType  
                 parseInt(child.key)
+        @insertChild child, index
+        
+    insertChild: (child, index) ->
 
         if index == @children.length
             @children.push child

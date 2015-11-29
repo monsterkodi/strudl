@@ -78,6 +78,6 @@ gulp.task 'app', ->
 
 gulp.task 'default', ->
                 
-    gulp.watch ['win.coffee', 'app.coffee','coffee/**/*.coffee'], ['salt', 'coffee']
-    gulp.watch 'style/*.styl', ['salt', 'style']
+    gulp.watch ['win.coffee', 'app.coffee','coffee/**/*.coffee'], ['coffee']
+    gulp.watch 'style/*.styl', ['style']
     gulp.watch '*.jade', ['jade']
