@@ -6,6 +6,7 @@
 000   000  000   000  000  000   000  000   000  00000000  000   000   0000000 
 ###
 
+fs    = require 'fs'
 Menu  = require 'menu'
 prefs = require './tools/prefs'
 log   = require './tools/log'
@@ -16,9 +17,10 @@ class MainMenu
     
         recent = []
         for f in prefs.load().recent
-            recent.push 
-                label: f
-                click: (i) -> main.loadFile i.label
+            if fs.existsSync f
+                recent.push 
+                    label: f
+                    click: (i) -> main.loadFile i.label
             
         Menu.setApplicationMenu Menu.buildFromTemplate [
             

@@ -6,9 +6,10 @@
 0000000     0000000    0000000  000   000  000   000  00000000  000   000   0000000 
 ###
 
+fs    = require 'fs'
+app   = require 'app'
+Menu  = require 'menu'
 prefs = require './tools/prefs'
-Menu = require 'menu'
-app  = require 'app'
 
 class DockMenu 
     
@@ -16,9 +17,10 @@ class DockMenu
         
         recent = []
         for f in prefs.load().recent
-            recent.push 
-                label: f
-                click: (i) -> main.loadFile i.label
+            if fs.existsSync f
+                recent.push 
+                    label: f
+                    click: (i) -> main.loadFile i.label
         
         app.dock.setMenu Menu.buildFromTemplate [
             

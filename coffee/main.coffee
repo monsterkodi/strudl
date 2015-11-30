@@ -53,16 +53,13 @@ class Main
         
     loadPreferences: ->
         
+        app.clearRecentDocuments()
+        
         p = prefs.load()
-
-        for f in  p.recent
-            app.addRecentDocument f
-                    
+                            
         for f in p.open
             @loadFile f
         
-        # app.clearRecentDocuments()
-            
     ###
     00000000  000  000      00000000
     000       000  000      000     
@@ -142,12 +139,14 @@ class Main
     ###
     
     beforeQuit: ->
+        app.clearRecentDocuments()
         @saveBounds()
         for k, w of @wins
             w.removeAllListeners 'close'
         
     quit: ->
         log 'quit'
+        app.clearRecentDocuments()
         app.quit()
 
 module.exports = Main
