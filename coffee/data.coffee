@@ -110,7 +110,7 @@ class DataModel extends Model
         s = s.replace /\*\*/g, '^^'
         s = s.replace /\*/g, '[^.]*'
         s = s.replace /\^\^/g, '.*'
-        log s
+        # log s
         new RegExp "^"+s+"$"
 
     findKeyValue: (key, val, item=@dataRoot) -> 
@@ -131,8 +131,7 @@ class DataModel extends Model
         valReg = @reg val         
         item.traverse (i) => @matchPath(i.keyPath(), pthReg) and @match(i.getValue(), valReg)
     
-    matchPath: (a, r) ->
-        @match a.join('.'), r
+    matchPath: (a, r) -> @match a.join('.'), r
         
     match: (a,r) ->
         if not _.isArray(a)
