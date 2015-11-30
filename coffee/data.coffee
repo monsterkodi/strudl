@@ -114,11 +114,14 @@ class DataModel extends Model
         @match a.join('.'), p
         
     match: (a,b) ->
-        sa = String a
-        sb = String b
+        if _.isString(a) or _.isNumber(a)
+            sa = String a
+            sb = String b
 
-        sb = sb.replace /\*/g, '.*'
-        sb = "^"+sb+"$"
-        sa.match(new RegExp(sb))?.length
+            sb = sb.replace /\*/g, '.*'
+            sb = "^"+sb+"$"
+            sa.match(new RegExp(sb))?.length
+        else
+            false
 
 module.exports = DataModel

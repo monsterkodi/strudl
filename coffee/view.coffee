@@ -73,7 +73,7 @@ class View extends Proxy
     viewHeight: -> document.getElementById('container').offsetHeight - document.getElementById('path').offsetHeight  - document.getElementById('find').offsetHeight
     numViewLines: -> Math.ceil(@viewHeight() / @lineHeight)
     numFullLines: -> Math.floor(@viewHeight() / @lineHeight)
-    numVisibleLines: -> @base.root.numVisible
+    numVisibleLines: -> @base.root?.numVisible or 0
 
     ###
      0000000   0000000  00000000    0000000   000      000    
@@ -134,9 +134,10 @@ class View extends Proxy
     
     selectIndex: (index) ->
         log 'selectIndex', index
-        @selIndex = index
-        @selIndex = Math.max(0, Math.min @selIndex, @numVisibleLines()-1)
-        @keyPath.set @base.visibleItems[@selIndex].dataItem().keyPath()
+        if index >= 0
+            @selIndex = index
+            @selIndex = Math.max(0, Math.min @selIndex, @numVisibleLines()-1)
+            @keyPath.set @base.visibleItems[@selIndex].dataItem().keyPath()
         @update()
     
     selectDelta: (lineDelta) -> @selectIndex @selIndex + lineDelta
@@ -172,7 +173,7 @@ class View extends Proxy
         @treeHeight = numLines * @lineHeight
         @linesHeight = viewLines * @lineHeight
 
-        @topIndex = parseInt @scroll / @lineHeight
+        @topIndex = parseInt @scroll / @lineHeight    
         @botIndex = Math.min(@topIndex + viewLines - 1, numLines-1)
         
         if @selIndex < @topIndex
@@ -187,36 +188,42 @@ class View extends Proxy
             @botIndex = Math.min(@topIndex + viewLines - 1, numLines-1)
             @scroll = @topIndex * @lineHeight
             
-        @root.children = []
-        @root.keyIndex = {}
-                
         for child in @tree.children
             child.innerHTML = "" # proper destruction needed?
             
-        for i in [@topIndex..@botIndex]
-            baseItem = @base.visibleItems[i]
-            @root.keyIndex[baseItem.key] = numLines
-            item = @createItem baseItem.key, baseItem, @root
-            @root.children.push item
-            item.createElement()     
+        if numLines
+            @root.children = []
+            @root.keyIndex = {}
+                                                                
+            for i in [@topIndex..@botIndex]
+                baseItem = @base.visibleItems[i]
+                @root.keyIndex[baseItem.key] = numLines
+                item = @createItem baseItem.key, baseItem, @root
+                @root.children.push item
+                item.createElement()     
                 
-        @updateSize()
-        @updateScroll()
+            @updateSize()
+            @updateScroll()
+                    
+            selItem = @closestItemForVisibleIndex @selIndex
+            if setFocus 
+                selItem.focus()
+            else
+                selItem.ownClass "selected", selItem.lin
                 
-        selItem = @closestItemForVisibleIndex @selIndex
-        if setFocus 
-            selItem.focus()
+            if selItem.value.visibleIndex != @selIndex
+                @selIndex = selItem.value.visibleIndex
+                
+            keypath = @base.visibleItems[@selIndex].dataItem().keyPath()
+            if @keyPath.key != keypath
+                @keyPath.set keypath
+                    
+            @tree.children[1].scrollLeft = selItem.elm.scrollWidth - @tree.children[1].clientWidth
         else
-            selItem.ownClass "selected", selItem.lin
-            
-        if selItem.value.visibleIndex != @selIndex
-            @selIndex = selItem.value.visibleIndex
-            
-        keypath = @base.visibleItems[@selIndex].dataItem().keyPath()
-        if @keyPath.key != keypath
-            @keyPath.set keypath
-                
-        @tree.children[1].scrollLeft = selItem.elm.scrollWidth - @tree.children[1].clientWidth
+            @keyPath.set []
+            @scroll = 0
+            @treeHeight = @lineHeight
+            @updateScroll()
                 
         profile "" if doProfile
         
@@ -302,7 +309,7 @@ class View extends Proxy
             for item in @root.children
                 if item.value.visibleIndex == index
                     return item
-    
+            
     onWillRemove: (item) =>
     onDidInsert: (baseItems) => @update()
             
