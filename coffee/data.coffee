@@ -37,12 +37,12 @@ class DataModel extends Model
             else
                 JSON.parse stringData
                 
-    setFilter: (key, value) ->
+    setFilter: (path, value) ->
         @emit 'willReload'
-        if key and value
-            @filtered = @findPathValue key, value
-        else if key
-            @filtered = @findPath key
+        if path and value
+            @filtered = @findPathValue path, value
+        else if path
+            @filtered = @findPath path
         else if value
             @filtered = @findValue value
         else
@@ -104,23 +104,40 @@ class DataModel extends Model
     000       000  000   000  0000000  
     ###
 
-    findKeyValue: (key, value, item=@dataRoot) -> item.traverse (i) => @match(i.key, key) and @match(i.getValue(), value)
-    findValue:    (     value, item=@dataRoot) -> item.traverse (i) => @match(i.getValue(), value)
-    findKey:      (key,        item=@dataRoot) -> item.traverse (i) => @match(i.key, key)
-    findPath:     (path,       item=@dataRoot) -> item.traverse (i) => @matchPath(i.keyPath(), path)
-    findPathValue:(path, value,item=@dataRoot) -> item.traverse (i) => @matchPath(i.keyPath(), path) and @match(i.getValue(), value)
-    
-    matchPath: (a, p) ->
-        @match a.join('.'), p
-        
-    match: (a,b) ->
-        if _.isString(a) or _.isNumber(a)
-            sa = String a
-            sb = String b
+    reg: (s) -> 
+        s = s.replace /([^.]+\|[^.]+)/g, '($1)'
+        s = s.replace /\./g, '\\.'
+        s = s.replace /\*\*/g, '^^'
+        s = s.replace /\*/g, '[^.]*'
+        s = s.replace /\^\^/g, '.*'
+        log s
+        new RegExp "^"+s+"$"
 
-            sb = sb.replace /\*/g, '.*'
-            sb = "^"+sb+"$"
-            sa.match(new RegExp(sb))?.length
+    findKeyValue: (key, val, item=@dataRoot) -> 
+        keyReg = @reg key 
+        valReg = @reg val 
+        item.traverse (i) => @match(i.key, keyReg) and @match(i.getValue(), valReg)
+    findValue:    (     val, item=@dataRoot) -> 
+        valReg = @reg val         
+        item.traverse (i) => @match(i.getValue(), valReg)
+    findKey:      (key,      item=@dataRoot) -> 
+        keyReg = @reg key 
+        item.traverse (i) => @match(i.key, keyReg)
+    findPath:     (path,     item=@dataRoot) -> 
+        pthReg = @reg path
+        item.traverse (i) => @matchPath(i.keyPath(), pthReg)
+    findPathValue:(path, val,item=@dataRoot) -> 
+        pthReg = @reg path
+        valReg = @reg val         
+        item.traverse (i) => @matchPath(i.keyPath(), pthReg) and @match(i.getValue(), valReg)
+    
+    matchPath: (a, r) ->
+        @match a.join('.'), r
+        
+    match: (a,r) ->
+        if not _.isArray(a)
+            sa = String a
+            sa.match(r)?.length
         else
             false
 
