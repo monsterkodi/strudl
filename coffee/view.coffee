@@ -44,7 +44,9 @@ class View extends Proxy
         @keyPath.on 'keypath', @onKeyPath
         
         @find = new Find @, document.getElementById 'find'
-        @find.on 'blur', => setTimeout @focusSelected, 1
+        @find.on 'blur', @refocus
+        @find.on 'hidden', @refocus
+        @find.elem.style.display = 'none'
         
         tmp = document.createElement 'div'
         tmp.className = 'tree-item'
@@ -133,11 +135,9 @@ class View extends Proxy
     selectedItem: -> @closestItemForVisibleIndex @selIndex
     
     selectIndex: (index) ->
-        log 'selectIndex', index
-        if index >= 0
-            @selIndex = index
-            @selIndex = Math.max(0, Math.min @selIndex, @numVisibleLines()-1)
-            @keyPath.set @base.visibleItems[@selIndex].dataItem().keyPath()
+        @selIndex = index
+        @selIndex = Math.max(0, Math.min @selIndex, @numVisibleLines()-1)
+        @keyPath.set @base.visibleItems[@selIndex]?.dataItem().keyPath()
         @update()
     
     selectDelta: (lineDelta) -> @selectIndex @selIndex + lineDelta
@@ -149,7 +149,7 @@ class View extends Proxy
     onKeyPath: (keypath) => @selectIndex @base.itemAt(keypath).visibleIndex
         
     focusSelected: () => 
-        if document.activeElement == document.body
+        if not document.activeElement.classList.contains 'tree-item'
             @selectedItem().focus()        
         
     ###
@@ -161,7 +161,7 @@ class View extends Proxy
     ###
         
     update: ->
-
+        
         doProfile = false
         numLines  = @numVisibleLines()
         viewLines = @numViewLines()
@@ -278,9 +278,9 @@ class View extends Proxy
         true
 
     onDidLayout: (baseItem) => 
-        
         if @selIndex < 0
             @selectIndex 0
+            @root.children[0]?.focus()
         else if @selIndex >= @numVisibleLines()
             @selectIndex @numVisibleLines() - 1 
         else
@@ -324,6 +324,25 @@ class View extends Proxy
     getWidth: (e) -> parseInt(window.getComputedStyle(e).width)
     setWidth: (e,w) -> e.style.width = "#{w}px"
     getElem: (clss,e=@tree) -> e.getElementsByClassName(clss)[0]        
+            
+    ###
+    00000000  000  000   000  0000000  
+    000       000  0000  000  000   000
+    000000    000  000 0 000  000   000
+    000       000  000  0000  000   000
+    000       000  000   000  0000000  
+    ###
+    
+    startFind: ->
+        if @find.elem.style.display == 'none'
+            @find.show()
+            @update()
+        @find.key.focus()
+        
+    refocus: =>
+        if not document.activeElement.classList.contains 'tree-item'
+            log 'focus selected'
+            setTimeout @focusSelected, 1
                             
     ###
     000   000  00000000  000   000  0000000     0000000   000   000  000   000
@@ -337,6 +356,8 @@ class View extends Proxy
                 
         keycode = keyname.keycode event
         switch keycode
+            when 'f' 
+                if event.metaKey then @startFind()
             when 'left', 'right'
                 if event.metaKey and event.altKey
                     if keycode == 'left'
@@ -352,14 +373,16 @@ class View extends Proxy
             when 'down' then @selectDown event
             when 'page up', 'page down'
                 n = event.shiftKey and @numVisibleLines() or @numViewLines()
-                @scrollLines(keycode == 'page up' and -n or n)
+                delta = keycode == 'page up' and -n or n
+                log 'delta', delta
+                @selectDelta delta
                 first = _.first @root.children
                 last  = _.last @root.children
                 if last.value.visibleIndex == @numVisibleLines()-1
                     last.select()
                 else
                     first.select()
-            # else
-            #     log keycode
+            else
+                log keycode
         
 module.exports = View

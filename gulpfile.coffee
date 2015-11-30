@@ -39,7 +39,6 @@ gulp.task 'jade', ->
         
 gulp.task 'salt', ->
     gulp.src ['win.coffee', 'app.coffee', 'coffee/**/*.coffee', 'style/*.styl'], base: '.'
-        .pipe inplace()
         .pipe debug title: 'salt'
         .pipe salt()
         .pipe gulp.dest '.'

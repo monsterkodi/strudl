@@ -22,6 +22,7 @@ class Path extends Emitter
         @emit 'keypath', @keys.slice(0,idx+1) if idx?
     
     set: (@keys) ->
+        @keys = [] if not @keys?
         @elem.innerHTML = ""
         if @keys.length
             keys = String(@keys[0]).split('►')
