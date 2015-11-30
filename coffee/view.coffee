@@ -333,11 +333,13 @@ class View extends Proxy
     000       000  000   000  0000000  
     ###
     
-    startFind: ->
-        if @find.elem.style.display == 'none'
-            @find.show()
-            @update()
+    findPath: ->
+        @update() if @find.show()
         @find.key.focus()
+
+    findValue: ->
+        @update() if @find.show()
+        @find.val.focus()
         
     refocus: =>
         if not document.activeElement.classList.contains 'tree-item'
@@ -356,8 +358,8 @@ class View extends Proxy
                 
         keycode = keyname.keycode event
         switch keycode
-            when 'f' 
-                if event.metaKey then @startFind()
+            # when 'f' 
+            #     if event.metaKey then @findPath()
             when 'left', 'right'
                 if event.metaKey and event.altKey
                     if keycode == 'left'

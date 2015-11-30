@@ -30,20 +30,29 @@ class Find extends Emitter
         keycode = keyname.keycode event
         switch keycode
             when 'esc'
-                @val.value = ''
-                @key.value = ''
-                @applyFilter()
-                @hide()
+                @clear()
             when 'enter'
                 @applyFilter()
             when 'down'
                 @emit 'blur'
             # else log 'keycode', keycode
             
-    show: -> @elem.style.display = 'block'
+    show: -> 
+        if @elem.style.display == 'none' 
+            @elem.style.display = 'block'
+            true
+
     hide: -> 
-        @elem.style.display = 'none'
-        @emit 'hidden'
+        if @elem.style.display == 'block' 
+            @elem.style.display = 'none'
+            @emit 'hidden'
+            true
+
+    clear: ->
+        @val.value = ''
+        @key.value = ''
+        @applyFilter()
+        @hide()
     
     onInput: (event) => 
         if @timer?

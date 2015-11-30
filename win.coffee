@@ -29,6 +29,10 @@ view    = null
 win.on 'reloadFile', -> 
     log 'reload file', win.filePath
     loadFile win.filePath
+    
+win.on 'findPath',  -> view.findPath()
+win.on 'findValue', -> view.findValue()
+win.on 'clearFind', -> view.find.clear()
 
 loadFile = (p) ->
     

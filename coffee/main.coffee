@@ -124,7 +124,6 @@ class Main
     ###
     
     saveBounds: ->
-        log 'save bounds'
         bounds = prefs.get 'windows'
         for k, w of @wins
             bounds[k] = w.getBounds()
@@ -145,7 +144,6 @@ class Main
             w.removeAllListeners 'close'
         
     quit: ->
-        log 'quit'
         app.clearRecentDocuments()
         app.quit()
 

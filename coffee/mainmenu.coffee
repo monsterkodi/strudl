@@ -69,9 +69,28 @@ class MainMenu
                 accelerator: 'CmdOrCtrl+R'
                 click: (i,win) -> win?.reload()
             ]
-        # , 
-        #     label: 'Edit'
-        #     submenu: []
+        ,
+            ###
+            00000000  000  000   000  0000000  
+            000       000  0000  000  000   000
+            000000    000  000 0 000  000   000
+            000       000  000  0000  000   000
+            000       000  000   000  0000000  
+            ###
+            label: 'Find'
+            submenu: [
+                label: 'Find Path'
+                accelerator: 'CmdOrCtrl+F'
+                click: (i,win) -> win.emit 'findPath'
+            ,
+                label: 'Find Value'
+                accelerator: 'CmdOrCtrl+G'
+                click: (i,win) -> win.emit 'findValue'
+            ,
+                label: 'Clear Find'
+                accelerator: 'CmdOrCtrl+K'
+                click: (i,win) -> win.emit 'clearFind'
+            ]
         ,        
             label: 'View'
             role: 'view'
