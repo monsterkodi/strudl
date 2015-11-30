@@ -1,1 +1,1 @@
-![strudl](https://raw.githubusercontent.com/monsterkodi/strudl/master/img/strudl.png)
+![strudl](https://raw.githubusercontent.com/monsterkodi/strudl/master/img/info.png)
