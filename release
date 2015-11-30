@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+echo gulp bump
+gulp bump
+APP=`sds package.json -k "name" -r`
+VER=`sds package.json -k "version" -r`
+echo build $APP v$VER
+RES="./$APP.app/Contents/Resources/app"
+echo rm app
+rm -rf app
+rm -rf "$APP.app"
+echo gulp release
+gulp release
+echo mv app
+mv app/"$APP.app" .
+echo done releasing $APP v$VER

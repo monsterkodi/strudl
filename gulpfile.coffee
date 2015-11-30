@@ -7,6 +7,7 @@ salt     = require 'gulp-salt'
 jade     = require 'gulp-jade'
 gutil    = require 'gulp-util'
 debug    = require 'gulp-debug'
+bump     = require 'gulp-bump'
 source   = require 'gulp-sourcemaps'
 symdest  = require 'gulp-symdest'
 changed  = require 'gulp-changed'
@@ -43,6 +44,11 @@ gulp.task 'salt', ->
         .pipe salt()
         .pipe gulp.dest '.'
 
+gulp.task 'bump', ->
+    gulp.src('./package.json')
+        .pipe bump()
+        .pipe gulp.dest '.'
+
 gulp.task 'clean', ->
     del [
         'js'
@@ -53,13 +59,16 @@ gulp.task 'clean', ->
         '!style/font-awesome.css'
     ]
 
-gulp.task 'package', ['style', 'coffee', 'app']
+gulp.task 'package', ['style', 'coffee', 'bump', 'debugapp']
+gulp.task 'release', ['style', 'coffee', 'bump', 'app']
 
-gulp.task 'app', ->
-    
+gulp.task 'app',      -> buildapp ['./package.json', './win.html', './js/**', './style/**', './lib/**', './node_modules/**']
+gulp.task 'debugapp', -> buildapp ['./package.json', './win.html', './js/**', './style/**', './lib/**']
+
+buildapp = (files) ->    
     #electron.dest 'electron-build', { version: '0.35.1', platform: 'darwin' }
 
-    gulp.src ['./package.json', './win.html', './js/**', './style/**', './lib/**'], base: '.'
+    gulp.src files, base: '.'
         .pipe debug()
         .pipe electron 
             name: 'Strudl'

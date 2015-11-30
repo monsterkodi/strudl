@@ -1,0 +1,21 @@
+'it is': 'a structured data viewer'
+what:
+    is:
+        'strudl?': 'in more detail?'
+it:
+    reads:
+        formats: ['json', 'cson', 'plist']
+    filters: 
+            'key paths': '**.bla.blub.*'
+            'values': 'or'
+            'both': ''
+    is: 
+        'pretty': 'fast'
+        'built on': [
+            'osx'
+            'node'
+            'electron'
+        ]
+        'and still in development': 'pre-alpha'
+        
+            
