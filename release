@@ -14,5 +14,6 @@ echo mv app
 mv "app/$APP.app" bin
 rm -rf app
 echo tar app
-tar czf "bin/$APP.app.tgz" "bin/$APP.app"
+cd bin
+tar czf "$APP.app.tgz" "$APP.app"
 echo done $APP v$VER

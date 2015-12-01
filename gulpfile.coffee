@@ -71,8 +71,8 @@ gulp.task 'clean', ->
         '!style/font-awesome.css'
     ]
 
-gulp.task 'package', ['style', 'coffee', 'bump', 'debugapp']
-gulp.task 'release', ['style', 'coffee', 'bump', 'app']
+gulp.task 'package', ['style', 'coffee', 'debugapp']
+gulp.task 'release', ['style', 'coffee', 'app']
 
 gulp.task 'app',      -> buildapp ['./package.json', './win.html', './js/**', './style/**', './lib/**', './node_modules/**']
 gulp.task 'debugapp', -> buildapp ['./package.json', './win.html', './js/**', './style/**', './lib/**']
