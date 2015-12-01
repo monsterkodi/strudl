@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-#release
 git add .
 git commit -m "version `sds package.json -k version -f "#v"`" 
-git push 
+git push
+gulp release
 npm publish
