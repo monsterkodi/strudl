@@ -34,6 +34,8 @@ class DataModel extends Model
         switch path.extname(@filePath) 
             when '.cson'
                 require('CSON').parse stringData
+            when '.yml'
+                require('js-yaml').safeLoad stringData
             else
                 JSON.parse stringData
                 

@@ -107,7 +107,7 @@ class Main
 
         p = dialog.showOpenDialog
             properties: [ 'openFile']
-            filters:    [ name: 'data', extensions: ['json', 'cson', 'plist'] ]
+            filters:    [ name: 'data', extensions: ['json', 'cson', 'plist', 'yml'] ]
             properties: [ 'openFile', 'multiSelections' ]
             
         if p?.length?

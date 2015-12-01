@@ -76,10 +76,10 @@ buildapp = (files) ->
             version: '0.35.1'
             platform: 'darwin'
             darwinIcon: 'img/strudl.icns'
-            extensions: ['json', 'cson', 'plist']
+            extensions: ['json', 'cson', 'plist', 'yml']
             darwinBundleDocumentTypes: [
                 name: 'Strudl'
-                extensions: ['json', 'cson', 'plist']
+                extensions: ['json', 'cson', 'plist', 'yml']
                 iconFile: 'img/file.icns'
             ]
         .pipe symdest 'app'
