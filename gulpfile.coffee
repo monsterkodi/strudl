@@ -101,6 +101,7 @@ buildapp = (files) ->
 
 gulp.task 'default', ->
                 
-    gulp.watch ['win.coffee', 'app.coffee','coffee/**/*.coffee', 'bin/*.coffee'], ['coffee']
+    gulp.watch ['win.coffee', 'app.coffee','coffee/**/*.coffee'], ['coffee']
+    gulp.watch ['bin/*.coffee'], ['bin']
     gulp.watch 'style/*.styl', ['style']
     gulp.watch '*.jade', ['jade']
