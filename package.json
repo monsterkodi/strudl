@@ -39,6 +39,7 @@
     "gulp-debug": "^2.1.2",
     "gulp-grunt": "^0.5.3",
     "gulp-jade": "^1.1.0",
+    "gulp-pepper": "^0.1.1",
     "gulp-run": "^1.6.11",
     "gulp-salt": "^0.1.4",
     "gulp-sourcemaps": "^1.6.0",

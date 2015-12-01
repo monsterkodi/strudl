@@ -81,15 +81,15 @@ class MainMenu
             submenu: [
                 label: 'Find Path'
                 accelerator: 'CmdOrCtrl+F'
-                click: (i,win) -> win.emit 'findPath'
+                click: (i,win) -> win?.emit 'findPath'
             ,
                 label: 'Find Value'
                 accelerator: 'CmdOrCtrl+G'
-                click: (i,win) -> win.emit 'findValue'
+                click: (i,win) -> win?.emit 'findValue'
             ,
                 label: 'Clear Find'
                 accelerator: 'CmdOrCtrl+K'
-                click: (i,win) -> win.emit 'clearFind'
+                click: (i,win) -> win?.emit 'clearFind'
             ]
         ,        
             label: 'View'
