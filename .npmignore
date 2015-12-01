@@ -1,0 +1,9 @@
+data
+test
+img
+electron*
+prefs.json
+*.app
+*.tgz
+*.coffee
+strudl.log

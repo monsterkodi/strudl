@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-node "`dirname $0`/strudl.js" $*
+node "`dirname $0`/../lib/node_modules/strudl/bin/strudl.js" $*

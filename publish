@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+gulp bump
+git add .
+git commit -m "version `sds package.json -k version -f "#v"`" 
+git push 
+npm publish
