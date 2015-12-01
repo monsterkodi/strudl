@@ -376,7 +376,7 @@ class View extends Proxy
             when 'page up', 'page down'
                 n = event.shiftKey and @numVisibleLines() or @numViewLines()
                 delta = keycode == 'page up' and -n or n
-                log 'delta', delta
+                dbg delta
                 @selectDelta delta
                 first = _.first @root.children
                 last  = _.last @root.children

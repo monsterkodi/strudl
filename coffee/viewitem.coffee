@@ -214,7 +214,7 @@ class ViewItem extends ProxyItem
         @root().elem.focus()
         
     select: ->
-        log 'viewitem.select', @value.visibleIndex
+        dbg @value.visibleIndex
         @model().selectIndex @value.visibleIndex
         
     onBlur: => @clrClass 'focus'

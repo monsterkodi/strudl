@@ -3,6 +3,7 @@ gulp     = require 'gulp'
 del      = require 'del'
 stylus   = require 'gulp-stylus'
 coffee   = require 'gulp-coffee'
+pepper   = require 'gulp-pepper'
 salt     = require 'gulp-salt'
 jade     = require 'gulp-jade'
 gutil    = require 'gulp-util'
@@ -21,6 +22,10 @@ gulp.task 'coffee', ->
         .pipe changed 'js/', extension: '.js'
         .pipe debug title: 'coffee'
         .pipe source.init()
+        .pipe pepper
+            stringify: (info) -> '"'+info.class + info.type + info.method + ' ► "'
+            paprika: 
+                dbg: 'log'
         .pipe coffee(bare: true).on('error', onError)
         .pipe source.write('./')
         .pipe gulp.dest 'js/'

@@ -27,9 +27,9 @@ class Main
         app.on 'ready', @onReady
         app.on 'open-file', (e,p) -> prefs.one 'open', p
         app.on 'before-quit'          , -> Main.app.beforeQuit()
-        app.on 'will-quit'            , -> log 'on will-quit'
-        app.on 'quit'                 , -> log 'on quit'
-        app.on 'window-all-closed'    , -> log 'on window-all-closed'
+        app.on 'will-quit'            , -> 
+        app.on 'quit'                 , -> 
+        app.on 'window-all-closed'    , -> 
         app.on 'will-finish-launching', -> 
 
     onReady: =>

@@ -36,16 +36,15 @@ win.on 'clearFind', -> view.find.clear()
 
 loadFile = (p) ->
     
-    log 'on loadFile', path
     data = new Data()
     prxy = new Proxy data
     view = new View prxy, document.getElementById 'tree'
         
-    log "\nloading data from file #{p}" 
+    log p
     data.load p  
     
     win.setRepresentedFilename p
-    app.addRecentDocument p
+
     title = path.basename p
     win.setTitle title
 

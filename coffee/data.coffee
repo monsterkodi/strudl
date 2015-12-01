@@ -17,12 +17,13 @@ _       = require 'lodash'
 class DataModel extends Model
 
     load: (@filePath) ->
+        dbg @filePath
         @emit 'willReload'
         if path.extname(@filePath) == '.plist'
             @data = require('simple-plist').readFileSync @filePath
         else
             @data = @parseString fs.readFileSync @filePath
-        profile "create tree"
+        profile "create tree" 
         @root = @createItem -1, @data, @
         @root.updateDescendants()
         @dataRoot = @root
