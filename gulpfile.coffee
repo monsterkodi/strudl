@@ -13,6 +13,7 @@ source   = require 'gulp-sourcemaps'
 symdest  = require 'gulp-symdest'
 changed  = require 'gulp-changed'
 inplace  = require 'gulp-changed-in-place'
+release  = require 'gulp-github-release'
 electron = require 'gulp-atom-electron'
  
 onError = (err) -> gutil.log err
@@ -66,13 +67,22 @@ gulp.task 'clean', ->
         '*.log'
         'bin/strudl.js'
         'bin/strudl.app'
-        'bin/strudl.tgz'
+        'bin/strudl.app.tgz'
         'style/*.css'
         '!style/font-awesome.css'
     ]
 
-gulp.task 'package', ['style', 'coffee', 'debugapp']
-gulp.task 'release', ['style', 'coffee', 'app']
+gulp.task 'release', ->
+    gulp.src './bin/strudl.app.tgz'
+        .pipe release
+            #token: 'token', # or you can set an env var called GITHUB_TOKEN instead 
+            repo: 'strudl'
+            owner: 'monsterkodi'
+            prerelease: true
+            manifest: require './package.json'
+
+gulp.task 'packagedebug', ['style', 'coffee', 'debugapp']
+gulp.task 'package', ['style', 'coffee', 'app']
 
 gulp.task 'app',      -> buildapp ['./package.json', './win.html', './js/**', './style/**', './lib/**', './node_modules/**']
 gulp.task 'debugapp', -> buildapp ['./package.json', './win.html', './js/**', './style/**', './lib/**']
