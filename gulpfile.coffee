@@ -29,6 +29,10 @@ gulp.task 'coffee', ->
         .pipe coffee(bare: true).on('error', onError)
         .pipe source.write('./')
         .pipe gulp.dest 'js/'
+    gulp.src ['bin/*.coffee'], base: '.'
+        .pipe changed '.', extension: '.js'
+        .pipe coffee(bare: true).on('error', onError)
+        .pipe gulp.dest '.'
         
 gulp.task 'style', ->
     gulp.src 'style/*.styl'
@@ -44,7 +48,7 @@ gulp.task 'jade', ->
         .pipe gulp.dest '.'
         
 gulp.task 'salt', ->
-    gulp.src ['win.coffee', 'app.coffee', 'coffee/**/*.coffee', 'style/*.styl'], base: '.'
+    gulp.src ['win.coffee', 'app.coffee', 'coffee/**/*.coffee', 'bin/*.coffee', 'style/*.styl'], base: '.'
         .pipe debug title: 'salt'
         .pipe salt()
         .pipe gulp.dest '.'
@@ -91,6 +95,6 @@ buildapp = (files) ->
 
 gulp.task 'default', ->
                 
-    gulp.watch ['win.coffee', 'app.coffee','coffee/**/*.coffee'], ['coffee']
+    gulp.watch ['win.coffee', 'app.coffee','coffee/**/*.coffee', 'bin/*.coffee'], ['coffee']
     gulp.watch 'style/*.styl', ['style']
     gulp.watch '*.jade', ['jade']
