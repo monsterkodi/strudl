@@ -20,7 +20,7 @@ exec = cp.exec;
 
 log = console.log;
 
-app = __dirname + "/Strudl.app";
+app = __dirname + "/strudl.app";
 
 tgz = app + ".tgz";
 
@@ -43,7 +43,7 @@ open = function() {
 if (!fs.existsSync(app)) {
   log('app not found ...');
   if (!fs.existsSync(tgz)) {
-    src = 'https://media.githubusercontent.com/media/monsterkodi/strudl/master/bin/Strudl.app.tgz';
+    src = 'https://media.githubusercontent.com/media/monsterkodi/strudl/master/bin/strudl.app.tgz';
     log("downloading tgz from github (this will take a while) ...");
     tar.extractTarballDownload(src, tgz, __dirname, {}, function(err, result) {
       if (err) {

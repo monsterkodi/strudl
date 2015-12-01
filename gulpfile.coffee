@@ -61,9 +61,12 @@ gulp.task 'bump', ->
 gulp.task 'clean', ->
     del [
         'js'
+        'app'
         'win.html'
         '*.log'
-        'Strudl*.app'
+        'bin/strudl.js'
+        'bin/strudl.app'
+        'bin/strudl.tgz'
         'style/*.css'
         '!style/font-awesome.css'
     ]
@@ -80,14 +83,14 @@ buildapp = (files) ->
     gulp.src files, base: '.'
         .pipe debug()
         .pipe electron 
-            name: 'Strudl'
+            name: 'strudl'
             role: 'Viewer'
             version: '0.35.1'
             platform: 'darwin'
             darwinIcon: 'img/strudl.icns'
             extensions: ['json', 'cson', 'plist', 'yml']
             darwinBundleDocumentTypes: [
-                name: 'Strudl'
+                name: 'strudl'
                 extensions: ['json', 'cson', 'plist', 'yml']
                 iconFile: 'img/file.icns'
             ]

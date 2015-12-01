@@ -26,12 +26,12 @@ class MainMenu
             
             label: 'Strudel'   
             submenu: [     
-                label: 'About Strudl'
+                label: 'About strudl'
                 role: 'about'
             ,
                 type: 'separator'
             ,
-                label: 'Hide Strudl'
+                label: 'Hide strudl'
                 accelerator: 'Command+H'
                 role: 'hide'
             ,
