@@ -11,8 +11,6 @@ debug    = require 'gulp-debug'
 bump     = require 'gulp-bump'
 source   = require 'gulp-sourcemaps'
 symdest  = require 'gulp-symdest'
-changed  = require 'gulp-changed'
-inplace  = require 'gulp-changed-in-place'
 release  = require 'gulp-github-release'
 electron = require 'gulp-atom-electron'
  
@@ -20,7 +18,6 @@ onError = (err) -> gutil.log err
 
 gulp.task 'coffee', ->
     gulp.src ['win.coffee', 'app.coffee','coffee/**/*.coffee'], base: '.'
-        .pipe changed 'js/', extension: '.js'
         .pipe debug title: 'coffee'
         .pipe source.init()
         .pipe pepper
@@ -30,8 +27,9 @@ gulp.task 'coffee', ->
         .pipe coffee(bare: true).on('error', onError)
         .pipe source.write('./')
         .pipe gulp.dest 'js/'
+    
+gulp.task 'bin', ->
     gulp.src ['bin/*.coffee'], base: '.'
-        .pipe changed '.', extension: '.js'
         .pipe coffee(bare: true).on('error', onError)
         .pipe gulp.dest '.'
         
@@ -43,7 +41,6 @@ gulp.task 'style', ->
 
 gulp.task 'jade', ->
     gulp.src '*.jade', base: '.'
-        .pipe changed '.', extension: '.html'
         .pipe jade pretty: true
         .pipe debug title: 'jade'
         .pipe gulp.dest '.'
@@ -81,11 +78,8 @@ gulp.task 'release', ->
             prerelease: true
             manifest: require './package.json'
 
-gulp.task 'packagedebug', ['style', 'coffee', 'debugapp']
-gulp.task 'package', ['style', 'coffee', 'app']
-
-gulp.task 'app',      -> buildapp ['./package.json', './win.html', './js/**', './style/**', './lib/**', './node_modules/**']
-gulp.task 'debugapp', -> buildapp ['./package.json', './win.html', './js/**', './style/**', './lib/**']
+gulp.task 'package',  ['coffee', 'bin', 'style', 'jade'], -> buildapp ['./package.json', './win.html', './js/**', './style/**', './lib/**', './node_modules/**']
+gulp.task 'debugapp', ['coffee', 'bin', 'style', 'jade'], -> buildapp ['./package.json', './lib/**']
 
 buildapp = (files) ->    
     #electron.dest 'electron-build', { version: '0.35.1', platform: 'darwin' }
