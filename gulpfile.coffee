@@ -81,7 +81,6 @@ buildapp = (files) ->
     #electron.dest 'electron-build', { version: '0.35.1', platform: 'darwin' }
 
     gulp.src files, base: '.'
-        .pipe debug()
         .pipe electron 
             name: 'strudl'
             role: 'Viewer'
