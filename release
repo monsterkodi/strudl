@@ -11,5 +11,7 @@ rm -rf "$APP.app"
 echo gulp release
 gulp release
 echo mv app
-mv app/"$APP.app" .
-echo done releasing $APP v$VER
+mv "app/$APP.app" bin
+echo tar app
+tar czf "bin/$APP.app.tgz" "bin/$APP.app"
+echo done $APP v$VER

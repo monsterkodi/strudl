@@ -1,6 +1,13 @@
 data
 test
 img
+app
+build
+log
+release
+run
+*.jade
+*.styl
 electron*
 prefs.json
 *.app
