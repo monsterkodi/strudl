@@ -1,5 +1,6 @@
 path     = require 'path'
 gulp     = require 'gulp'
+plumber  = require 'gulp-plumber'
 del      = require 'del'
 stylus   = require 'gulp-stylus'
 coffee   = require 'gulp-coffee'
@@ -18,6 +19,7 @@ onError = (err) -> gutil.log err
 
 gulp.task 'coffee', ->
     gulp.src ['win.coffee', 'app.coffee','coffee/**/*.coffee'], base: '.'
+        .pipe plumber()
         .pipe debug title: 'coffee'
         .pipe source.init()
         .pipe pepper
@@ -30,23 +32,28 @@ gulp.task 'coffee', ->
     
 gulp.task 'bin', ->
     gulp.src ['bin/*.coffee'], base: '.'
+        .pipe plumber()
+        .pipe debug title: 'bin'
         .pipe coffee(bare: true).on('error', onError)
         .pipe gulp.dest '.'
         
 gulp.task 'style', ->
     gulp.src 'style/*.styl'
-        .pipe stylus()
+        .pipe plumber()
         .pipe debug title: 'style'
+        .pipe stylus()
         .pipe gulp.dest 'style'
 
 gulp.task 'jade', ->
     gulp.src '*.jade', base: '.'
-        .pipe jade pretty: true
+        .pipe plumber()
         .pipe debug title: 'jade'
+        .pipe jade pretty: true
         .pipe gulp.dest '.'
         
 gulp.task 'salt', ->
     gulp.src ['win.coffee', 'app.coffee', 'coffee/**/*.coffee', 'bin/*.coffee', 'style/*.styl'], base: '.'
+        .pipe plumber()
         .pipe debug title: 'salt'
         .pipe salt()
         .pipe gulp.dest '.'
