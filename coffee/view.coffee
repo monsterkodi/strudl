@@ -231,10 +231,19 @@ class View extends Proxy
         [ic,kc,vc,nc] = [@col('idx'), @col('key'), @col('val'), @col('num')]
         [ix,kx,vx,nx] = [ic.offsetLeft, kc.offsetLeft, vc.offsetLeft, nc.offsetLeft]
         [iw,kw,vw,nw] = [ic.offsetWidth, kc.offsetWidth, vc.offsetWidth, nc.offsetWidth]
-        vd = vw - @getWidth vc
-        @setWidth vc, -vd+@getWidth(@tree) - nw - kw - iw
+
+        if vc.style.display == 'none'
+            @setWidth kc, @getWidth(@tree) - nw - iw
+        else if kc.style.display == 'none'
+            @setWidth vc, @getWidth(@tree) - nw - iw
+        else 
+            as = @getWidth(@tree) - nw - iw
+            ks = as * @sizer.pos
+            # dbg as, ks, as-ks
+            @setWidth kc, ks
+            @setWidth vc, as - ks
         
-        @sizer?.update()
+        @sizer.update()
         
     updateScroll: ->
         vh           = Math.min @linesHeight, @viewHeight()
@@ -280,6 +289,9 @@ class View extends Proxy
         true
 
     onDidLayout: (baseItem) => 
+        if not @sizer
+            @sizer = new Sizer @
+
         if @selIndex < 0
             @selectIndex 0
             @root.children[0]?.focus()
@@ -288,15 +300,9 @@ class View extends Proxy
         else
             @update()
             
-        if not @sizer
-            @sizer = new Sizer @
-            
     setColumVisible: (c, v) -> 
 
-        if @col(c).style.display == 'none'
-            @col(c).style.display = 'inline-block'
-        else
-            @col(c).style.display = 'none'
+        @col(c).style.display = v and 'inline-block' or 'none'
         
         if @col('val').style.display == 'none' or @col('key').style.display == 'none'
             @sizer.hide()
@@ -393,7 +399,6 @@ class View extends Proxy
             when 'page up', 'page down'
                 n = event.shiftKey and @numVisibleLines() or @numViewLines()
                 delta = keycode == 'page up' and -n or n
-                dbg delta
                 @selectDelta delta
                 first = _.first @root.children
                 last  = _.last @root.children
@@ -401,7 +406,7 @@ class View extends Proxy
                     last.select()
                 else
                     first.select()
-            else
-                log keycode
+            # else
+            #     log keycode
         
 module.exports = View
