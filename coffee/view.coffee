@@ -149,7 +149,7 @@ class View extends Proxy
     onKeyPath: (keypath) => @selectIndex @base.itemAt(keypath).visibleIndex
         
     focusSelected: () => 
-        if not document.activeElement.classList.contains 'tree-item'
+        if not document.activeElement.classList.contains 'tree-line'
             @selectedItem().focus()        
         
     ###
@@ -168,7 +168,7 @@ class View extends Proxy
         
         profile "update #{numLines}" if doProfile
         
-        setFocus = document.activeElement.classList.contains 'tree-item'
+        setFocus = document.activeElement.classList.contains 'tree-line'
         
         @treeHeight = numLines * @lineHeight
         @linesHeight = viewLines * @lineHeight

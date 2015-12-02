@@ -35,6 +35,8 @@ class ViewItem extends ProxyItem
             @lin = document.createElement 'span'
             @lin.className = 'tree-line'
             @lin.addEventListener 'click', @onClick
+            @lin.addEventListener 'blur',  @onBlur
+            @lin.addEventListener 'focus', @onFocus
             @lin.tabIndex = -1
             linc.appendChild @lin
 
@@ -63,8 +65,6 @@ class ViewItem extends ProxyItem
                 spc.classList.add @isExpanded() and "expanded" or "collapsed"
             @elm.appendChild spc
             @elm.addEventListener 'click', @onClick
-            @elm.addEventListener 'blur', @onBlur
-            @elm.addEventListener 'focus', @onFocus
             
             @split = String(@key).split '►'
             
@@ -146,6 +146,7 @@ class ViewItem extends ProxyItem
                 @val.firstElementChild.innerHTML = @getValue() ? 'null'
                     
     removeElement: ->
+        @lin.remove()
         @elm.remove()
         @idx.remove()
         @val.remove()
@@ -214,24 +215,24 @@ class ViewItem extends ProxyItem
     deselect: -> 
         @delClass 'selected', @lin
         @delClass 'focus', @lin
-        @elm.tabIndex = -1  
+        @lin.tabIndex = -1  
         @root().elem.focus()
         
     select: ->
         dbg @value.visibleIndex
         @model().selectIndex @value.visibleIndex
         
-    onBlur: => @clrClass 'focus'
+    onBlur: => @clrClass 'focus', @lin
     onFocus: => @ownClass 'focus', @lin
     
-    hasFocus: => document.activeElement == @elm
+    hasFocus: => document.activeElement == @lin
         
     focus: (event) ->
         @ownClass 'selected', @lin
         @ownClass 'focus', @lin
-        if @elm != document.activeElement
-            @elm.focus()   
-            @elm.tabIndex = 2     
+        if @lin != document.activeElement
+            @lin.focus()   
+            @lin.tabIndex = 2     
                                                         
     selectLeft: (event) -> 
         if event.metaKey
