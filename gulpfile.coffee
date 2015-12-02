@@ -79,7 +79,7 @@ gulp.task 'clean', ->
 gulp.task 'release', ->
     gulp.src './bin/strudl.app.tgz'
         .pipe release
-            #token: 'token', # or you can set an env var called GITHUB_TOKEN instead 
+            #token: GITHUB_TOKEN
             repo: 'strudl'
             owner: 'monsterkodi'
             prerelease: true
@@ -93,8 +93,8 @@ gulp.task 'app', ['coffee', 'bin', 'style', 'jade'], ->
             darwinIcon: 'img/strudl.icns'
             darwinBundleDocumentTypes: [
                 name: 'strudl'
-                role: 'viewer'
-                ostypes: '****'
+                role: 'Viewer'
+                ostypes: ['****']
                 iconFile: 'img/file.icns'
                 extensions: ['json', 'cson', 'plist', 'yml']
             ]

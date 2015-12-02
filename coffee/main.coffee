@@ -15,11 +15,19 @@ MainMenu = require './mainmenu'
 DockMenu = require './dockmenu'
 log      = require './tools/log'
 prefs    = require './tools/prefs'
+prefs.debug = false # log prefs
 
 class Main
     
     @app = null
-    @init: -> Main.app = new Main()
+    @init: -> 
+        
+        prefs.init "#{app.getPath('userData')}/prefs.json", 
+            open: []
+            recent: []
+            windows: {}
+
+        Main.app = new Main()
     
     constructor: ->
 

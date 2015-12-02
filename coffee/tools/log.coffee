@@ -10,11 +10,13 @@ str = require './str'
 fs  = require 'fs'
             
 module.exports = -> 
-    msg = (str(a) for a in arguments).join(' ')
-    console.log msg
+    
     try
-        stream = fs.createWriteStream('/Users/kodi/Projects/strudl/strudl.log', flags: 'a+', encoding: 'utf8')
-        stream.write msg + "\n"
-        stream.end()
+        if process.env['USER'] == 'kodi'
+            msg = (str(a) for a in arguments).join(' ')
+            stream = fs.createWriteStream('/Users/kodi/Projects/strudl/strudl.log', flags: 'a+', encoding: 'utf8')
+            stream.write msg + "\n"
+            stream.end()
+            console.log msg
     catch
-        console.log msg
+        true
