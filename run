@@ -1,3 +1,2 @@
 #!/usr/bin/env bash
-# electron-build/Electron.app/Contents/MacOS/Electron .
-open `sds package.json -k "name" -f "#v"`.app
+open `sds package.json -p "name" -r`.app

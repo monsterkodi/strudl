@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-APP=`sds package.json -k "name" -f "#v"`
+APP=`sds package.json -p "name" -r`
 RES="./$APP.app/Contents/Resources/app"
 echo rm app
 rm -rf app
