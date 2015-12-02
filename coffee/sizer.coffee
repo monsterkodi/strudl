@@ -13,7 +13,13 @@ class Sizer extends Drag
     constructor: (@view) ->
         
         super @view.tree.nextElementSibling.getElementsByClassName('sizer')[0]
+        @update()
+        
+    update: ->
         @elem.style.left = "#{@view.col('val').offsetLeft - @elem.offsetWidth}px"
+        
+    hide: -> @elem.style.display = 'none'
+    show: -> @elem.style.display = 'block'
         
     onDrag: (event) => 
         dx = event.clientX - @elem.offsetWidth - @x

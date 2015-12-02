@@ -234,6 +234,8 @@ class View extends Proxy
         vd = vw - @getWidth vc
         @setWidth vc, -vd+@getWidth(@tree) - nw - kw - iw
         
+        @sizer?.update()
+        
     updateScroll: ->
         vh           = Math.min @linesHeight, @viewHeight()
         scrollTop    = parseInt (@scroll / @treeHeight) * vh
@@ -288,6 +290,21 @@ class View extends Proxy
             
         if not @sizer
             @sizer = new Sizer @
+            
+    setColumVisible: (c, v) -> 
+
+        if @col(c).style.display == 'none'
+            @col(c).style.display = 'inline-block'
+        else
+            @col(c).style.display = 'none'
+        
+        if @col('val').style.display == 'none' or @col('key').style.display == 'none'
+            @sizer.hide()
+            if @col('val').style.display == 'none' and @col('key').style.display == 'none'
+                @col(c == 'key' and 'val' or 'key').style.display = 'inline-block'
+        else 
+            @sizer.show()
+        @update()
             
     ###
     000  000000000  00000000  00     00

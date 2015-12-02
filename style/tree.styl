@@ -22,11 +22,16 @@
 .tree-col
     display             inline-block
     overflow            hidden
+    &.lin
+        float           left
+        box-sizing      border-box
+        width           0
+        overflow        visible
     &.idx
         float           left
         box-sizing      border-box
         width           idxColumnWidth
-        overflow        visible
+        // overflow        visible
     &.key
         overflow-x      auto
         overflow-y      hidden

@@ -92,13 +92,41 @@ class MainMenu
                 click: (i,win) -> win?.emit 'clearFind'
             ]
         ,        
+            ###
+            000   000  000  00000000  000   000
+            000   000  000  000       000 0 000
+             000 000   000  0000000   000000000
+               000     000  000       000   000
+                0      000  00000000  00     00
+            ###
             label: 'View'
             role: 'view'
             submenu: [
+                label: 'Index Column'
+                accelerator: 'CmdOrCtrl+1'
+                type: 'checkbox'
+                click: (i,win) -> win?.emit 'setColumnVisible', 'idx', i.checked
+            ,
+                label: 'Path Column'
+                accelerator: 'CmdOrCtrl+2'
+                type: 'checkbox'
+                click: (i,win) -> win?.emit 'setColumnVisible', 'key', i.checked
+            ,
+                label: 'Value Column'
+                accelerator: 'CmdOrCtrl+3'
+                type: 'checkbox'
+                click: (i,win) -> win?.emit 'setColumnVisible', 'val', i.checked
+            ,
+                label: 'Number Column'
+                accelerator: 'CmdOrCtrl+4'
+                type: 'checkbox'
+                click: (i,win) -> win?.emit 'setColumnVisible', 'num', i.checked
+            ,
+                type: 'separator'
+            ,                
                 label: 'Toggle FullScreen'
                 accelerator: 'Ctrl+Command+F'
                 click: (i,win) -> win?.setFullScreen !win.isFullScreen()
-
             ]
         ,        
             ###

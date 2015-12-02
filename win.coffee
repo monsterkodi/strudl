@@ -33,6 +33,7 @@ win.on 'reloadFile', ->
 win.on 'findPath',  -> view.findPath()
 win.on 'findValue', -> view.findValue()
 win.on 'clearFind', -> view.find.clear()
+win.on 'setColumnVisible', (c,v) -> view.setColumVisible c,v
 
 loadFile = (p) ->
     

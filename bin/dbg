@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+BIN=`dirname $0`
+echo $BIN
+cd $BIN
+echo $PWD
+if [ ! -e strudl.app.tgz ] 
+then
+    echo build release
+    cd ..
+    echo $PWD
+    release
+    cd $BIN
+    echo $PWD
+fi
+
+echo extract
+tar xzf strudl.app.tgz -C ..
+cd ..
+echo rm, ln
+rm -rd strudl.app/Contents/Resources/app
+cd strudl.app/Contents/Resources
+ln -s ../../.. app
+cd ../../..

@@ -29,17 +29,20 @@ class ViewItem extends ProxyItem
         
         if @key != -1
 
+            linc = document.createElement 'div'
+            linc.className = "tree-item linc"
+
+            @lin = document.createElement 'span'
+            @lin.className = 'tree-line'
+            @lin.addEventListener 'click', @onClick
+            @lin.tabIndex = -1
+            linc.appendChild @lin
+
             @idx = document.createElement 'div'
             @idx.className = "tree-item idx"
             @idx.innerHTML = "#{@value.visibleIndex} "
             @idx.id = "#{@indexInParent()}"
             
-            @lin = document.createElement 'span'
-            @lin.className = 'tree-line'
-            @lin.addEventListener 'click', @onClick
-            @lin.tabIndex = -1
-            @idx.appendChild @lin
-
             @elm = document.createElement 'div'
             @elm.className = "tree-item key"
             @elm.tabIndex = -1
@@ -108,6 +111,7 @@ class ViewItem extends ProxyItem
                 @num.appendChild chd
                 @num.appendChild vis
             
+            @col('lin').appendChild linc
             @col('idx').appendChild @idx
             @col('key').appendChild @elm         
             @col('val').appendChild @val
