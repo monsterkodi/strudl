@@ -10,8 +10,8 @@ RES="./$APP.app/Contents/Resources/app"
 echo rm app
 rm -rf app
 rm -rf "bin/$APP.app"
-echo package
-gulp package
+echo app
+gulp app
 echo mv app
 mv "app/$APP.app" bin
 rm -rf app

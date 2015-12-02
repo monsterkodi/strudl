@@ -7,7 +7,6 @@
 ###
 
 fs       = require 'fs'
-process  = require 'process'
 tar      = require 'tarball-extract'
 download = require 'download'
 cp       = require 'child_process'

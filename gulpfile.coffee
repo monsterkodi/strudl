@@ -78,26 +78,22 @@ gulp.task 'release', ->
             prerelease: true
             manifest: require './package.json'
 
-gulp.task 'package',  ['coffee', 'bin', 'style', 'jade'], -> buildapp ['./package.json', './win.html', './js/**', './style/**', './lib/**', './node_modules/**']
-gulp.task 'debugapp', ['coffee', 'bin', 'style', 'jade'], -> buildapp ['./package.json', './lib/**']
-
-buildapp = (files) ->    
-    #electron.dest 'electron-build', { version: '0.35.1', platform: 'darwin' }
-
-    gulp.src files, base: '.'
+gulp.task 'app', ['coffee', 'bin', 'style', 'jade'], ->
+    gulp.src ['./package.json', './win.html', './js/**', './style/**', './lib/**', './node_modules/**'], base: '.'
         .pipe electron 
-            name: 'strudl'
-            role: 'Viewer'
-            version: '0.35.1'
+            version: '0.35.2'
             platform: 'darwin'
             darwinIcon: 'img/strudl.icns'
-            extensions: ['json', 'cson', 'plist', 'yml']
             darwinBundleDocumentTypes: [
                 name: 'strudl'
-                extensions: ['json', 'cson', 'plist', 'yml']
+                role: 'viewer'
+                ostypes: '****'
                 iconFile: 'img/file.icns'
+                extensions: ['json', 'cson', 'plist', 'yml']
             ]
         .pipe symdest 'app'
+
+gulp.task 'electron-build', -> electron.dest 'electron-build', { version: '0.35.2', platform: 'darwin' }
 
 gulp.task 'default', ->
                 
