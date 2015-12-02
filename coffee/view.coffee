@@ -366,7 +366,6 @@ class View extends Proxy
         
     refocus: =>
         if not document.activeElement.classList.contains 'tree-item'
-            log 'focus selected'
             setTimeout @focusSelected, 1
                             
     ###

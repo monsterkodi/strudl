@@ -35,7 +35,7 @@ class Main
         app.on 'ready', @onReady
         app.on 'open-file', (e,p) -> prefs.one 'open', p
         app.on 'before-quit'          , -> Main.app.beforeQuit()
-        app.on 'will-quit'            , -> 
+        app.on 'will-quit'            , ->
         app.on 'quit'                 , -> 
         app.on 'window-all-closed'    , -> 
         app.on 'will-finish-launching', -> 
@@ -96,7 +96,6 @@ class Main
         w.setBounds wd[p] if wd[p]?
                 
         w.on 'close', (event) => 
-            log 'on window close'
             @saveBounds()
             k = _.findKey @wins, event.sender
             @wins[k].removeAllListeners()
@@ -122,6 +121,14 @@ class Main
             for f in p
                 if fs.existsSync f
                     @loadFile f
+
+    reload: (win) ->
+        if win?
+            
+            p = win.filePath
+            dbg p
+            win.close()
+            @loadFile p
 
     ###
     0000000     0000000   000   000  000   000  0000000     0000000

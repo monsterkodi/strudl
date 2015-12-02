@@ -67,7 +67,7 @@ class MainMenu
             ,
                 label: 'Reload'
                 accelerator: 'CmdOrCtrl+R'
-                click: (i,win) -> win?.reload()
+                click: (i,win) -> main.reload win
             ]
         ,
             ###

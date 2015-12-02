@@ -176,7 +176,6 @@ class ViewItem extends ProxyItem
         event.stopPropagation()
     
     onKeyPath: (keypath) => 
-        # log 'onKeyPath', keypath.join '.'
         @model().data().setFilter keypath.join '.'
         
     ###
@@ -218,9 +217,7 @@ class ViewItem extends ProxyItem
         @lin.tabIndex = -1  
         @root().elem.focus()
         
-    select: ->
-        dbg @value.visibleIndex
-        @model().selectIndex @value.visibleIndex
+    select: -> @model().selectIndex @value.visibleIndex
         
     onBlur: => @clrClass 'focus', @lin
     onFocus: => @ownClass 'focus', @lin

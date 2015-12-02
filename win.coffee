@@ -26,10 +26,6 @@ data    = null
 prxy    = null
 view    = null
 
-win.on 'reloadFile', -> 
-    log 'reload file', win.filePath
-    loadFile win.filePath
-    
 win.on 'findPath',  -> view.findPath()
 win.on 'findValue', -> view.findValue()
 win.on 'clearFind', -> view.find.clear()
@@ -41,7 +37,6 @@ loadFile = (p) ->
     prxy = new Proxy data
     view = new View prxy, document.getElementById 'tree'
         
-    log p
     data.load p  
     
     win.setRepresentedFilename p
@@ -60,7 +55,7 @@ loadFile = (p) ->
 document.addEventListener 'DOMContentLoaded', () -> 
     loadFile win.filePath
     win.emit 'domLoaded'
-    
+        
 ###
 00000000   00000000   0000000  000  0000000  00000000
 000   000  000       000       000     000   000     
@@ -69,7 +64,7 @@ document.addEventListener 'DOMContentLoaded', () ->
 000   000  00000000  0000000   000  0000000  00000000
 ###
 
-win.on 'resize', () -> view.update()
+window.addEventListener 'resize', () -> view.update()
     
 ###
 000   000  00000000  000   000  0000000     0000000   000   000  000   000
@@ -87,7 +82,7 @@ document.addEventListener 'keydown', (event) ->
     switch key
         when 'command+i'  then toggleStyle()
         when 'command+w'  then win.close()
-        # else log "main.keydown", key, e
+        # else log "main.keydown", event, key, e
 
 ###
  0000000  000000000  000   000  000      00000000
@@ -99,7 +94,6 @@ document.addEventListener 'keydown', (event) ->
 
 toggleStyle = ->
     link = document.getElementById 'style-link'
-    log link, link.href, new String(link.href).split('/')
     currentScheme   = _.last new String(link.href).split('/')
     schemes         = ['dark.css', 'bright.css']
     nextSchemeIndex = ( schemes.indexOf(currentScheme) + 1) % schemes.length
