@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
+cd "`dirname $0`/.."
 open `sds package.json -p "name" -r`.app

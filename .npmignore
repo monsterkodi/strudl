@@ -14,3 +14,8 @@ prefs.json
 *.tgz
 *.coffee
 strudl.log
+bin/dbg
+bin/log
+bin/run
+bin/publish
+bin/release
