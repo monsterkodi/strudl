@@ -15,10 +15,10 @@ class ProxyItem extends Item
 
     constructor: (@key, @value, prt) -> 
 
-        @numVisible = 0
         if @key == -1
             @mdl = prt
             @visibleIndex = -1
+            @numVisible = 0
         else
             @parent = prt
             @visibleIndex = 0
@@ -55,18 +55,12 @@ class ProxyItem extends Item
         null
                 
     updateCounters: () ->
-        incVis = (i) ->
-            i.numVisible += 1
-            incVis i.parent if i.parent?
-        @numVisible = 0
         @mdl.visibleItems = []
-        vis = 0
+        @numVisible = 0
         @findFirstVisible (i) =>
             @mdl.visibleItems.push i
-            i.numVisible = 0
-            incVis i.parent
-            i.visibleIndex = vis
-            vis += 1
+            i.visibleIndex = @numVisible
+            @numVisible += 1
             false        
     
     ###

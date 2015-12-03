@@ -105,25 +105,25 @@ class MainMenu
                 label: 'Index Column'
                 accelerator: 'CmdOrCtrl+1'
                 type: 'checkbox'
-                checked: 'true'
+                checked: true
                 click: (i,win) -> win?.emit 'setColumnVisible', 'idx', i.checked
             ,
                 label: 'Path Column'
                 accelerator: 'CmdOrCtrl+2'
                 type: 'checkbox'
-                checked: 'true'
+                checked: true
                 click: (i,win) -> win?.emit 'setColumnVisible', 'key', i.checked
             ,
                 label: 'Value Column'
                 accelerator: 'CmdOrCtrl+3'
                 type: 'checkbox'
-                checked: 'true'
+                checked: true
                 click: (i,win) -> win?.emit 'setColumnVisible', 'val', i.checked
             ,
                 label: 'Number Column'
                 accelerator: 'CmdOrCtrl+4'
                 type: 'checkbox'
-                checked: 'true'
+                checked: true
                 click: (i,win) -> win?.emit 'setColumnVisible', 'num', i.checked
             ,
                 type: 'separator'

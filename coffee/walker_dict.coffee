@@ -20,7 +20,7 @@ walk = walkDir root,
 walk.ignore ["/Volumes", "/Users/kodi/Library/Developer/Shared/Documentation/DocSets"]
     
 dirs = {}
-dpth = root.split(path.sep).length
+dpth = root != "/" and root.split(path.sep).length or 0
         
 shorten = (p, l=80) ->
     if p.length <= l then return p
@@ -30,6 +30,8 @@ getDir = (p) ->
     s = p.split path.sep
     s = s.slice dpth
     c = dirs
+    s.shift() while s[0] == ''
+    # dbg p, c, s
     while s.length
         c = c[s.shift()]
     c
