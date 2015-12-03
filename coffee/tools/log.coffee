@@ -13,10 +13,11 @@ module.exports = ->
     
     try
         if process.env['USER'] == 'kodi'
-            msg = (str(a) for a in arguments).join(' ')
-            stream = fs.createWriteStream('/Users/kodi/Projects/strudl/strudl.log', flags: 'a+', encoding: 'utf8')
-            stream.write msg + "\n"
-            stream.end()
+            msg = (str(a) for a in arguments).join(' ') + "\n"
+            fs.appendFileSync('/Users/kodi/Projects/strudl/strudl.log', msg, encoding: 'utf8')
+            # stream = fs.createWriteStream('/Users/kodi/Projects/strudl/strudl.log', flags: 'a+', encoding: 'utf8')
+            # stream.write msg + "\n"
+            # stream.end()
             console.log msg
     catch
-        true
+        console.log msg

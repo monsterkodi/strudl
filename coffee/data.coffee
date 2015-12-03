@@ -32,6 +32,7 @@ class DataModel extends Model
         @emit 'didReload'
 
     parseString: (stringData) ->
+        dbg "parsing string #{stringData.length}"
         switch path.extname(@filePath) 
             when '.cson'
                 require('CSON').parse stringData

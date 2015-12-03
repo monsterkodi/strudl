@@ -26,12 +26,14 @@
     "js-yaml": "^3.4.6",
     "keycode": "^2.1.0",
     "lodash": "^3.10.1",
+    "moment": "^2.10.6",
     "nomnom": "^1.8.1",
     "performance-now": "^0.2.0",
     "simple-plist": "0.0.4",
     "tarball-extract": "0.0.3",
     "underscore.string": "^3.2.2",
-    "uuid": "^2.0.1"
+    "uuid": "^2.0.1",
+    "walkdir": "0.0.11"
   },
   "devDependencies": {
     "debug-menu": "^0.2.0",
