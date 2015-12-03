@@ -13,6 +13,7 @@ prefs.json
 *.app
 *.tgz
 *.coffee
+walker*.*
 strudl.log
 bin/dbg
 bin/log

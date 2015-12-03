@@ -13,7 +13,7 @@ startTime = moment()
 timeSinceStart = () -> moment().subtract(startTime).format('m [m] s [s]')
 
 verbose = false
-root = "/Users/kodi"
+root = "/"
 walk = walkDir root, 
     "max_depth": Infinity
     
@@ -57,7 +57,7 @@ walk.on 'end', ->
     process.stdout.cursorTo(0)
     log "#{Object.keys(dirs).length} dirs parsed in #{timeSinceStart()}"
     
-    fs.writeFileSync resolve('~/Projects/strudl/data/home_dict.json'), JSON.stringify(dirs)
+    fs.writeFileSync resolve('~/Projects/strudl/data/root_dict.json'), JSON.stringify(dirs)
     
     log "json saved at #{timeSinceStart()}"
     
