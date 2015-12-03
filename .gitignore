@@ -13,8 +13,3 @@ style/tree.css
 bin/strudl.app.tgz
 bin/strudl.js
 win.html
-bin/dbg
-bin/log
-bin/run
-bin/publish
-bin/release
