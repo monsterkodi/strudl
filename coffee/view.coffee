@@ -239,7 +239,6 @@ class View extends Proxy
         else 
             as = @getWidth(@tree) - nw - iw
             ks = as * @sizer.pos
-            # dbg as, ks, as-ks
             @setWidth kc, ks
             @setWidth vc, as - ks
         

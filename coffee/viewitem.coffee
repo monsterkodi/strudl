@@ -104,12 +104,12 @@ class ViewItem extends ProxyItem
                 chd = document.createElement 'span'
                 chd.className = "tree-value chd"
             
-                vis = document.createElement 'span'
-                vis.className = "tree-value vis"
+                # vis = document.createElement 'span'
+                # vis.className = "tree-value vis"
                 
                 @num.appendChild dsc
                 @num.appendChild chd
-                @num.appendChild vis
+                # @num.appendChild vis
             
             @col('lin').appendChild linc
             @col('idx').appendChild @idx
@@ -132,12 +132,9 @@ class ViewItem extends ProxyItem
     update: ->
         
         if @isParent()
-            vis = @getElem 'vis', @num
-            chd = @getElem 'chd', @num
-            dsc = @getElem 'dsc', @num
-            vis.innerHTML = (@isExpanded() and "#{@value.numVisible}" or "")
-            chd.innerHTML = "#{@dataItem().children.length}"
-            dsc.innerHTML = "#{@dataItem().numDescendants-1}"
+            (@getElem 'dsc', @num).innerHTML = "#{@dataItem().numDescendants-1}"
+            (@getElem 'chd', @num).innerHTML = "#{@dataItem().children.length}"
+            # (@getElem 'vis', @num).innerHTML = (@isExpanded() and "#{@value.numVisible}" or "")
 
         switch @type
             when Item.objectType

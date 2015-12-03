@@ -55,9 +55,9 @@ class Find extends Emitter
         @hide()
     
     onInput: (event) => 
-        if @timer?
-            clearTimeout @timer
-        @timer = setTimeout @applyFilter, Math.min(1000, @filterTime*2)
+        # if @timer?
+        #     clearTimeout @timer
+        # @timer = setTimeout @applyFilter, Math.min(1000, @filterTime*2)
         
     onFocus: (event) =>
         if @blurTimer?

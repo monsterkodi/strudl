@@ -13,49 +13,32 @@ startTime = moment()
 timeSinceStart = () -> moment().subtract(startTime).format('m [m] s [s]')
 
 verbose = false
-root = "/Users/kodi/Projects"
+root = "/Users/kodi"
 walk = walkDir root, 
     "max_depth": Infinity
     
 walk.ignore ["/Volumes", "/Users/kodi/Library/Developer/Shared/Documentation/DocSets"]
     
-dirs = 
-    "#{root}": 
-        files: []
-        dirs: []
-        size: 0
-        name: root
-        path: ''
+dirs = {}
+dpth = root.split(path.sep).length
         
 shorten = (p, l=80) ->
     if p.length <= l then return p
     p.substr(0,l-3) + '...'
         
-calcSize = (dirname) ->
-    d = dirs[dirname]
-    if d?
-        for file in d.files
-            d.size += file.size
-        for dir in d.dirs
-            if dirname == '/'
-                d.size += calcSize '/' + dir
-            else
-                d.size += calcSize dirname + '/' + dir
-        return d.size
-    log '???', dirname
-    0
-    
+getDir = (p) ->
+    s = p.split path.sep
+    s = s.slice dpth
+    c = dirs
+    while s.length
+        c = c[s.shift()]
+    c
+            
 walk.on 'directory', (dirname, stat) ->
     log chalk.blue.bold dirname if verbose
-    parent = dirs[path.dirname dirname]
+    parent = getDir path.dirname dirname
     name = path.basename dirname
-    parent.dirs.push name
-    dirs[dirname] = 
-        files: []
-        dirs:  []
-        size:  0   
-        name:  name
-        path:  dirname
+    parent[name] = {}
         
     if not verbose
         process.stdout.clearLine()
@@ -65,19 +48,16 @@ walk.on 'directory', (dirname, stat) ->
 walk.on 'file', (filename, stat) ->
     dirname = path.dirname filename
     log chalk.magenta dirname if verbose
-    parent = dirs[dirname]
-    parent.files.push 
-        name: path.basename filename
-        size: stat.size
+    parent = getDir dirname
+    name = path.basename filename
+    parent[name] = stat.size
                 
 walk.on 'end', ->
     process.stdout.clearLine()
     process.stdout.cursorTo(0)
     log "#{Object.keys(dirs).length} dirs parsed in #{timeSinceStart()}"
-    calcSize root
-    log 'total size:', dirs[root].size
     
-    fs.writeFileSync resolve('~/Projects/strudl/data/projects.json'), JSON.stringify(dirs)
+    fs.writeFileSync resolve('~/Projects/strudl/data/home_dict.json'), JSON.stringify(dirs)
     
     log "json saved at #{timeSinceStart()}"
     

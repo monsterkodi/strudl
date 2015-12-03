@@ -20,39 +20,45 @@ walk = walkDir root,
 walk.ignore ["/Volumes", "/Users/kodi/Library/Developer/Shared/Documentation/DocSets"]
     
 dirs = 
-    "#{root}": 
-        files: []
-        dirs: []
-        size: 0
-        name: root
-        path: ''
+    files: {}
+    dirs: {}
+    size: 0
+    name: path.basename root
+    path: root
+dpth = root.split(path.sep).length
         
 shorten = (p, l=80) ->
     if p.length <= l then return p
     p.substr(0,l-3) + '...'
         
+getDir = (p) ->
+    s = p.split path.sep
+    s = s.slice dpth
+    c = dirs
+    while s.length
+        c = c.dirs[s.shift()]
+    c
+    
 calcSize = (dirname) ->
-    d = dirs[dirname]
     if d?
-        for file in d.files
+        for k,file of d.files
             d.size += file.size
-        for dir in d.dirs
+        for k,dir of d.dirs
             if dirname == '/'
-                d.size += calcSize '/' + dir
+                d.size += calcSize('/' + dir.name)
             else
-                d.size += calcSize dirname + '/' + dir
+                d.size += calcSize(dirname + '/' + dir.name)
         return d.size
     log '???', dirname
     0
-    
+        
 walk.on 'directory', (dirname, stat) ->
     log chalk.blue.bold dirname if verbose
-    parent = dirs[path.dirname dirname]
+    parent = getDir path.dirname dirname
     name = path.basename dirname
-    parent.dirs.push name
-    dirs[dirname] = 
-        files: []
-        dirs:  []
+    parent.dirs[name] =
+        files: {}
+        dirs:  {}
         size:  0   
         name:  name
         path:  dirname
@@ -65,9 +71,10 @@ walk.on 'directory', (dirname, stat) ->
 walk.on 'file', (filename, stat) ->
     dirname = path.dirname filename
     log chalk.magenta dirname if verbose
-    parent = dirs[dirname]
-    parent.files.push 
-        name: path.basename filename
+    parent = getDir dirname
+    name = path.basename filename
+    parent.files[name] =
+        name: name
         size: stat.size
                 
 walk.on 'end', ->
@@ -75,9 +82,9 @@ walk.on 'end', ->
     process.stdout.cursorTo(0)
     log "#{Object.keys(dirs).length} dirs parsed in #{timeSinceStart()}"
     calcSize root
-    log 'total size:', dirs[root].size
+    log 'total size:', dirs.size
     
-    fs.writeFileSync resolve('~/Projects/strudl/data/projects.json'), JSON.stringify(dirs)
+    fs.writeFileSync resolve('~/Projects/strudl/data/projects_tree.json'), JSON.stringify(dirs)
     
     log "json saved at #{timeSinceStart()}"
     
