@@ -12,17 +12,19 @@ jsonStr = (a) -> JSON.stringify a, null, " "
 startTime = moment()
 timeSinceStart = () -> moment().subtract(startTime).format('m [m] s [s]')
 
-walk = walkDir "/", 
+verbose = false
+root = "/Users/kodi"
+walk = walkDir root, 
     "max_depth": Infinity
     
-walk.ignore ["/Volumes"]
+walk.ignore ["/Volumes", "/Users/kodi/Library/Developer/Shared/Documentation/DocSets"]
     
 dirs = 
-    '/': 
+    "#{root}": 
         files: []
         dirs: []
         size: 0
-        name: '/'
+        name: root
         path: ''
         
 shorten = (p, l=80) ->
@@ -44,7 +46,7 @@ calcSize = (dirname) ->
     0
     
 walk.on 'directory', (dirname, stat) ->
-    # log chalk.blue.bold dirname
+    log chalk.blue.bold dirname if verbose
     parent = dirs[path.dirname dirname]
     name = path.basename dirname
     parent.dirs.push name
@@ -55,13 +57,14 @@ walk.on 'directory', (dirname, stat) ->
         name:  name
         path:  dirname
         
-    process.stdout.clearLine()
-    process.stdout.cursorTo(0)
-    process.stdout.write shorten dirname
+    if not verbose
+        process.stdout.clearLine()
+        process.stdout.cursorTo(0)
+        process.stdout.write shorten dirname
 
 walk.on 'file', (filename, stat) ->
-    # log chalk.magenta dirname
     dirname = path.dirname filename
+    log chalk.magenta dirname if verbose
     parent = dirs[dirname]
     parent.files.push 
         name: path.basename filename
@@ -71,10 +74,10 @@ walk.on 'end', ->
     process.stdout.clearLine()
     process.stdout.cursorTo(0)
     log "#{Object.keys(dirs).length} dirs parsed in #{timeSinceStart()}"
-    calcSize '/'
-    log 'total size:', dirs['/'].size
+    calcSize root
+    log 'total size:', dirs[root].size
     
-    fs.writeFileSync resolve('~/.kugel.json'), JSON.stringify(dirs)
+    fs.writeFileSync resolve('~/Projects/strudl/data/home.json'), JSON.stringify(dirs)
     
     log "json saved at #{timeSinceStart()}"
     

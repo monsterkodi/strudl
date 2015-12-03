@@ -25,6 +25,7 @@ class DataModel extends Model
             @data = @parseString fs.readFileSync @filePath
         profile "create tree" 
         @root = @createItem -1, @data, @
+        log "tree created"
         @root.updateDescendants()
         @dataRoot = @root
         profile ""
@@ -39,7 +40,9 @@ class DataModel extends Model
             when '.yml'
                 require('js-yaml').safeLoad stringData
             else
-                JSON.parse stringData
+                d = JSON.parse stringData
+                log "json parsed"
+                d
                 
     setFilter: (path, value) ->
         @emit 'willReload'
@@ -74,7 +77,7 @@ class DataModel extends Model
         
         item = new Item key, data, parent
         item.id = @nextID()
-        
+        if item.id > 3000000 then return item
         switch item.type
             when Item.arrayType
                 for index in [0...data.length]
