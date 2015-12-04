@@ -21,13 +21,13 @@
         'all "foo" leaves below "bar" objects': "bar.**.foo"
         'all "foo" items on level 4': "*.*.*.foo"
         'all items on level 3': "*.*.*"
-        'first 50 array items': "array.[1-4]?\d"
+        'first 50 array items': "array.[1-4]?\\d"
     'find values':
         'bool': "true|false"
-        'int': "\d+"
-        'float': "\d+.\d+"
-        'number': "\d+(.\d+)?"
-        'urls': "*:\\**"
+        'int': "\\d+"
+        'float': "\\d+.\\d+"
+        'number': "\\d+(.\\d+)?"
+        'urls': "https?://**"
         
         
             
