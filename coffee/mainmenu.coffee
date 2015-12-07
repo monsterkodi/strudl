@@ -8,6 +8,7 @@
 
 fs    = require 'fs'
 Menu  = require 'menu'
+path  = require 'path'
 prefs = require './tools/prefs'
 log   = require './tools/log'
 
@@ -18,9 +19,19 @@ class MainMenu
         recent = []
         for f in prefs.load().recent
             if fs.existsSync f
-                recent.push 
-                    label: f
+                recent.unshift 
+                    label: path.basename(f) + ' - ' + path.dirname(f)
                     click: (i) -> main.loadFile i.label
+        if recent.length
+            recent.push
+                type: 'separator'
+            recent.push
+                label: 'Clear List'
+                click: (i) -> 
+                    p = prefs.load()
+                    p.recent = []
+                    prefs.save p
+                    MainMenu.init main
             
         Menu.setApplicationMenu Menu.buildFromTemplate [
             
@@ -68,6 +79,43 @@ class MainMenu
                 label: 'Reload'
                 accelerator: 'CmdOrCtrl+R'
                 click: (i,win) -> main.reload win
+            ]
+        ,    
+            ###
+            00000000  0000000    000  000000000
+            000       000   000  000     000   
+            0000000   000   000  000     000   
+            000       000   000  000     000   
+            00000000  0000000    000     000   
+            ###
+            label: "Edit",
+            # role: 'edit',
+            submenu: [
+                label: "Undo"
+                accelerator: "CmdOrCtrl+Z"
+                selector: "undo:" 
+            ,
+                label: "Redo"
+                accelerator: "Shift+CmdOrCtrl+Z"
+                selector: "redo:" 
+            ,
+                type: "separator" 
+            ,
+                label: "Cut"
+                accelerator: "CmdOrCtrl+X"
+                selector: "cut:" 
+            ,
+                label: "Copy"
+                accelerator: "CmdOrCtrl+C"
+                selector: "copy:" 
+            ,
+                label: "Paste"
+                accelerator: "CmdOrCtrl+V"
+                selector: "paste:"
+            ,
+                label: "Select All"
+                accelerator: "CmdOrCtrl+A"
+                selector: "selectAll:"
             ]
         ,
             ###

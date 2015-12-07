@@ -110,6 +110,7 @@ class Main
 
         prefs.one 'open', p
         prefs.one 'recent', p
+        MainMenu.init @
 
     openFile: ->
 
