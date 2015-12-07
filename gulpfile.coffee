@@ -2,6 +2,7 @@ path     = require 'path'
 gulp     = require 'gulp'
 plumber  = require 'gulp-plumber'
 del      = require 'del'
+sds      = require 'sds'
 stylus   = require 'gulp-stylus'
 coffee   = require 'gulp-coffee'
 pepper   = require 'gulp-pepper'
@@ -85,10 +86,11 @@ gulp.task 'release', ->
             prerelease: true
             manifest: require './package.json'
 
+electronVersion = '0.35.4'
 gulp.task 'app', ['coffee', 'bin', 'style', 'jade'], ->
     gulp.src ['./package.json', './win.html', './js/**', './style/**', './lib/**', './node_modules/**'], base: '.'
         .pipe electron 
-            version: '0.35.2'
+            version: electronVersion
             platform: 'darwin'
             darwinIcon: 'img/strudl.icns'
             darwinBundleDocumentTypes: [
@@ -96,11 +98,11 @@ gulp.task 'app', ['coffee', 'bin', 'style', 'jade'], ->
                 role: 'Viewer'
                 ostypes: ['****']
                 iconFile: 'img/file.icns'
-                extensions: ['json', 'cson', 'plist', 'yml']
+                extensions: sds.extensions
             ]
         .pipe symdest 'app'
 
-gulp.task 'electron-build', -> electron.dest 'electron-build', { version: '0.35.2', platform: 'darwin' }
+gulp.task 'electron-build', -> electron.dest 'electron-build', { version: electronVersion, platform: 'darwin' }
 
 gulp.task 'default', ->
                 

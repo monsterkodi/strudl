@@ -1,6 +1,6 @@
 {
   "name": "strudl",
-  "version": "0.4.14",
+  "version": "0.4.16",
   "description": "a structured data viewer",
   "author": "monsterkodi",
   "license": "Unlicense",
@@ -29,6 +29,7 @@
     "moment": "^2.10.6",
     "nomnom": "^1.8.1",
     "performance-now": "^0.2.0",
+    "sds": "^1.2.5",
     "simple-plist": "0.0.4",
     "tarball-extract": "0.0.3",
     "underscore.string": "^3.2.2",

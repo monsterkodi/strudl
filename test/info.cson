@@ -4,7 +4,7 @@ what:
         'strudl?': 'in more detail?'
 it:
     reads:
-        formats: ['json', 'cson', 'plist', 'yml']
+        formats: ['json', 'cson', 'noon', 'plist', 'yaml', 'yml']
     filters: 
             'key paths': '**.bla.blub.*'
             'values': 'or'

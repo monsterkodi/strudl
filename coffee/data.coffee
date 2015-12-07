@@ -11,6 +11,7 @@ Item    = require './item'
 profile = require './tools/profile'
 log     = require './tools/log'
 path    = require 'path'
+sds     = require 'sds'
 fs      = require 'fs'
 _       = require 'lodash'
 
@@ -19,10 +20,9 @@ class DataModel extends Model
     load: (@filePath) ->
         dbg @filePath
         @emit 'willReload'
-        if path.extname(@filePath) == '.plist'
-            @data = require('simple-plist').readFileSync @filePath
-        else
-            @data = @parseString fs.readFileSync @filePath
+        if path.extname(@filePath) in sds.extnames
+            @data = sds.load @filePath
+
         profile "create tree" 
         @root = @createItem -1, @data, @
         log "tree created"
@@ -32,18 +32,6 @@ class DataModel extends Model
         log "#{@lastID} items"
         @emit 'didReload'
 
-    parseString: (stringData) ->
-        dbg "parsing string #{stringData.length}"
-        switch path.extname(@filePath) 
-            when '.cson'
-                require('CSON').parse stringData
-            when '.yml'
-                require('js-yaml').safeLoad stringData
-            else
-                d = JSON.parse stringData
-                log "json parsed"
-                d
-                
     setFilter: (path, value) ->
         @emit 'willReload'
         if path and value

@@ -9,6 +9,7 @@
 _        = require 'lodash'
 fs       = require 'fs'
 app      = require 'app'
+sds      = require 'sds'
 dialog   = require 'dialog'
 Window   = require 'browser-window'
 MainMenu = require './mainmenu'
@@ -114,7 +115,7 @@ class Main
 
         p = dialog.showOpenDialog
             properties: [ 'openFile']
-            filters:    [ name: 'data', extensions: ['json', 'cson', 'plist', 'yml'] ]
+            filters:    [ name: 'data', extensions: sds.extensions ]
             properties: [ 'openFile', 'multiSelections' ]
             
         if p?.length?
