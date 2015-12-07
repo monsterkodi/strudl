@@ -121,8 +121,7 @@ class View extends Proxy
                 @selectIndex top
             else if @selIndex >= top + @numFullLines()
                 @selectIndex top + @numFullLines() - 1
-            else 
-                @update() 
+            @update() 
                         
     ###
      0000000  00000000  000      00000000   0000000  000000000
@@ -138,7 +137,9 @@ class View extends Proxy
         @selIndex = index
         @selIndex = Math.max(0, Math.min @selIndex, @numVisibleLines()-1)
         @keyPath.set @base.visibleItems[@selIndex]?.dataItem().keyPath()
-        @update()
+        setFocus = document.activeElement.classList.contains 'tree-line'
+        if setFocus
+            @selectedItem().setFocus()
     
     selectDelta: (lineDelta) -> @selectIndex @selIndex + lineDelta
         
@@ -150,7 +151,7 @@ class View extends Proxy
         
     focusSelected: () => 
         if not document.activeElement.classList.contains 'tree-line'
-            @selectedItem().focus()        
+            @selectedItem().setFocus()        
         
     ###
     000   000  00000000   0000000     0000000   000000000  00000000
@@ -169,6 +170,7 @@ class View extends Proxy
         profile "update #{numLines}" if doProfile
         
         setFocus = document.activeElement.classList.contains 'tree-line'
+        dbg setFocus, document.activeElement?.className
         
         @treeHeight = numLines * @lineHeight
         @linesHeight = viewLines * @lineHeight
@@ -207,7 +209,7 @@ class View extends Proxy
                     
             selItem = @closestItemForVisibleIndex @selIndex
             if setFocus 
-                selItem.focus()
+                selItem.setFocus()
             else
                 selItem.ownClass "selected", selItem.lin
                 
@@ -224,7 +226,9 @@ class View extends Proxy
             @scroll = 0
             @treeHeight = @lineHeight
             @updateScroll()
-                
+            
+        window.getSelection().empty()        
+        
         profile "" if doProfile
         
     updateSize: ->
@@ -293,7 +297,7 @@ class View extends Proxy
 
         if @selIndex < 0
             @selectIndex 0
-            @root.children[0]?.focus()
+            @root.children[0]?.setFocus()
         else if @selIndex >= @numVisibleLines()
             @selectIndex @numVisibleLines() - 1 
         else
@@ -376,11 +380,9 @@ class View extends Proxy
     ###
     
     onKeyDown: (event) =>
-                
+        # dbg document.activeElement?.className
         keycode = keyname.keycode event
         switch keycode
-            # when 'f' 
-            #     if event.metaKey then @findPath()
             when 'left', 'right'
                 if event.metaKey and event.altKey
                     if keycode == 'left'

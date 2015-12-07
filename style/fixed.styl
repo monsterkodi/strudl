@@ -6,17 +6,12 @@
 *  000       000  000   000  00000000  0000000  
 */
 
-nodrag()
-    -webkit-app-region  no-drag
-
 treeItemHeight = 24px
 idxColumnWidth = 50px
 numColumnWidth = 100px
 
 body
     margin              0px
-    -webkit-user-select none
-    pointer-events      all
     font-size           14px
     overflow            hidden
 
@@ -43,10 +38,11 @@ textarea
 */
 
 #find
-    position relative
-    display block
+    outline             none
+    position            relative
+    display             block
     height              treeItemHeight
-    width   100%
+    width               100%
     
     .key
         box-sizing      border-box
@@ -85,6 +81,7 @@ textarea
 
 #path
     display             block
+    outline             none
     min-height          treeItemHeight
     padding             0
     margin              0

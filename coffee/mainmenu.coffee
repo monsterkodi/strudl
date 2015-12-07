@@ -21,7 +21,8 @@ class MainMenu
             if fs.existsSync f
                 recent.unshift 
                     label: path.basename(f) + ' - ' + path.dirname(f)
-                    click: (i) -> main.loadFile i.label
+                    path: f
+                    click: (i) -> main.loadFile i.path
         if recent.length
             recent.push
                 type: 'separator'
@@ -89,8 +90,17 @@ class MainMenu
             00000000  0000000    000     000   
             ###
             label: "Edit",
-            # role: 'edit',
             submenu: [
+                label: "Undo"
+                accelerator: "CmdOrCtrl+Z"
+                selector: "undo:" 
+            ,
+                label: "Redo"
+                accelerator: "Shift+CmdOrCtrl+Z"
+                selector: "redo:" 
+            ,
+                type: "separator" 
+            ,
                 label: "Cut"
                 accelerator: "CmdOrCtrl+X"
                 selector: "cut:" 

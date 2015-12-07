@@ -18,6 +18,8 @@ class Drag extends EventEmitter
     onDragStart: (event) =>
         if event.target != @elem 
             return
+            
+        window.getSelection().empty()
         window.addEventListener 'mousemove', @onDrag
         window.addEventListener 'mouseup',   @onDragEnd
 
@@ -28,6 +30,7 @@ class Drag extends EventEmitter
         @rx = @ry = 0
                 
     onDrag: (event) =>
+        window.getSelection().empty()
         if event.clientX or event.clientY
             @x = event.clientX - @elem.offsetWidth
             @y = event.clientY - @elem.offsetHeight

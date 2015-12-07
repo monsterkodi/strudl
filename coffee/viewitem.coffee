@@ -33,10 +33,10 @@ class ViewItem extends ProxyItem
             linc.className = "tree-item linc"
 
             @lin = document.createElement 'span'
-            @lin.className = 'tree-line'
-            @lin.addEventListener 'click', @onClick
-            @lin.addEventListener 'blur',  @onBlur
-            @lin.addEventListener 'focus', @onFocus
+            @lin.className = 'tree-line line-' + String @value.visibleIndex
+            @lin.addEventListener 'mousedown', @onMouseDown
+            @lin.addEventListener 'blur',      @onBlur
+            @lin.addEventListener 'focus',     @onFocus
             @lin.tabIndex = -1
             linc.appendChild @lin
 
@@ -46,6 +46,7 @@ class ViewItem extends ProxyItem
             @idx.id = "#{@indexInParent()}"
             
             @elm = document.createElement 'div'
+            @elm.addEventListener 'mousedown', @onMouseDown
             @elm.className = "tree-item key"
             @elm.tabIndex = -1
             
@@ -53,7 +54,7 @@ class ViewItem extends ProxyItem
                 .on 'drag', @model().onDrag 
         
             spc = document.createElement 'span'
-            spc.addEventListener 'click', (event) => @onClick event, true
+            spc.addEventListener 'mousedown', (event) => @onMouseDown event, true
             spc.className = "tree-value spc"
             spc.style.minWidth = "#{@depth()*30}.px"
             spc.innerHTML = "&nbsp;"
@@ -64,12 +65,13 @@ class ViewItem extends ProxyItem
             if @isExpandable()
                 spc.classList.add @isExpanded() and "expanded" or "collapsed"
             @elm.appendChild spc
-            @elm.addEventListener 'click', @onClick
             
             @split = String(@key).split '►'
             
             key = document.createElement 'span'
-            key.addEventListener 'click', @onClick            
+            # key.addEventListener 'mousedown', @onMouseDown            
+            # key.addEventListener 'mousemove', @onMouseMove   
+            # key.addEventListener 'mouseup',   @onMouseUp
             key.className = "tree-value key " + @typeName().toLowerCase()
             
             if @split.length == 1
@@ -85,12 +87,16 @@ class ViewItem extends ProxyItem
             
             @val = document.createElement 'div'
             @val.className = "tree-item val " + @typeName().toLowerCase()
-            @val.addEventListener 'wheel', @onWheel
-            @val.addEventListener 'click', @onClick
-            @valDrag = new Drag @val
-            @valDrag.on 'drag', @onValDrag
+            @val.addEventListener 'mousedown', @onMouseDown
+            @val.addEventListener 'mouseover', @onMouseOver
+            @val.addEventListener 'mouseout',  @onMouseOut
+            
+            new Drag @val
+                .on 'drag', @model().onDrag 
 
             val = document.createElement 'span'
+            # @val.addEventListener 'mousemove', @onMouseMove   
+            # @val.addEventListener 'mouseup',   @onMouseUp            
             val.className = "tree-value val"
             @val.appendChild val
 
@@ -152,49 +158,38 @@ class ViewItem extends ProxyItem
     prevItem: () -> @parent.children[@indexInParent()-1]
         
     ###
-     0000000  000      000   0000000  000   000
-    000       000      000  000       000  000 
-    000       000      000  000       0000000  
-    000       000      000  000       000  000 
-     0000000  0000000  000   0000000  000   000
+    00     00   0000000   000   000   0000000  00000000
+    000   000  000   000  000   000  000       000     
+    000000000  000   000  000   000  0000000   0000000 
+    000 0 000  000   000  000   000       000  000     
+    000   000   0000000    0000000   0000000   00000000
     ###
         
-    onClick: (event, toggle=false) =>
-        toggle = true if @hasClass 'selected', @lin
-        @focus()
+    onMouseDown: (event, toggle=false) =>
+        
+        event.stopPropagation()
+        event.preventDefault()        
+        
+        if not @isExpanded() and @hasClass 'selected', @lin
+            toggle = true 
+            
+        @setFocus()
+        @select event
+        
         if toggle
             @toggle()
-        @select event
-        event.stopPropagation()
+            
+        # dbg document.activeElement.className   
+        
+    onMouseMove: (event) =>
+        # dbg event.target.className
+
+    onMouseUp: (event) =>
+        # dbg event.target.className
     
     onKeyPath: (keypath) => 
         @model().data().setFilter keypath.join '.'
-        
-    ###
-     0000000   0000000  00000000    0000000   000      000    
-    000       000       000   000  000   000  000      000    
-    0000000   000       0000000    000   000  000      000    
-         000  000       000   000  000   000  000      000    
-    0000000    0000000  000   000   0000000   0000000  0000000
-    ###
-        
-    onValDrag: (drag) => 
-            if @scrollable()
-                @scrollBy drag.dx
-
-    onWheel: (event) =>
-        if @scrollable() and Math.abs(event.deltaX) > Math.abs(event.deltaY)
-            @scrollBy event.deltaX
-            event.stopPropagation()
-            
-    scrollable: -> @val.clientWidth < @val.firstElementChild.clientWidth
-    scrollBy: (delta) ->
-            v = @val.firstElementChild
-            left = @getLeft(v) - delta
-            left = Math.min 0, left
-            left = Math.max left, -v.offsetWidth
-            @setLeft v, left
-        
+                
     ###
      0000000  00000000  000      00000000   0000000  000000000
     000       000       000      000       000          000   
@@ -202,26 +197,27 @@ class ViewItem extends ProxyItem
          000  000       000      000       000          000   
     0000000   00000000  0000000  00000000   0000000     000   
     ###
+                
+    select: -> 
+        @model().selectIndex @value.visibleIndex
+        @ownClass 'selected', @lin
         
-    deselect: -> 
-        @delClass 'selected', @lin
-        @delClass 'focus', @lin
-        @lin.tabIndex = -1  
-        @root().elem.focus()
+    onBlur: => 
+        dbg @lin.className
+        @clrClass 'focus', @lin
+        @lin.tabIndex = -1
         
-    select: -> @model().selectIndex @value.visibleIndex
-        
-    onBlur: => @clrClass 'focus', @lin
-    onFocus: => @ownClass 'focus', @lin
+    onFocus: => 
+        @ownClass 'focus', @lin
+        @ownClass 'selected', @lin
+        @lin.tabIndex = 2
     
     hasFocus: => document.activeElement == @lin
         
-    focus: (event) ->
-        @ownClass 'selected', @lin
+    setFocus: (event) -> 
+        dbg @lin.className
+        @lin.focus()   
         @ownClass 'focus', @lin
-        if @lin != document.activeElement
-            @lin.focus()   
-            @lin.tabIndex = 2     
                                                         
     selectLeft: (event) -> 
         if event.metaKey
@@ -240,6 +236,34 @@ class ViewItem extends ProxyItem
             @expand false
         else
             @model().selectDown event
+
+    ###
+     0000000   0000000  00000000    0000000   000      000    
+    000       000       000   000  000   000  000      000    
+    0000000   000       0000000    000   000  000      000    
+         000  000       000   000  000   000  000      000    
+    0000000    0000000  000   000   0000000   0000000  0000000
+    ###
+        
+    onMouseOver: (event) => @val.addEventListener 'wheel', @onWheel
+    onMouseOut: (event) => @val.removeEventListener 'wheel', @onWheel
+         
+    onWheel: (event) =>
+        dbg event.target.className
+        if @scrollable() and Math.abs(event.deltaX) > Math.abs(event.deltaY)
+            if @val.firstElementChild.style.position != 'absolute'
+                @val.firstElementChild.style.position = 'absolute'
+                @val.firstElementChild.style.left = '0'
+            @scrollBy event.deltaX
+            event.stopPropagation()
+            
+    scrollable: -> @val.clientWidth < @val.firstElementChild.clientWidth
+    scrollBy: (delta) ->
+            v = @val.firstElementChild
+            left = @getLeft(v) - delta
+            left = Math.min 0, left
+            left = Math.max left, -v.offsetWidth
+            @setLeft v, left
             
     ###
      0000000  000       0000000   0000000
