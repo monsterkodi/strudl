@@ -35,8 +35,8 @@ class ViewItem extends ProxyItem
             @lin = document.createElement 'span'
             @lin.className = 'tree-line line-' + String @value.visibleIndex
             @lin.addEventListener 'mousedown', @onMouseDown
-            @lin.addEventListener 'blur',      @onBlur
             @lin.addEventListener 'focus',     @onFocus
+            @lin.addEventListener 'blur',      @onBlur
             @lin.tabIndex = -1
             linc.appendChild @lin
 
@@ -47,6 +47,8 @@ class ViewItem extends ProxyItem
             
             @elm = document.createElement 'div'
             @elm.addEventListener 'mousedown', @onMouseDown
+            @elm.addEventListener 'focus',     @onFocus
+            @elm.addEventListener 'blur',      @onBlur
             @elm.className = "tree-item key"
             @elm.tabIndex = -1
             
@@ -69,9 +71,6 @@ class ViewItem extends ProxyItem
             @split = String(@key).split '►'
             
             key = document.createElement 'span'
-            # key.addEventListener 'mousedown', @onMouseDown            
-            # key.addEventListener 'mousemove', @onMouseMove   
-            # key.addEventListener 'mouseup',   @onMouseUp
             key.className = "tree-value key " + @typeName().toLowerCase()
             
             if @split.length == 1
@@ -88,15 +87,15 @@ class ViewItem extends ProxyItem
             @val = document.createElement 'div'
             @val.className = "tree-item val " + @typeName().toLowerCase()
             @val.addEventListener 'mousedown', @onMouseDown
+            @val.addEventListener 'focus',     @onFocus
+            @val.addEventListener 'blur',      @onBlur
             @val.addEventListener 'mouseover', @onMouseOver
             @val.addEventListener 'mouseout',  @onMouseOut
-            
+
             new Drag @val
                 .on 'drag', @model().onDrag 
 
             val = document.createElement 'span'
-            # @val.addEventListener 'mousemove', @onMouseMove   
-            # @val.addEventListener 'mouseup',   @onMouseUp            
             val.className = "tree-value val"
             @val.appendChild val
 
@@ -167,8 +166,8 @@ class ViewItem extends ProxyItem
         
     onMouseDown: (event, toggle=false) =>
         
+        # preventDefault here breaks selection!
         event.stopPropagation()
-        event.preventDefault()        
         
         if not @isExpanded() and @hasClass 'selected', @lin
             toggle = true 
@@ -178,18 +177,41 @@ class ViewItem extends ProxyItem
         
         if toggle
             @toggle()
-            
-        # dbg document.activeElement.className   
         
     onMouseMove: (event) =>
-        # dbg event.target.className
-
     onMouseUp: (event) =>
-        # dbg event.target.className
     
     onKeyPath: (keypath) => 
         @model().data().setFilter keypath.join '.'
+        
+    ###
+    00000000   0000000    0000000  000   000   0000000
+    000       000   000  000       000   000  000     
+    000000    000   000  000       000   000  0000000 
+    000       000   000  000       000   000       000
+    000        0000000    0000000   0000000   0000000 
+    ###
+        
+    hasFocus: => document.activeElement in [@lin, @val, @elm]
+
+    setFocus: () => @lin.focus()   
                 
+    onFocus: (event) => 
+        @ownClass 'focus', @lin
+        @ownClass 'selected', @lin
+        @ownClass 'tree-line-focus', event.target
+        event.target.tabIndex = 2
+        setTimeout @focusAgain, 10 # wtf?
+                
+    focusAgain: () =>
+        if @hasClass('selected', @lin) and document.activeElement == document.body
+            @setFocus()
+    
+    onBlur: (event) => 
+        @clrClass 'focus', @lin
+        @clrClass 'tree-line-focus', event.target
+        event.target.tabIndex = -1
+                        
     ###
      0000000  00000000  000      00000000   0000000  000000000
     000       000       000      000       000          000   
@@ -197,27 +219,12 @@ class ViewItem extends ProxyItem
          000  000       000      000       000          000   
     0000000   00000000  0000000  00000000   0000000     000   
     ###
-                
+                                
     select: -> 
         @model().selectIndex @value.visibleIndex
-        @ownClass 'selected', @lin
+        @setSelected()
         
-    onBlur: => 
-        dbg @lin.className
-        @clrClass 'focus', @lin
-        @lin.tabIndex = -1
-        
-    onFocus: => 
-        @ownClass 'focus', @lin
-        @ownClass 'selected', @lin
-        @lin.tabIndex = 2
-    
-    hasFocus: => document.activeElement == @lin
-        
-    setFocus: (event) -> 
-        dbg @lin.className
-        @lin.focus()   
-        @ownClass 'focus', @lin
+    setSelected: () -> @ownClass 'selected', @lin
                                                         
     selectLeft: (event) -> 
         if event.metaKey
@@ -245,8 +252,8 @@ class ViewItem extends ProxyItem
     0000000    0000000  000   000   0000000   0000000  0000000
     ###
         
-    onMouseOver: (event) => @val.addEventListener 'wheel', @onWheel
-    onMouseOut: (event) => @val.removeEventListener 'wheel', @onWheel
+    onMouseOver: (event) => @val.addEventListener    'wheel', @onWheel
+    onMouseOut: (event)  => @val.removeEventListener 'wheel', @onWheel
          
     onWheel: (event) =>
         dbg event.target.className

@@ -24,8 +24,8 @@ class View extends Proxy
     constructor: (base, @tree) -> 
         super base, 'view', @tree
         @tree.addEventListener 'keydown', @onKeyDown
-        @tree.addEventListener 'wheel', @onWheel
-        @tree.tabIndex = -1
+        @tree.addEventListener 'wheel',   @onWheel
+
         @topIndex = 0
         @botIndex = 0
         @selIndex = -1
@@ -53,7 +53,7 @@ class View extends Proxy
         @tree.appendChild tmp
         @lineHeight = tmp.offsetHeight
         tmp.remove()
-                        
+                                
     setBase: (base) ->
         super base
         @base.on "didLayout", @onDidLayout
@@ -131,15 +131,20 @@ class View extends Proxy
     0000000   00000000  0000000  00000000   0000000     000   
     ###
     
+    hasFocus: () -> document.activeElement.classList.contains 'tree-line-focus'
+    
     selectedItem: -> @closestItemForVisibleIndex @selIndex
     
     selectIndex: (index) ->
         @selIndex = index
         @selIndex = Math.max(0, Math.min @selIndex, @numVisibleLines()-1)
         @keyPath.set @base.visibleItems[@selIndex]?.dataItem().keyPath()
-        setFocus = document.activeElement.classList.contains 'tree-line'
-        if setFocus
-            @selectedItem().setFocus()
+        if @selIndex < @topIndex or @selIndex >= @topIndex + @numFullLines()
+            @update()
+        else if @hasFocus()
+            @selectedItem()?.setFocus()
+        else 
+            @selectedItem()?.setSelected()
     
     selectDelta: (lineDelta) -> @selectIndex @selIndex + lineDelta
         
@@ -150,7 +155,7 @@ class View extends Proxy
     onKeyPath: (keypath) => @selectIndex @base.itemAt(keypath).visibleIndex
         
     focusSelected: () => 
-        if not document.activeElement.classList.contains 'tree-line'
+        if not @hasFocus()
             @selectedItem().setFocus()        
         
     ###
@@ -169,8 +174,8 @@ class View extends Proxy
         
         profile "update #{numLines}" if doProfile
         
-        setFocus = document.activeElement.classList.contains 'tree-line'
-        dbg setFocus, document.activeElement?.className
+        setFocus = @hasFocus()
+        # dbg setFocus, document.activeElement?.className
         
         @treeHeight = numLines * @lineHeight
         @linesHeight = viewLines * @lineHeight
@@ -297,12 +302,13 @@ class View extends Proxy
 
         if @selIndex < 0
             @selectIndex 0
+            @update()
             @root.children[0]?.setFocus()
+            return
         else if @selIndex >= @numVisibleLines()
             @selectIndex @numVisibleLines() - 1 
-        else
-            @update()
-            
+        @update()
+                    
     setColumVisible: (c, v) -> 
 
         @col(c).style.display = v and 'inline-block' or 'none'
