@@ -4,8 +4,8 @@ echo clean
 gulp clean
 echo bump
 gulp bump
-APP=`sds package.json -p "name" -r`
-VER=`sds package.json -p "version" -r`
+APP=`sds -rp name`
+VER=`sds -rp version`
 echo build $APP v$VER
 RES="./$APP.app/Contents/Resources/app"
 echo rm app
@@ -19,4 +19,6 @@ rm -rf app
 echo tar app
 cd bin
 tar czf "$APP.app.tgz" "$APP.app"
+echo dbg
+dbg
 echo done $APP v$VER

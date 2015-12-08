@@ -1,9 +1,9 @@
 ###
-00     00   0000000   000  000   000
-000   000  000   000  000  0000  000
-000000000  000000000  000  000 0 000
-000 0 000  000   000  000  000  0000
-000   000  000   000  000  000   000
+ 0000000   00000000   00000000 
+000   000  000   000  000   000
+000000000  00000000   00000000 
+000   000  000        000      
+000   000  000        000      
 ###
 
 _        = require 'lodash'
@@ -16,7 +16,17 @@ MainMenu = require './mainmenu'
 DockMenu = require './dockmenu'
 log      = require './tools/log'
 prefs    = require './tools/prefs'
+debugel  = require 'electron-debug'
+debugel showDevTools: false # open console?
 prefs.debug = false # log prefs
+
+###
+00     00   0000000   000  000   000
+000   000  000   000  000  0000  000
+000000000  000000000  000  000 0 000
+000 0 000  000   000  000  000  0000
+000   000  000   000  000  000   000
+###
 
 class Main
     
@@ -65,9 +75,12 @@ class Main
         app.clearRecentDocuments()
         
         p = prefs.load()
-                            
-        for f in p.open
-            @loadFile f
+                
+        if p.open.length            
+            for f in p.open
+                @loadFile f
+        else
+            @showAbout()
         
     ###
     00000000  000  000      00000000
@@ -104,7 +117,7 @@ class Main
             prefs.del 'open', p
 
         w.filePath = p
-        w.loadURL "file://#{cwd}/../../win.html"
+        w.loadURL "file://#{cwd}/html/win.html"
 
         @wins[p] = w
 
@@ -145,6 +158,19 @@ class Main
         for k, w of @wins
             bounds[k] = w.getBounds()
         prefs.set 'windows', bounds
+        
+    
+    showAbout: ->    
+        cwd = __dirname
+        w = new Window
+            dir:           cwd
+            preloadWindow: true
+            resizable:     true
+            frame:         true
+            show:          true
+            center:        false
+            
+        w.loadURL "file://#{cwd}/html/about.html"
 
     ###
      0000000   000   000  000  000000000
@@ -163,5 +189,7 @@ class Main
     quit: ->
         app.clearRecentDocuments()
         app.quit()
+
+Main.init()
 
 module.exports = Main

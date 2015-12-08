@@ -13,11 +13,14 @@ then
     echo $PWD
 fi
 
+echo rm dbg
+rm -rf ../strudl.app
 echo extract
 tar xzf strudl.app.tgz -C ..
 cd ..
 echo rm, ln
-rm -rd strudl.app/Contents/Resources/app
+rm -rf strudl.app/Contents/Resources/app
 cd strudl.app/Contents/Resources
 ln -s ../../.. app
 cd ../../..
+open strudl.app   

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 cd "`dirname $0`/.."
 git add .
-git commit -m "version `sds package.json -p version -r`" 
+git commit -m "v`sds -rp version`" 
 git push
-gulp release
+gulp publish_release
 npm publish
 npm install -g strudl
