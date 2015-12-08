@@ -22,6 +22,8 @@ gulp.task 'coffee', ->
     gulp.src ['win.coffee', 'app.coffee','coffee/**/*.coffee'], base: '.'
         .pipe plumber()
         .pipe debug title: 'coffee'
+        .pipe salt()
+        .pipe gulp.dest '.'
         .pipe source.init()
         .pipe pepper
             stringify: (info) -> '"'+info.class + info.type + info.method + ' ► "'
@@ -29,6 +31,13 @@ gulp.task 'coffee', ->
                 dbg: 'log'
         .pipe coffee(bare: true).on('error', onError)
         .pipe source.write('./')
+        .pipe gulp.dest 'js/'
+
+gulp.task 'coffee_release', ->
+    gulp.src ['win.coffee', 'app.coffee','coffee/**/*.coffee'], base: '.'
+        .pipe plumber()
+        .pipe debug title: 'coffee'
+        .pipe coffee(bare: true).on('error', onError)
         .pipe gulp.dest 'js/'
     
 gulp.task 'bin', ->
@@ -64,7 +73,7 @@ gulp.task 'bump', ->
         .pipe bump()
         .pipe gulp.dest '.'
 
-gulp.task 'clean', ->
+gulp.task 'clean', (c) ->
     del [
         'js'
         'app'
@@ -76,6 +85,7 @@ gulp.task 'clean', ->
         'style/*.css'
         '!style/font-awesome.css'
     ]
+    c()
 
 gulp.task 'release', ->
     gulp.src './bin/strudl.app.tgz'
@@ -87,7 +97,7 @@ gulp.task 'release', ->
             manifest: require './package.json'
 
 electronVersion = '0.35.4'
-gulp.task 'app', ['coffee', 'bin', 'style', 'jade'], ->
+gulp.task 'app', ['clean', 'coffee_release', 'bin', 'style', 'jade'], ->
     gulp.src ['./package.json', './win.html', './js/**', './style/**', './lib/**', './node_modules/**'], base: '.'
         .pipe electron 
             version: electronVersion
