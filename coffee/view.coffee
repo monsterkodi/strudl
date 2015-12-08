@@ -79,87 +79,6 @@ class View extends Proxy
     numVisibleLines: -> @base.root?.numVisible or 0
 
     ###
-     0000000   0000000  00000000    0000000   000      000    
-    000       000       000   000  000   000  000      000    
-    0000000   000       0000000    000   000  000      000    
-         000  000       000   000  000   000  000      000    
-    0000000    0000000  000   000   0000000   0000000  0000000
-    ###
-                
-    scrollLines: (lineDelta) -> @scrollBy lineDelta * @lineHeight
-
-    scrollFactor: (event) ->
-        f  = 1 
-        f *= 1 + 9 * event.metaKey
-        f *= 1 + 99 * event.altKey        
-        f *= 1 + 999 * event.ctrlKey
-
-    onWheel: (event) => @scrollBy event.deltaY * @scrollFactor event
-    
-    onScrollDrag: (drag) =>
-        delta = -(drag.dy / @linesHeight) * @treeHeight
-        @scrollBy delta
-
-    onDrag: (drag) => @scrollBy drag.dy
-    
-    scrollBy: (delta) -> 
-
-        numLines = @numVisibleLines()
-        viewLines = @numViewLines()
-        @treeHeight = numLines * @lineHeight
-        @linesHeight = viewLines * @lineHeight
-        @scrollMax = @treeHeight - @linesHeight + @lineHeight
-        
-        @scroll += delta
-        @scroll = Math.min @scroll, @scrollMax
-        @scroll = Math.max @scroll, 0
-        
-        top = parseInt @scroll / @lineHeight
-        bot = Math.min(@topIndex + viewLines - 1, numLines - 1)
-
-        if @topIndex != top or @botIndex != bot
-            if @selIndex < top
-                @selectIndex top
-            else if @selIndex >= top + @numFullLines()
-                @selectIndex top + @numFullLines() - 1
-            @update() 
-                        
-    ###
-     0000000  00000000  000      00000000   0000000  000000000
-    000       000       000      000       000          000   
-    0000000   0000000   000      0000000   000          000   
-         000  000       000      000       000          000   
-    0000000   00000000  0000000  00000000   0000000     000   
-    ###
-    
-    hasFocus: () -> document.activeElement.classList.contains 'tree-line-focus'
-    
-    selectedItem: -> @closestItemForVisibleIndex @selIndex
-    
-    selectIndex: (index) ->
-        @selIndex = index
-        @selIndex = Math.max(0, Math.min @selIndex, @numVisibleLines()-1)
-        @keyPath.set @base.visibleItems[@selIndex]?.dataItem().keyPath()
-        if @selIndex < @topIndex or @selIndex >= @topIndex + @numFullLines()
-            @update()
-        else if @hasFocus()
-            @selectedItem()?.setFocus()
-        else 
-            @selectedItem()?.setSelected()
-    
-    selectDelta: (lineDelta) -> @selectIndex @selIndex + lineDelta
-        
-    selectUp: (event) -> @selectDelta -@scrollFactor event
-        
-    selectDown: (event) -> @selectDelta @scrollFactor event
-
-    onKeyPath: (keypath) => @selectIndex @base.itemAt(keypath).visibleIndex
-        
-    focusSelected: () => 
-        if not @hasFocus()
-            @selectedItem().setFocus()        
-        
-    ###
     000   000  00000000   0000000     0000000   000000000  00000000
     000   000  000   000  000   000  000   000     000     000     
     000   000  00000000   000   000  000000000     000     0000000 
@@ -236,6 +155,14 @@ class View extends Proxy
         window.getSelection().empty()        
         
         profile "" if doProfile
+
+    ###
+     0000000  000  0000000  00000000
+    000       000     000   000     
+    0000000   000    000    0000000 
+         000  000   000     000     
+    0000000   000  0000000  00000000
+    ###
         
     updateSize: ->
         [ic,kc,vc,nc] = [@col('idx'), @col('key'), @col('val'), @col('num')]
@@ -253,23 +180,7 @@ class View extends Proxy
             @setWidth vc, as - ks
         
         @sizer.update()
-        
-    updateScroll: ->
-        vh           = Math.min @linesHeight, @viewHeight()
-        scrollTop    = parseInt (@scroll / @treeHeight) * vh
-        scrollTop    = Math.max 0, scrollTop
-        scrollHeight = parseInt (@linesHeight / @treeHeight) * vh
-        scrollHeight = Math.max scrollHeight, parseInt @lineHeight/4
-        scrollTop    = Math.min scrollTop, @numFullLines()*@lineHeight-scrollHeight-1
-        
-        @scrollLeft.classList.toggle 'flashy', (scrollHeight < @lineHeight)
-        @scrollLeft.style.top    = "#{scrollTop}.px"
-        @scrollLeft.style.height = "#{scrollHeight}.px"
 
-        @scrollRight.classList.toggle 'flashy', (scrollHeight < @lineHeight)
-        @scrollRight.style.top    = "#{scrollTop}.px"
-        @scrollRight.style.height = "#{scrollHeight}.px"
-            
     ###
     000       0000000   000   000   0000000   000   000  000000000
     000      000   000   000 000   000   000  000   000     000   
@@ -321,6 +232,104 @@ class View extends Proxy
         else 
             @sizer.show()
         @update()
+            
+    ###
+     0000000   0000000  00000000    0000000   000      000    
+    000       000       000   000  000   000  000      000    
+    0000000   000       0000000    000   000  000      000    
+         000  000       000   000  000   000  000      000    
+    0000000    0000000  000   000   0000000   0000000  0000000
+    ###
+        
+    updateScroll: ->
+        vh           = Math.min @linesHeight, @viewHeight()
+        scrollTop    = parseInt (@scroll / @treeHeight) * vh
+        scrollTop    = Math.max 0, scrollTop
+        scrollHeight = parseInt (@linesHeight / @treeHeight) * vh
+        scrollHeight = Math.max scrollHeight, parseInt @lineHeight/4
+        scrollTop    = Math.min scrollTop, @numFullLines()*@lineHeight-scrollHeight-1
+        
+        @scrollLeft.classList.toggle 'flashy', (scrollHeight < @lineHeight)
+        @scrollLeft.style.top    = "#{scrollTop}.px"
+        @scrollLeft.style.height = "#{scrollHeight}.px"
+
+        @scrollRight.classList.toggle 'flashy', (scrollHeight < @lineHeight)
+        @scrollRight.style.top    = "#{scrollTop}.px"
+        @scrollRight.style.height = "#{scrollHeight}.px"
+                
+    scrollLines: (lineDelta) -> @scrollBy lineDelta * @lineHeight
+
+    scrollFactor: (event) ->
+        f  = 1 
+        f *= 1 + 9 * event.metaKey
+        f *= 1 + 99 * event.altKey        
+        f *= 1 + 999 * event.ctrlKey
+
+    onWheel: (event) => @scrollBy event.deltaY * @scrollFactor event
+    
+    onScrollDrag: (drag) =>
+        delta = -(drag.dy / @linesHeight) * @treeHeight
+        @scrollBy delta
+
+    onDrag: (drag) => @scrollBy drag.dy
+    
+    scrollBy: (delta) -> 
+
+        numLines = @numVisibleLines()
+        viewLines = @numViewLines()
+        @treeHeight = numLines * @lineHeight
+        @linesHeight = viewLines * @lineHeight
+        @scrollMax = @treeHeight - @linesHeight + @lineHeight
+        
+        @scroll += delta
+        @scroll = Math.min @scroll, @scrollMax
+        @scroll = Math.max @scroll, 0
+        
+        top = parseInt @scroll / @lineHeight
+        bot = Math.min(@topIndex + viewLines - 1, numLines - 1)
+
+        if @topIndex != top or @botIndex != bot
+            if @selIndex < top
+                @selectIndex top
+            else if @selIndex >= top + @numFullLines()
+                @selectIndex top + @numFullLines() - 1
+            @update() 
+                        
+    ###
+     0000000  00000000  000      00000000   0000000  000000000
+    000       000       000      000       000          000   
+    0000000   0000000   000      0000000   000          000   
+         000  000       000      000       000          000   
+    0000000   00000000  0000000  00000000   0000000     000   
+    ###
+    
+    hasFocus: () -> document.activeElement.classList.contains 'tree-line-focus'
+    
+    selectedItem: -> @closestItemForVisibleIndex @selIndex
+    
+    selectIndex: (index) ->
+        @selIndex = index
+        @selIndex = Math.max(0, Math.min @selIndex, @numVisibleLines()-1)
+        @keyPath.set @base.visibleItems[@selIndex]?.dataItem().keyPath()
+        if @selIndex < @topIndex or @selIndex >= @topIndex + @numFullLines()
+            @update()
+        else if @hasFocus()
+            @selectedItem()?.setFocus()
+        else 
+            @selectedItem()?.setSelected()
+    
+    selectDelta: (lineDelta) -> @selectIndex @selIndex + lineDelta
+        
+    selectUp: (event) -> @selectDelta -@scrollFactor event
+        
+    selectDown: (event) -> @selectDelta @scrollFactor event
+
+    onKeyPath: (keypath) => @selectIndex @base.itemAt(keypath).visibleIndex
+        
+    focusSelected: () => 
+        if not @hasFocus()
+            @selectedItem().setFocus()       
+                        
             
     ###
     000  000000000  00000000  00     00
