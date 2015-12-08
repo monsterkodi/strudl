@@ -55,13 +55,14 @@
   "keywords": [
     "json",
     "cson",
+    "noon",
     "plist",
     "yaml",
     "structured",
     "data",
-    "viewer",
     "search",
     "filter",
+    "viewer",
     "electron",
     "tool"
   ],
