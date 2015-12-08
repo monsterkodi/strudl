@@ -98,7 +98,7 @@ gulp.task 'clean', (c) ->
     ]
     c()
 
-gulp.task 'release', ->
+gulp.task 'publish_release', ->
     gulp.src './bin/strudl.app.tgz'
         .pipe release
             #token: GITHUB_TOKEN
