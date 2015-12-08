@@ -46,6 +46,7 @@ class View extends Proxy
         @find = new Find @, document.getElementById 'find'
         @find.on 'blur', @refocus
         @find.on 'hidden', @refocus
+        @find.on 'applied', @onFindApplied
         @find.elem.style.display = 'none'
         
         tmp = document.createElement 'div'
@@ -376,6 +377,9 @@ class View extends Proxy
     refocus: =>
         if not document.activeElement.classList.contains 'tree-item'
             setTimeout @focusSelected, 1
+            
+    onFindApplied: =>
+        @selectIndex 0
                             
     ###
     000   000  00000000  000   000  0000000     0000000   000   000  000   000

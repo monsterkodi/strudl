@@ -79,6 +79,7 @@ class Find extends Emitter
         start = now()
         @tree.data().setFilter key, val
         @filterTime = parseInt now() - start
+        @emit 'applied'
             
     ###
     00000000  000      00000000  00     00
