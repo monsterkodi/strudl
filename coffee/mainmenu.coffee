@@ -39,7 +39,7 @@ class MainMenu
             label: 'Strudel'   
             submenu: [     
                 label: 'About strudl'
-                role: 'about'
+                click: main.showAbout
             ,
                 type: 'separator'
             ,

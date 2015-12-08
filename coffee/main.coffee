@@ -17,6 +17,7 @@ DockMenu = require './dockmenu'
 log      = require './tools/log'
 prefs    = require './tools/prefs'
 debugel  = require 'electron-debug'
+
 debugel showDevTools: false # open console?
 prefs.debug = false # log prefs
 
@@ -125,7 +126,7 @@ class Main
         prefs.one 'recent', p
         MainMenu.init @
 
-    openFile: ->
+    openFile: =>
 
         p = dialog.showOpenDialog
             properties: [ 'openFile']
@@ -139,7 +140,6 @@ class Main
 
     reload: (win) ->
         if win?
-            
             p = win.filePath
             dbg p
             win.close()
@@ -158,9 +158,16 @@ class Main
         for k, w of @wins
             bounds[k] = w.getBounds()
         prefs.set 'windows', bounds
-        
+
+    ###
+     0000000   0000000     0000000   000   000  000000000
+    000   000  000   000  000   000  000   000     000   
+    000000000  0000000    000   000  000   000     000   
+    000   000  000   000  000   000  000   000     000   
+    000   000  0000000     0000000    0000000      000   
+    ###
     
-    showAbout: ->    
+    showAbout: =>    
         cwd = __dirname
         w = new Window
             dir:           cwd
@@ -169,8 +176,11 @@ class Main
             frame:         true
             show:          true
             center:        false
+            width:         400
+            height:        420
             
         w.loadURL "file://#{cwd}/html/about.html"
+        w.on 'openFileDialog', @openFile
 
     ###
      0000000   000   000  000  000000000
@@ -190,6 +200,7 @@ class Main
         app.clearRecentDocuments()
         app.quit()
 
-Main.init()
+if not Main.app?
+    Main.init()
 
 module.exports = Main

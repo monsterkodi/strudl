@@ -4,8 +4,12 @@ html(lang="en")
         meta(charset='utf-8')
         title about strudl
         link(rel='stylesheet' href='../style/about.css' type='text/css')
-
+        script(src='../about.js')
     body#body
-        div#container
-            div#about
-                img#icon(src='../img/about.png')
+        div#container(onclick="window.close();")
+            center
+                div#about
+                    img#icon(src='../img/about.png', onclick="openFile();")
+                    div#version
+                    a(onclick="openURL('<%= repository.url %>');" href="#")
+                        div strudl v<%= version %>

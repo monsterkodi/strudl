@@ -11,10 +11,12 @@ jade     = require 'gulp-jade'
 gutil    = require 'gulp-util'
 debug    = require 'gulp-debug'
 bump     = require 'gulp-bump'
+template = require 'gulp-template'
 source   = require 'gulp-sourcemaps'
 symdest  = require 'gulp-symdest'
 release  = require 'gulp-github-release'
 electron = require 'gulp-atom-electron'
+packagej = require './package.json'
  
 onError = (err) -> gutil.log err
 
@@ -37,6 +39,10 @@ gulp.task 'coffee_release', ->
     gulp.src ['win.coffee', 'app.coffee','coffee/**/*.coffee'], base: './coffee'
         .pipe plumber()
         .pipe debug title: 'coffee'
+        .pipe pepper
+            stringify: (info) -> '""'
+            paprika: 
+                dbg: 'log'
         .pipe coffee(bare: true).on('error', onError)
         .pipe gulp.dest 'js/'
     
@@ -58,6 +64,7 @@ gulp.task 'jade', ->
     gulp.src 'jade/*.jade', base: 'jade'
         .pipe plumber()
         .pipe debug title: 'jade'
+        .pipe template packagej
         .pipe jade pretty: true
         .pipe gulp.dest 'js/html'
         
@@ -72,11 +79,13 @@ gulp.task 'bump', ->
     gulp.src('./package.json')
         .pipe bump()
         .pipe gulp.dest '.'
-
+        
 gulp.task 'clean', (c) ->
     del [
         '!js/lib/prototype.js'
         'js/*.js'
+        'js/*.map'
+        'js/tools'
         'js/html'
         'js/style'
         'app'
@@ -112,7 +121,7 @@ gulp.task 'app', ['clean', 'coffee_release', 'bin', 'style', 'jade'], ->
                 iconFile: 'img/file.icns'
                 extensions: sds.extensions
             ]
-        .pipe debug title: 'app'
+        # .pipe debug title: 'app'
         .pipe symdest 'app'
 
 gulp.task 'electron-build', -> electron.dest 'electron-build', { version: electronVersion, platform: 'darwin' }
