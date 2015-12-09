@@ -145,6 +145,16 @@ class Main
             win.close()
             @loadFile p
 
+    focusNextWindow: (win) ->
+        log 'win', win
+        allWindows = Window.getAllWindows()
+        for w in allWindows
+            if w == win
+                log 'got w'
+                i = 1 + allWindows.indexOf w
+                i = 0 if i >= allWindows.length
+                allWindows[i].focus()
+
     ###
     0000000     0000000   000   000  000   000  0000000     0000000
     000   000  000   000  000   000  0000  000  000   000  000     

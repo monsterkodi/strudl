@@ -187,15 +187,21 @@ class MainMenu
             label: 'Window'
             role: 'window'
             submenu: [
-                label: 'Zoom'
-                role: 'maximize'
-            ,
                 label: 'Bring All to Front'
+                accelerator: 'Cmd+Ctrl+`'
                 role: 'front'
             ,
                 label: 'Minimize'
                 accelerator: 'CmdOrCtrl+M'
                 role: 'minimize'
+            ,
+                label: 'Maximize'
+                accelerator: 'Ctrl+Alt+Cmd+M'
+                click: (i,win) -> win?.maximize()
+            ,
+                label: 'Cycle Through Windows'
+                accelerator: 'CmdOrCtrl+`'
+                click: (i,win) -> main.focusNextWindow win
             ]
         ,        
             label: 'Help'
