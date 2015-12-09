@@ -84,9 +84,17 @@ initTools = ->
         icon:    'fa-arrow-circle-o-down'
         action:  () -> prxy.root.expand true 
     Menu.addButton btn,
+        tooltip: 'expand leaves'
+        icon:    'fa-level-down'
+        action:  () -> prxy.expandLeaves()
+    Menu.addButton btn,
         tooltip: 'collapse all'
         icon:    'fa-arrow-circle-o-up'
         action:  () -> prxy.collapseTop true 
+    Menu.addButton btn,
+        tooltip: 'collapse leaves'
+        icon:    'fa-level-up'
+        action:  () -> prxy.collapseLeaves() 
     Menu.addButton btn,
         tooltip: 'toggle num column'
         icon:    'fa-ellipsis-h'

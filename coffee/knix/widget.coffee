@@ -7,12 +7,9 @@
 ###
 _ = require 'lodash'
 uuid    = require 'node-uuid'
-warning = require './warning'
-log     = require './log'
-dbg     = require './log'
 str     = require './str'
 def     = require './def'
-rect    = require './rect'
+log     = require '../tools/log'
 
 class Widget
 
@@ -27,7 +24,7 @@ class Widget
         # dbg cfg
 
         if not cfg.type?
-            warning "NO TYPE?"
+            log "NO TYPE?"
             cfg.type = 'unknown'
 
         if not cfg.elem?
@@ -174,7 +171,6 @@ class Widget
                     # log 'found connector element', t, e.widget.config[t]
                     if e.widget.config[t] == name or e.widget.config[t]+':'+t == name
                         return e.widget
-            # warning 'no elem with class', name
         log 'connector not found!', name
         undefined
 
@@ -412,7 +408,7 @@ class Widget
     move:   (p) => @moveBy p.x, p.y
     moveBy: (dx, dy) => 
         r = @relPos()
-        @setPos x: r.x + dx, y: r.y + d.y
+        @moveTo r.x + dx, r.y + dy
     moveTo: (x, y) =>
         @config.x = x if x?
         @config.y = y if y?
@@ -461,7 +457,6 @@ class Widget
     sizePos:   => x: @getWidth(), y: @getHeight()
     getWidth:  => @elem?.getWidth()
     getHeight: => @elem?.getHeight()
-    absRect:   => new rect @absPos().x, @absPos().y, @getWidth(), @getHeight()
 
     innerWidth:   => @elem.getLayout().get("padding-box-width")
     innerHeight:  => @elem.getLayout().get("padding-box-height")

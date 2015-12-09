@@ -57,6 +57,8 @@ gulp.task 'style', ->
     gulp.src 'style/*.styl', base: '.'
         .pipe plumber()
         # .pipe debug title: 'style'
+        .pipe salt()
+        .pipe gulp.dest '.'
         .pipe stylus()
         .pipe gulp.dest 'js'
 
