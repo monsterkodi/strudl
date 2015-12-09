@@ -306,7 +306,7 @@ class View extends Proxy
     0000000   00000000  0000000  00000000   0000000     000   
     ###
     
-    hasFocus: () -> document.activeElement.classList.contains 'tree-line-focus'
+    hasFocus: -> document.activeElement.classList.contains 'tree-line-focus'
     
     selectedItem: -> @closestItemForVisibleIndex @selIndex
     
@@ -329,11 +329,13 @@ class View extends Proxy
 
     onKeyPath: (keypath) => @selectIndex @base.itemAt(keypath).visibleIndex
         
-    focusSelected: () => 
+    focusSelected: => 
         if not @hasFocus()
             @selectedItem().setFocus()       
                         
-            
+    collapseSubtree: -> @base.collapseLeaves @selectedItem().value  
+    expandSubtree:   -> @base.expandLeaves @selectedItem().value     
+        
     ###
     000  000000000  00000000  00     00
     000     000     000       000   000

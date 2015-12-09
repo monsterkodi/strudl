@@ -81,20 +81,28 @@ initTools = ->
         action:  () -> view.toggleColumn 'idx'
     Menu.addButton btn,
         tooltip: 'expand all'
-        icon:    'fa-arrow-circle-o-down'
+        icon:    'fa-arrow-circle-down'
         action:  () -> prxy.root.expand true 
     Menu.addButton btn,
         tooltip: 'expand leaves'
-        icon:    'fa-level-down'
+        icon:    'fa-arrow-circle-o-down'
         action:  () -> prxy.expandLeaves()
     Menu.addButton btn,
+        tooltip: 'collapse subtree'
+        icon:    'fa-angle-down'
+        action:  () -> view.expandSubtree() 
+    Menu.addButton btn,
         tooltip: 'collapse all'
-        icon:    'fa-arrow-circle-o-up'
+        icon:    'fa-arrow-circle-up'
         action:  () -> prxy.collapseTop true 
     Menu.addButton btn,
         tooltip: 'collapse leaves'
-        icon:    'fa-level-up'
+        icon:    'fa-arrow-circle-o-up'
         action:  () -> prxy.collapseLeaves() 
+    Menu.addButton btn,
+        tooltip: 'collapse subtree'
+        icon:    'fa-angle-up'
+        action:  () -> view.collapseSubtree() 
     Menu.addButton btn,
         tooltip: 'toggle num column'
         icon:    'fa-ellipsis-h'
