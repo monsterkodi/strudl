@@ -1,6 +1,6 @@
 {
     "name": "strudl",
-    "version": "0.6.36",
+    "version": "0.6.37",
     "description": "structured data viewer",
     "author": "monsterkodi",
     "license": "Unlicense",
@@ -68,8 +68,10 @@
         "electron",
         "tool"
     ],
-    "maintainers": [{
-        "name": "monsterkodi",
-        "email": "monsterkodi@gmx.net"
-    }]
+    "maintainers": [
+        {
+            "name": "monsterkodi",
+            "email": "monsterkodi@gmx.net"
+        }
+    ]
 }

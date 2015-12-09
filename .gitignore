@@ -1,7 +1,10 @@
 data
 electron*
 img/*.pxm
-js
+js/*.js
+js/*.map
+js/html
+js/style
 node_modules
 prefs.json
 *.app
