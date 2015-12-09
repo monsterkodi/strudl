@@ -188,17 +188,19 @@ class MainMenu
             label: 'Window'
             role: 'window'
             submenu: [
+                label:       'Minimize'
+                accelerator: 'Cmd+M'
+                click:       (i,win) -> win?.minimize()
+            ,
+                label:       'Maximize'
+                accelerator: 'Cmd+Shift+m'
+                click:       (i,win) -> win?.maximize()
+            ,
+                type: 'separator'
+            ,                            
                 label:       'Bring All to Front'
                 accelerator: 'Alt+Cmd+`'
                 role:        'front'
-            ,
-                label:       'Minimize'
-                accelerator: 'CmdOrCtrl+M'
-                role:        'minimize'
-            ,
-                label:       'Maximize'
-                accelerator: 'Ctrl+Alt+Cmd+M'
-                click:       (i,win) -> win?.maximize()
             ,
                 label:       'Cycle Through Windows'
                 accelerator: 'CmdOrCtrl+`'

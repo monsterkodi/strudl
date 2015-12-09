@@ -16,10 +16,9 @@ MainMenu = require './mainmenu'
 DockMenu = require './dockmenu'
 log      = require './tools/log'
 prefs    = require './tools/prefs'
-debugel  = require 'electron-debug'
 
-debugel showDevTools: false # open console?
-prefs.debug = false # log prefs
+# prefs.debug = true # log prefs
+# require('electron-debug')(showDevTools: true) # open console?
 
 ###
 00     00   0000000   000  000   000
