@@ -7,30 +7,20 @@
 ###
 
 _           = require 'lodash'
-StyleSwitch = require './styleswitch'
-About       = require './about'
-Console     = require './console'
 Widget      = require './widget'
 Stage       = require './stage'
 Menu        = require './menu'
 tools       = require './tools'
 str         = require './str'
-log         = require './log'
-dbg         = require './log'
 def         = require './def'
+log         = require '../tools/log'
 
 class knix
 
     @init: (config={}) =>
-
-        if config.console?
-            c = new Console()
-            c.shade() if config.console == 'shade'
-
-        # StyleSwitch.init()
                 
-        # @initMenu()
-        # @initTools()
+        @initMenu()
+        @initTools()
         Stage.init()
     
         c?.raise()
@@ -50,13 +40,13 @@ class knix
         
         mainMenu = new Menu
             id:     'menu'
-            parent: 'stage'
+            parent: 'menu-bar'
             style:  
                 top: '0px'
             
         toolMenu = new Menu
             id:     'tool'
-            parent: 'stage'
+            parent: 'menu-bar'
             style:  
                 top:   '0px'
                 right: '0px'
@@ -67,31 +57,10 @@ class knix
             menu: 'tool'
 
         Menu.addButton btn,
-            tooltip: 'console'
-            icon:    'octicon-terminal'
-            action:  -> new Console()
-
-        Menu.addButton btn,
-            tooltip: 'style'
-            keys:    ['i']
-            icon:    'octicon-color-mode'
-            action:  StyleSwitch.toggle
-
-        Menu.addButton btn,
-            tooltip: 'about'
-            icon:    'octicon-info'
-            action:  About.show
-
-        Menu.addButton btn,
-            tooltip: 'shade all'
-            icon:    'octicon-dash'
-            action:  knix.shadeWindows
-
-        Menu.addButton btn,
             tooltip: 'close windows'
-            icon:    'octicon-x'
-            keys:    ['⇧⌥„']
-            action:  knix.closeAllWindows            
+            icon:    'fa-arrow-circle-o-up'
+            keys:    ['⇧⌥x']
+            action:  () -> log 'hello'     
 
     ###
      0000000  00000000   00000000   0000000   000000000  00000000

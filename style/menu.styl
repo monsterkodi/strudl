@@ -1,0 +1,64 @@
+/*
+*  00     00  00000000  000   000  000   000
+*  000   000  000       0000  000  000   000
+*  000000000  0000000   000 0 000  000   000
+*  000 0 000  000       000  0000  000   000
+*  000   000  00000000  000   000   0000000 
+*/
+
+menuHeight = 20px
+
+#menu-bar
+    width 100%
+
+.menu
+    position:         absolute
+    height:           menuHeight
+    overflow:         hidden
+
+#menu
+    border-bottom-right-radius: 6px
+
+#tool
+    border-bottom-left-radius: 6px
+
+.context-menu .content 
+    padding: 0px
+    & > div
+        margin-bottom: 0px
+
+.context-menu .content .button
+.menu .button
+    overflow:         hidden
+    float:            left
+    font-weight:      normal
+    height:           menuHeight
+    padding-top:      2px
+    border-radius:    0
+
+.context-menu .content .button
+    padding-top: 5px
+    padding-bottom: 5px
+    height: 30px
+    border: 0px
+    box-shadow: none
+
+.submenu 
+.context-menu .content
+    overflow: visible
+    & .button
+        float: none
+
+.context-menu .content .icon
+    padding-left: 5px
+    padding-right: 4px
+ 
+.submenu .button
+.context-menu .content .button
+    text-align: left
+    padding-right: 9px 
+        
+.tool-button
+    padding-left: 0
+    padding-right: 0
+    border-radius: 0

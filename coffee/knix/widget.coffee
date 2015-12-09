@@ -11,7 +11,6 @@ warning = require './warning'
 log     = require './log'
 dbg     = require './log'
 str     = require './str'
-pos     = require './pos'
 def     = require './def'
 rect    = require './rect'
 
@@ -45,7 +44,10 @@ class Widget
 
         @initElem()
         
-        @elem.relPos = -> o = @positionedOffset(); pos o.left, o.top
+        @elem.relPos = -> 
+            o = @positionedOffset()
+            x: o.left 
+            y: o.top
 
         @elem.writeAttribute('id', @config.id) if @config.id? # set element id
 
@@ -98,7 +100,6 @@ class Widget
 
         #__________________________________________________ event setup
 
-        @addMovement()
         @initEvents()
         @
 
@@ -231,7 +232,7 @@ class Widget
             height : @config.height
 
     emitMove: =>
-        p = pos @config.x, @config.y
+        p = x: @config.x, y: @config.y
         @emit 'move',
             pos: p
 
@@ -409,13 +410,14 @@ class Widget
 
     setPos: (p) => @moveTo p.x, p.y
     move:   (p) => @moveBy p.x, p.y
-    moveBy: (dx, dy) => @setPos @relPos().plus pos(dx, dy)
+    moveBy: (dx, dy) => 
+        r = @relPos()
+        @setPos x: r.x + dx, y: r.y + d.y
     moveTo: (x, y) =>
         @config.x = x if x?
         @config.y = y if y?
         @elem.style.left = "%dpx".fmt(x) if x?
         @elem.style.top  = "%dpx".fmt(y) if y?
-        # log @elem.style.left, @elem.style.top
         @emitMove()
         @
 
@@ -437,7 +439,6 @@ class Widget
         if h?
             oh = @elem.style.height
             @setHeightNoEmit h
-            # log @elem.id, @elem.style.height, h
             @emitSize() if oh != @elem.style.height
         @
 
@@ -445,9 +446,7 @@ class Widget
         if h? 
             @config.height = h
             if @getHeight() != h
-                # log @elem.id, @getHeight(), h
                 @elem.style.height = "%dpx".fmt(h)
-                # log @elem.id, @elem.style.height, h
                 if newHeight = @getHeight() and diff = newHeight - h
                     @elem.style.height = "%dpx".fmt(h - diff)
                     log 'adjusted', diff, @elem.id, @elem.style.height, h
@@ -458,8 +457,8 @@ class Widget
         @
 
     setSize:   (s) => @resize s.width, s.height
-    getSize:   => return { width : @getWidth(), height : @getHeight() }
-    sizePos:   => return pos @getWidth(), @getHeight()
+    getSize:   => width : @getWidth(), height : @getHeight()
+    sizePos:   => x: @getWidth(), y: @getHeight()
     getWidth:  => @elem?.getWidth()
     getHeight: => @elem?.getHeight()
     absRect:   => new rect @absPos().x, @absPos().y, @getWidth(), @getHeight()
@@ -470,42 +469,9 @@ class Widget
     minHeight:    => h = parseInt @elem.getStyle('min-height'); if h then h else 0
     maxWidth:     => w = parseInt @elem.getStyle('max-width' ); if w then w else Number.MAX_VALUE
     maxHeight:    => h = parseInt @elem.getStyle('max-height'); if h then h else Number.MAX_VALUE
-    relPos:       => o = @elem.positionedOffset(); pos o.left, o.top
-    absPos:       => o = @elem.cumulativeOffset(); s = @elem.cumulativeScrollOffset(); pos o.left - s.left, o.top - s.top
-    scrollPos:    => pos @elem.scrollLeft, @elem.scrollTop
-    absCenter:    => @absPos().plus(pos(@elem.getWidth(),@elem.getHeight()).scale(0.5))
+    relPos:       => o = @elem.positionedOffset(); x: o.left, y: o.top
+    absPos:       => o = @elem.cumulativeOffset(); s = @elem.cumulativeScrollOffset(); x: o.left - s.left, y: o.top - s.top
+    scrollPos:    => x: @elem.scrollLeft, y: @elem.scrollTop
     stretchWidth: => @elem.style.width = '50%'
-
-    ###
-    00     00   0000000   000   000  00000000
-    000   000  000   000  000   000  000     
-    000000000  000   000   000 000   0000000 
-    000 0 000  000   000     000     000     
-    000   000   0000000       0      00000000
-    ###
-
-    addMovement: =>        
-        if @config.isMovable
-            new Drag
-                target:  @elem
-                minPos:  pos(undefined,0)
-                onMove:  @onMove
-                onStart: @moveStart
-                onStop:  @moveStop
-                cursor: null
-
-    onMove: (drag, event) =>
-        log 'move', @elem?.id
-        @emitMove()
-        
-    moveStart: (drag, event) =>
-        tag 'Drag'
-        log 'start', event.target?.id
-        StyleSwitch.togglePathFilter()
-
-    moveStop: (drag, event) =>
-        tag 'Drag'
-        log 'stop', event.target?.id
-        StyleSwitch.togglePathFilter()
 
 module.exports = Widget

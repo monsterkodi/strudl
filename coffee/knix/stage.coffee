@@ -6,11 +6,9 @@
 0000000      000     000   000   0000000   00000000
 ###
 
-pos = require './pos'
-
 class Stage
 
-    @mousePos = pos 0, 0
+    @mousePos = x: 0, y: 0
     
     @init: =>
         stage = $('stage')
@@ -45,10 +43,10 @@ class Stage
     @absPos: (event) =>
         event = if event? then event else window.event
         if isNaN window.scrollX
-            return pos(event.clientX + document.documentElement.scrollLeft + document.body.scrollLeft,
-                       event.clientY + document.documentElement.scrollTop + document.body.scrollTop)
+            return x: event.clientX + document.documentElement.scrollLeft + document.body.scrollLeft
+                   y: event.clientY + document.documentElement.scrollTop + document.body.scrollTop
         else
-            return pos(event.clientX + window.scrollX, event.clientY + window.scrollY)
+            return x: event.clientX + window.scrollX, y: event.clientY + window.scrollY
 
     @relPos: (event) =>
         event = if event? then event else window.event
