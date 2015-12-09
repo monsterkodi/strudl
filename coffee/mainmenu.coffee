@@ -38,25 +38,25 @@ class MainMenu
             
             label: 'Strudel'   
             submenu: [     
-                label: 'About strudl'
+                label:       'About strudl'
                 accelerator: 'CmdOrCtrl+.'
-                click: main.showAbout
+                click:       main.showAbout
             ,
                 type: 'separator'
             ,
-                label: 'Hide strudl'
+                label:       'Hide strudl'
                 accelerator: 'Command+H'
-                role: 'hide'
+                role:        'hide'
             ,
-                label: 'Hide Others'
+                label:       'Hide Others'
                 accelerator: 'Command+Alt+H'
-                role: 'hideothers'
+                role:        'hideothers'
             ,
                 type: 'separator'
             ,
-                label: 'Quit'
+                label:       'Quit'
                 accelerator: 'Command+Q'
-                click: -> main.quit()
+                click:       -> main.quit()
             ]
         ,
             ###
@@ -69,18 +69,18 @@ class MainMenu
             label: 'File'
             role: 'file'
             submenu: [
-                label: 'Open...'
+                label:       'Open...'
                 accelerator: 'CmdOrCtrl+O'
-                click: -> main.openFile()
+                click:       -> main.openFile()
             ,
-                label: 'Open Recent'
-                submenu: recent
+                label:       'Open Recent'
+                submenu:     recent
             ,
                 type: 'separator'
             ,
-                label: 'Reload'
+                label:       'Reload'
                 accelerator: 'CmdOrCtrl+R'
-                click: (i,win) -> main.reload win
+                click:       (i,win) -> main.reload win
             ]
         ,    
             ###
@@ -92,27 +92,27 @@ class MainMenu
             ###
             label: "Edit",
             submenu: [
-                label: "Undo"
+                label:       "Undo"
                 accelerator: "CmdOrCtrl+Z"
-                selector: "undo:" 
+                selector:    "undo:" 
             ,
-                label: "Redo"
+                label:       "Redo"
                 accelerator: "Shift+CmdOrCtrl+Z"
-                selector: "redo:" 
+                selector:    "redo:" 
             ,
                 type: "separator" 
             ,
-                label: "Cut"
+                label:       "Cut"
                 accelerator: "CmdOrCtrl+X"
-                selector: "cut:" 
+                selector:    "cut:" 
             ,
-                label: "Copy"
+                label:       "Copy"
                 accelerator: "CmdOrCtrl+C"
-                selector: "copy:" 
+                selector:    "copy:" 
             ,
-                label: "Paste"
+                label:       "Paste"
                 accelerator: "CmdOrCtrl+V"
-                selector: "paste:"
+                selector:    "paste:"
             ]
         ,
             ###
@@ -124,17 +124,17 @@ class MainMenu
             ###
             label: 'Find'
             submenu: [
-                label: 'Find Path'
+                label:       'Find Path'
                 accelerator: 'CmdOrCtrl+F'
-                click: (i,win) -> win?.emit 'findPath'
+                click:       (i,win) -> win?.emit 'findPath'
             ,
-                label: 'Find Value'
+                label:       'Find Value'
                 accelerator: 'CmdOrCtrl+G'
-                click: (i,win) -> win?.emit 'findValue'
+                click:       (i,win) -> win?.emit 'findValue'
             ,
-                label: 'Clear Find'
+                label:       'Clear Find'
                 accelerator: 'CmdOrCtrl+K'
-                click: (i,win) -> win?.emit 'clearFind'
+                click:       (i,win) -> win?.emit 'clearFind'
             ]
         ,        
             ###
@@ -147,35 +147,35 @@ class MainMenu
             label: 'View'
             role: 'view'
             submenu: [
-                label: 'Index Column'
+                label:       'Index Column'
                 accelerator: 'CmdOrCtrl+1'
-                type: 'checkbox'
-                checked: true
-                click: (i,win) -> win?.emit 'setColumnVisible', 'idx', i.checked
+                type:        'checkbox'
+                checked:     true
+                click:       (i,win) -> win?.emit 'setColumnVisible', 'idx', i.checked
             ,
-                label: 'Path Column'
+                label:       'Path Column'
                 accelerator: 'CmdOrCtrl+2'
-                type: 'checkbox'
-                checked: true
-                click: (i,win) -> win?.emit 'setColumnVisible', 'key', i.checked
+                type:        'checkbox'
+                checked:     true
+                click:       (i,win) -> win?.emit 'setColumnVisible', 'key', i.checked
             ,
-                label: 'Value Column'
+                label:       'Value Column'
                 accelerator: 'CmdOrCtrl+3'
-                type: 'checkbox'
-                checked: true
-                click: (i,win) -> win?.emit 'setColumnVisible', 'val', i.checked
+                type:        'checkbox'
+                checked:     true
+                click:       (i,win) -> win?.emit 'setColumnVisible', 'val', i.checked
             ,
-                label: 'Number Column'
+                label:       'Number Column'
                 accelerator: 'CmdOrCtrl+4'
-                type: 'checkbox'
-                checked: true
-                click: (i,win) -> win?.emit 'setColumnVisible', 'num', i.checked
+                type:        'checkbox'
+                checked:     true
+                click:       (i,win) -> win?.emit 'setColumnVisible', 'num', i.checked
             ,
                 type: 'separator'
             ,                
-                label: 'Toggle FullScreen'
+                label:       'Toggle FullScreen'
                 accelerator: 'Ctrl+Command+F'
-                click: (i,win) -> win?.setFullScreen !win.isFullScreen()
+                click:       (i,win) -> win?.setFullScreen !win.isFullScreen()
             ]
         ,        
             ###
@@ -188,21 +188,21 @@ class MainMenu
             label: 'Window'
             role: 'window'
             submenu: [
-                label: 'Bring All to Front'
-                accelerator: 'Cmd+Ctrl+`'
-                role: 'front'
+                label:       'Bring All to Front'
+                accelerator: 'Alt+Cmd+`'
+                role:        'front'
             ,
-                label: 'Minimize'
+                label:       'Minimize'
                 accelerator: 'CmdOrCtrl+M'
-                role: 'minimize'
+                role:        'minimize'
             ,
-                label: 'Maximize'
+                label:       'Maximize'
                 accelerator: 'Ctrl+Alt+Cmd+M'
-                click: (i,win) -> win?.maximize()
+                click:       (i,win) -> win?.maximize()
             ,
-                label: 'Cycle Through Windows'
+                label:       'Cycle Through Windows'
                 accelerator: 'CmdOrCtrl+`'
-                click: (i,win) -> main.focusNextWindow win
+                click:       (i,win) -> main.focusNextWindow win
             ]
         ,        
             label: 'Help'
