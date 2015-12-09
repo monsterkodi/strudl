@@ -9,6 +9,8 @@
 clr                  = {} 
 clr.black            = #000000
 clr.gray-most-dark   = #181818
+clr.gray-dark        = #333333
+clr.gray-medium      = #666666
 clr.gray             = #888888
 clr.white            = #ffffff
 clr.yellow           = #ffff00
@@ -35,12 +37,11 @@ body
     overflow            hidden
     
 a
-    font-weight         bold
     text-decoration     none
     color:              clr.blue-medium
     &:hover  
         color:          clr.orange
-        
+                
 #container
     position            absolute
     top                 0
@@ -51,3 +52,13 @@ a
 #icon
     margin-top          30px
     margin-bottom       30px
+    cursor              pointer
+
+#name
+    font-weight         bold
+    
+#version
+    font-size           14px
+    color:              clr.gray-dark
+    &:hover 
+        color:          clr.gray-medium

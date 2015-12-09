@@ -23,7 +23,7 @@ onError = (err) -> gutil.log err
 gulp.task 'coffee', ->
     gulp.src ['coffee/**/*.coffee'], base: 'coffee'
         .pipe plumber()
-        .pipe debug title: 'coffee'
+        # .pipe debug title: 'coffee'
         .pipe salt()
         .pipe gulp.dest 'coffee'
         .pipe source.init()
@@ -38,7 +38,7 @@ gulp.task 'coffee', ->
 gulp.task 'coffee_release', ->
     gulp.src ['win.coffee', 'app.coffee','coffee/**/*.coffee'], base: './coffee'
         .pipe plumber()
-        .pipe debug title: 'coffee'
+        # .pipe debug title: 'coffee'
         .pipe pepper
             stringify: (info) -> '""'
             paprika: 
@@ -49,21 +49,21 @@ gulp.task 'coffee_release', ->
 gulp.task 'bin', ->
     gulp.src ['bin/*.coffee'], base: '.'
         .pipe plumber()
-        .pipe debug title: 'bin'
+        # .pipe debug title: 'bin'
         .pipe coffee(bare: true).on('error', onError)
         .pipe gulp.dest '.'
         
 gulp.task 'style', ->
     gulp.src 'style/*.styl', base: '.'
         .pipe plumber()
-        .pipe debug title: 'style'
+        # .pipe debug title: 'style'
         .pipe stylus()
         .pipe gulp.dest 'js'
 
 gulp.task 'jade', ->
     gulp.src 'jade/*.jade', base: 'jade'
         .pipe plumber()
-        .pipe debug title: 'jade'
+        # .pipe debug title: 'jade'
         .pipe template packagej
         .pipe jade pretty: true
         .pipe gulp.dest 'js/html'
@@ -71,7 +71,7 @@ gulp.task 'jade', ->
 gulp.task 'salt', ->
     gulp.src ['win.coffee', 'app.coffee', 'coffee/**/*.coffee', 'bin/*.coffee', 'style/*.styl'], base: '.'
         .pipe plumber()
-        .pipe debug title: 'salt'
+        # .pipe debug title: 'salt'
         .pipe salt()
         .pipe gulp.dest '.'
 

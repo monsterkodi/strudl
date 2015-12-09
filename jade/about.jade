@@ -12,4 +12,6 @@ html(lang="en")
                     img#icon(src='../img/about.png', onclick="openFile();")
                     div#version
                     a(onclick="openURL('<%= repository.url %>');" href="#")
-                        div strudl v<%= version %>
+                        div#name strudl 
+                    a(onclick="openURL('<%= repository.url %>');" href="#")
+                        div#version v<%= version %>

@@ -39,6 +39,7 @@ class MainMenu
             label: 'Strudel'   
             submenu: [     
                 label: 'About strudl'
+                accelerator: 'CmdOrCtrl+.'
                 click: main.showAbout
             ,
                 type: 'separator'
