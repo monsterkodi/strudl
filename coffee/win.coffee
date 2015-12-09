@@ -79,30 +79,43 @@ initTools = ->
         tooltip: 'toggle index column'
         icon:    'fa-ellipsis-v'
         action:  () -> view.toggleColumn 'idx'
+        
     Menu.addButton btn,
-        tooltip: 'expand all'
+        tooltip: 'expand all deep ⌥⌘→'
         icon:    'fa-arrow-circle-down'
         action:  () -> prxy.root.expand true 
     Menu.addButton btn,
-        tooltip: 'expand leaves'
-        icon:    'fa-arrow-circle-o-down'
-        action:  () -> prxy.expandLeaves()
-    Menu.addButton btn,
-        tooltip: 'collapse subtree'
-        icon:    'fa-angle-down'
-        action:  () -> view.expandSubtree() 
-    Menu.addButton btn,
-        tooltip: 'collapse all'
+        tooltip: 'collapse all deep ⌥⌘←'
         icon:    'fa-arrow-circle-up'
         action:  () -> prxy.collapseTop true 
+
     Menu.addButton btn,
-        tooltip: 'collapse leaves'
-        icon:    'fa-arrow-circle-o-up'
+        tooltip: 'expand all ⌥⌘]'
+        icon:    'fa-chevron-circle-down'
+        action:  () -> prxy.expandLeaves()
+    Menu.addButton btn,
+        tooltip: 'collapse all ⌥⌘['
+        icon:    'fa-chevron-circle-up'
         action:  () -> prxy.collapseLeaves() 
+
     Menu.addButton btn,
-        tooltip: 'collapse subtree'
+        tooltip: 'expand subtree deep ⌘→'
+        icon:    'fa-arrow-circle-o-down'
+        action:  () -> view.expandSubtree true 
+    Menu.addButton btn,
+        tooltip: 'collapse subtree deep ⌘←'
+        icon:    'fa-arrow-circle-o-up'
+        action:  () -> view.collapseSubtree true
+
+    Menu.addButton btn,
+        tooltip: 'expand subtree ⌘]'
+        icon:    'fa-angle-down'
+        action:  () -> view.expandSubtree()         
+    Menu.addButton btn,
+        tooltip: 'collapse subtree ⌘['
         icon:    'fa-angle-up'
-        action:  () -> view.collapseSubtree() 
+        action:  () -> view.collapseSubtree()
+        
     Menu.addButton btn,
         tooltip: 'toggle num column'
         icon:    'fa-ellipsis-h'

@@ -146,8 +146,8 @@ class Proxy extends Model
 
     expandTop:      (recursive=false) -> @expandItems @root.children, recursive
     collapseTop:    (recursive=false) -> @collapseItems @root.children, recursive
-    collapseLeaves: (item=@root) -> @collapseItems @leafItemParents item
-    expandLeaves:   (item=@root) -> @expandItems @leafItems item
+    collapseLeaves: (item=@root, recursive=false) -> @collapseItems @leafItemParents(item), recursive
+    expandLeaves:   (item=@root, recursive=false) -> @expandItems @leafItems(item), recursive
     
     ###
     000      00000000   0000000   00000000

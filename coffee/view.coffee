@@ -333,8 +333,12 @@ class View extends Proxy
         if not @hasFocus()
             @selectedItem().setFocus()       
                         
-    collapseSubtree: -> @base.collapseLeaves @selectedItem().value  
-    expandSubtree:   -> @base.expandLeaves @selectedItem().value     
+    collapseSubtree: (recursive=false) -> 
+        if recursive
+            @selectedItem().collapse true
+        else
+            @base.collapseLeaves @selectedItem().value
+    expandSubtree:   (recursive=false) -> @base.expandLeaves @selectedItem().value,   recursive    
         
     ###
     000  000000000  00000000  00     00
@@ -404,7 +408,6 @@ class View extends Proxy
     ###
     
     onKeyDown: (event) =>
-        # dbg document.activeElement?.className
         keycode = keyname.keycode event
         switch keycode
             when 'left', 'right'
@@ -413,9 +416,27 @@ class View extends Proxy
                         @base.collapseTop true
                     else
                         @base.expandTop true
+                else if event.mateKey
+                    if keycode == 'left'
+                        @collapseSubtree true 
+                    else
+                        @expandSubtree true 
                 else
                     @selectedItem()?["select#{_.capitalize(keycode)}"] event
                 event.preventDefault()
+                
+            when '[', ']'
+                if event.metaKey and event.altKey
+                    if keycode == '['
+                        @base.collapseLeaves()
+                    else
+                        @base.expandLeaves()
+                else if event.metaKey
+                    if keycode == '['
+                        @collapseSubtree()
+                    else
+                        @expandSubtree()                   
+                        
             when 'home' then @selectDelta -@numVisibleLines()
             when 'end'  then @selectDelta  @numVisibleLines()
             when 'up'   then @selectUp event
