@@ -18,7 +18,7 @@ log      = require './tools/log'
 prefs    = require './tools/prefs'
 
 # prefs.debug = true # log prefs
-# require('electron-debug')(showDevTools: true) # open console?
+require('electron-debug') showDevTools: false # open console?
 
 ###
 00     00   0000000   000  000   000

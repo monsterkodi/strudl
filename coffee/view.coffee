@@ -73,7 +73,7 @@ class View extends Proxy
             @root = @createItem -1, @base.root, @
             @root.elem = @tree
             
-    viewHeight: -> document.getElementById('container').offsetHeight - document.getElementById('path').offsetHeight  - document.getElementById('find').offsetHeight
+    viewHeight: -> document.getElementById('stage').offsetHeight - document.getElementById('path').offsetHeight  - document.getElementById('find').offsetHeight
     numViewLines: -> Math.ceil(@viewHeight() / @lineHeight)
     numFullLines: -> Math.floor(@viewHeight() / @lineHeight)
     numVisibleLines: -> @base.root?.numVisible or 0

@@ -15,6 +15,7 @@ keyname = require '../tools/keyname'
 Data    = require '../data'
 Proxy   = require '../proxy'
 View    = require '../view'
+knix    = require '../knix/knix'
 remote  = require 'remote'
 app     = remote.require 'app'
 win     = remote.getCurrentWindow()
@@ -53,6 +54,9 @@ loadFile = (p) ->
 ###
 
 document.addEventListener 'DOMContentLoaded', () -> 
+    
+    knix.init()
+    
     loadFile win.filePath
     win.emit 'domLoaded'
         

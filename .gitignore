@@ -4,6 +4,7 @@ img/*.pxm
 js/*.js
 js/*.map
 js/html
+js/knix
 js/style
 node_modules
 prefs.json
