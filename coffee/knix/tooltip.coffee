@@ -6,12 +6,14 @@
    000      0000000    0000000   0000000     000     000  000      
 ###
 
-def = require './def'
+def   = require './def'
+stage = require './stage'
+log   = require '../tools/log'
 
 class Tooltip
 
     @create: (cfg, defs) =>
-
+        log 'tooltip'
         cfg = def cfg, defs
         cfg = def cfg, 
                   delay : 700
@@ -22,16 +24,18 @@ class Tooltip
         cfg.target.elem.on 'mousedown',  @onLeave
 
     @onHover: (event, d) =>
-        Settings = require './settings'
+        log 'tooltip'
         for e in [d, d.ancestors()].flatten()
-            if e?.widget?.tooltip? and Settings.get 'tooltips', false
+            log 'tooltip2', e?.widget?.tooltip?
+            if e?.widget?.tooltip?
                 tooltip = e.widget.tooltip
+                log 'tooltip3', tooltip
                 if tooltip.window?
                     tooltip.window.close()
                     delete tooltip.window
                 if tooltip.timer?
                     clearInterval tooltip.timer
-                popup = -> Tooltip.popup(e, Stage.absPos event)
+                popup = -> Tooltip.popup(e, stage.absPos event)
                 tooltip.timer = setInterval(popup, tooltip.delay)
                 return
 

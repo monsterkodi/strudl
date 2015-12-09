@@ -15,6 +15,7 @@ keyname = require '../tools/keyname'
 Data    = require '../data'
 Proxy   = require '../proxy'
 View    = require '../view'
+Menu    = require '../knix/menu'
 knix    = require '../knix/knix'
 remote  = require 'remote'
 app     = remote.require 'app'
@@ -30,7 +31,7 @@ view    = null
 win.on 'findPath',  -> view.findPath()
 win.on 'findValue', -> view.findValue()
 win.on 'clearFind', -> view.find.clear()
-win.on 'setColumnVisible', (c,v) -> view.setColumVisible c,v
+win.on 'setColumnVisible', (c,v) -> view.setColumnVisible c,v
 
 loadFile = (p) ->
     
@@ -56,9 +57,40 @@ loadFile = (p) ->
 document.addEventListener 'DOMContentLoaded', () -> 
     
     knix.init()
+    initTools()
     
     loadFile win.filePath
     win.emit 'domLoaded'
+
+###
+000000000   0000000    0000000   000       0000000
+   000     000   000  000   000  000      000     
+   000     000   000  000   000  000      0000000 
+   000     000   000  000   000  000           000
+   000      0000000    0000000   0000000  0000000 
+###
+
+initTools = ->
+
+    btn = 
+        menu: 'tool'
+
+    Menu.addButton btn,
+        tooltip: 'toggle index column'
+        icon:    'fa-ellipsis-v'
+        action:  () -> view.toggleColumn 'idx'
+    Menu.addButton btn,
+        tooltip: 'expand all'
+        icon:    'fa-arrow-circle-o-down'
+        action:  () -> prxy.root.expand true 
+    Menu.addButton btn,
+        tooltip: 'collapse all'
+        icon:    'fa-arrow-circle-o-up'
+        action:  () -> prxy.collapseTop true 
+    Menu.addButton btn,
+        tooltip: 'toggle num column'
+        icon:    'fa-ellipsis-h'
+        action:  () -> view.toggleColumn 'num'
         
 ###
 00000000   00000000   0000000  000  0000000  00000000

@@ -20,12 +20,7 @@ class knix
     @init: (config={}) =>
                 
         @initMenu()
-        @initTools()
         Stage.init()
-    
-        c?.raise()
-        c?.maximize() if config.console == 'maximized'
-                
         @
     
     ###
@@ -51,17 +46,6 @@ class knix
                 top:   '0px'
                 right: '0px'
         
-    @initTools: =>
-
-        btn = 
-            menu: 'tool'
-
-        Menu.addButton btn,
-            tooltip: 'close windows'
-            icon:    'fa-arrow-circle-o-up'
-            keys:    ['⇧⌥x']
-            action:  () -> log 'hello'     
-
     ###
      0000000  00000000   00000000   0000000   000000000  00000000
     000       000   000  000       000   000     000     000     
@@ -97,31 +81,7 @@ class knix
             parent: 'stage'
         Stage.positionWindow(w) if w.isWindow?()
         w
-        
-    ###
-    000   000  000  000   000  0000000     0000000   000   000   0000000
-    000 0 000  000  0000  000  000   000  000   000  000 0 000  000     
-    000000000  000  000 0 000  000   000  000   000  000000000  0000000 
-    000   000  000  000  0000  000   000  000   000  000   000       000
-    00     00  000  000   000  0000000     0000000   00     00  0000000 
-    ###
-
-    @isSelectableWindow:   (w) => not w.hasClassName('tooltip')
-    @allWindows:           => w.widget for w in $$('.window') when @isSelectableWindow(w)
-    @selectedWindows:      => w.widget for w in $$('.window.selected') when @isSelectableWindow(w)
-    @selectedOrAllWindows: => 
-        w = @selectedWindows()
-        w = @allWindows() if _.isEmpty w
-        w
-    @selectedWidgets:  => w.widget for w in $$('.selected') when @isSelectableWindow(w)
-    @delSelection:     => @selectedWidgets().each (w) -> w.del?() unless w?.isWindow?()
-    @deselectAll:      => @selectedWidgets().each (w) -> w.elem.removeClassName 'selected'
-    @selectAll:        => @allWindows().each (w) -> w.elem.addClassName 'selected'
-
-    @shadeWindows:    => @selectedOrAllWindows().each (w) -> w.shade()
-    @closeWindows:    => @selectedWindows().each (w) -> w.close()
-    @closeAllWindows: => @allWindows().each (w) -> w.close()
-                    
+                            
     ###
     000000000   0000000    0000000   000      000000000  000  00000000    0000000
        000     000   000  000   000  000         000     000  000   000  000     

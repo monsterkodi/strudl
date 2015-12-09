@@ -220,8 +220,11 @@ class View extends Proxy
         else if @selIndex >= @numVisibleLines()
             @selectIndex @numVisibleLines() - 1 
         @update()
+
+    toggleColumn: (c) -> 
+        @setColumnVisible c, @col(c).style.display == 'none'
                     
-    setColumVisible: (c, v) -> 
+    setColumnVisible: (c, v) -> 
 
         @col(c).style.display = v and 'inline-block' or 'none'
         

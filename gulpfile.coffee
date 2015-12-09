@@ -26,13 +26,13 @@ gulp.task 'coffee', ->
         # .pipe debug title: 'coffee'
         .pipe salt()
         .pipe gulp.dest 'coffee'
-        .pipe source.init()
+        # .pipe source.init()
         .pipe pepper
             stringify: (info) -> '"'+info.class + info.type + info.method + ' ► "'
             paprika: 
                 dbg: 'log'
         .pipe coffee(bare: true).on('error', onError)
-        .pipe source.write '.'
+        # .pipe source.write '.'
         .pipe gulp.dest 'js'
 
 gulp.task 'coffee_release', ->
