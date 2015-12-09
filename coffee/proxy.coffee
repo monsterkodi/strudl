@@ -146,8 +146,8 @@ class Proxy extends Model
 
     expandTop:      (recursive=false) -> @expandItems @root.children, recursive
     collapseTop:    (recursive=false) -> @collapseItems @root.children, recursive
-    collapseLeaves: (recursive=false) -> @collapseItems @leafItems(), recursive
-    expandLeaves: -> @expandItems @leafItems()
+    collapseLeaves: -> @collapseItems @leafItemParents()
+    expandLeaves:   -> @expandItems @leafItems()
     
     ###
     000      00000000   0000000   00000000
@@ -171,5 +171,7 @@ class Proxy extends Model
             for child in item.children
                 leafs.push.apply(leafs, @leafItems child)
             leafs
+    itemParents: (items) -> ( i.parent for i in items when not i.isTop() )
+    leafItemParents: () -> @itemParents @leafItems()
                     
 module.exports = Proxy
