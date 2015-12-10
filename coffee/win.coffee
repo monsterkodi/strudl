@@ -166,7 +166,7 @@ toggleStyle = ->
     newlink      = document.createElement 'link'
     newlink.rel  = 'stylesheet'
     newlink.type = 'text/css'
-    newlink.href = 'style/'+schemes[nextSchemeIndex]
+    newlink.href = '../style/'+schemes[nextSchemeIndex]
     newlink.id   = 'style-link'
 
     link.parentNode.replaceChild newlink, link        

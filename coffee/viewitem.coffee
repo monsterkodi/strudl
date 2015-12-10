@@ -256,7 +256,6 @@ class ViewItem extends ProxyItem
     onMouseOut: (event)  => @val.removeEventListener 'wheel', @onWheel
          
     onWheel: (event) =>
-        dbg event.target.className
         if @scrollable() and Math.abs(event.deltaX) > Math.abs(event.deltaY)
             if @val.firstElementChild.style.position != 'absolute'
                 @val.firstElementChild.style.position = 'absolute'

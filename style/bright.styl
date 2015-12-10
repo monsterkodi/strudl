@@ -118,3 +118,42 @@ evenColor = clr.gray-very-bright
 
 .tree-value.dsc
     color:              clr.gray-medium
+    
+/*
+*  00     00  00000000  000   000  000   000
+*  000   000  000       0000  000  000   000
+*  000000000  0000000   000 0 000  000   000
+*  000 0 000  000       000  0000  000   000
+*  000   000  00000000  000   000   0000000 
+*/
+
+.menu
+    & > *
+        color:          clr.gray-bright
+        
+.context-menu .content .button
+.menu .button
+    &:hover
+        color:          clr.blue-bright
+    &:active
+        color:          black
+
+.context-menu .content .button
+    color:              white
+    background-color:   clr.gray-very-bright
+
+/*
+*  000   000  000  000   000  0000000     0000000   000   000
+*  000 0 000  000  0000  000  000   000  000   000  000 0 000
+*  000000000  000  000 0 000  000   000  000   000  000000000
+*  000   000  000  000  0000  000   000  000   000  000   000
+*  00     00  000  000   000  0000000     0000000   00     00
+*/
+
+.window        
+    border:             black
+    background-color:   clr.gray-super-bright
+    // shadow()
+
+.tooltip
+    color:              gray
