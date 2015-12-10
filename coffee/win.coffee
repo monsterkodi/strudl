@@ -76,48 +76,48 @@ initTools = ->
         menu: 'tool'
 
     Menu.addButton btn,
-        tooltip: 'toggle index column'
+        tooltip: 'Toggle Indices ⌘1'
         icon:    'fa-ellipsis-v'
         action:  () -> view.toggleColumn 'idx'
         
     Menu.addButton btn,
-        tooltip: 'expand all deep ⌥⌘→'
+        tooltip: 'Expand All Deep ⌥⌘→'
         icon:    'fa-arrow-circle-down'
         action:  () -> prxy.root.expand true 
     Menu.addButton btn,
-        tooltip: 'collapse all deep ⌥⌘←'
+        tooltip: 'Collapse All Deep ⌥⌘←'
         icon:    'fa-arrow-circle-up'
         action:  () -> prxy.collapseTop true 
 
     Menu.addButton btn,
-        tooltip: 'expand all ⌥⌘]'
+        tooltip: 'Expand All ⌥⌘]'
         icon:    'fa-chevron-circle-down'
         action:  () -> prxy.expandLeaves()
     Menu.addButton btn,
-        tooltip: 'collapse all ⌥⌘['
+        tooltip: 'Collapse All ⌥⌘['
         icon:    'fa-chevron-circle-up'
         action:  () -> prxy.collapseLeaves() 
 
     Menu.addButton btn,
-        tooltip: 'expand subtree deep ⌘→'
-        icon:    'fa-arrow-circle-o-down'
+        tooltip: 'Expand Subtree Deep ⌘→'
+        icon:    'fa-arrow-down'
         action:  () -> view.expandSubtree true 
     Menu.addButton btn,
-        tooltip: 'collapse subtree deep ⌘←'
-        icon:    'fa-arrow-circle-o-up'
+        tooltip: 'Collapse Subtree Deep ⌘←'
+        icon:    'fa-arrow-up'
         action:  () -> view.collapseSubtree true
 
     Menu.addButton btn,
-        tooltip: 'expand subtree ⌘]'
+        tooltip: 'Expand Subtree ⌘]'
         icon:    'fa-angle-down'
         action:  () -> view.expandSubtree()         
     Menu.addButton btn,
-        tooltip: 'collapse subtree ⌘['
+        tooltip: 'Collapse Subtree ⌘['
         icon:    'fa-angle-up'
         action:  () -> view.collapseSubtree()
         
     Menu.addButton btn,
-        tooltip: 'toggle num column'
+        tooltip: 'Toggle Numbers ⌘4'
         icon:    'fa-ellipsis-h'
         action:  () -> view.toggleColumn 'num'
         

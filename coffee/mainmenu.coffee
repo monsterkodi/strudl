@@ -147,25 +147,25 @@ class MainMenu
             label: 'View'
             role: 'view'
             submenu: [
-                label:       'Index Column'
+                label:       'Indices'
                 accelerator: 'CmdOrCtrl+1'
                 type:        'checkbox'
                 checked:     true
                 click:       (i,win) -> win?.emit 'setColumnVisible', 'idx', i.checked
             ,
-                label:       'Path Column'
+                label:       'Paths'
                 accelerator: 'CmdOrCtrl+2'
                 type:        'checkbox'
                 checked:     true
                 click:       (i,win) -> win?.emit 'setColumnVisible', 'key', i.checked
             ,
-                label:       'Value Column'
+                label:       'Values'
                 accelerator: 'CmdOrCtrl+3'
                 type:        'checkbox'
                 checked:     true
                 click:       (i,win) -> win?.emit 'setColumnVisible', 'val', i.checked
             ,
-                label:       'Number Column'
+                label:       'Numbers'
                 accelerator: 'CmdOrCtrl+4'
                 type:        'checkbox'
                 checked:     true

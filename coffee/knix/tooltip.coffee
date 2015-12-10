@@ -16,7 +16,7 @@ class Tooltip
     @create: (cfg, defs) =>
         cfg = def cfg, defs
         cfg = def cfg, 
-                  delay : 3000
+                  delay : 2000
                   
         cfg.target.tooltip = cfg
         cfg.target.elem.on 'mousemove',  @onHover
