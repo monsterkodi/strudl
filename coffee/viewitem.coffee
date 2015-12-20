@@ -40,6 +40,7 @@ class ViewItem extends ProxyItem
         @idx.id = "#{@indexInParent()}"
         
         spc = @elm.children[0]
+        spc.className = "tree-value spc"
         spc.style.minWidth = "#{@depth()*30}.px"
         if @isExpandable()
             spc.classList.add @isExpanded() and "expanded" or "collapsed"
@@ -47,8 +48,20 @@ class ViewItem extends ProxyItem
             spc.classList.remove "expanded"
             spc.classList.remove "collapsed"
         
+        @split = String(@key).split '►'
+        @pth   = null
         key = @elm.children[1]
-        key.innerHTML = @key
+        key.className = "tree-value key " + @typeName().toLowerCase()
+        key.innerHTML = ""
+        if @split.length == 1
+            key.innerHTML = @key
+            if @parent.type == Item.arrayType
+                @addClass 'array-index', key
+        else
+            @pth = new Path key
+            @pth.set @split
+            @pth.on 'keypath', @onKeyPath
+
         key.className = "tree-value key " + @typeName().toLowerCase()
 
         @update()
@@ -57,8 +70,8 @@ class ViewItem extends ProxyItem
         
         if @key != -1
 
-            linc = document.createElement 'div'
-            linc.className = "tree-item linc"
+            @linc = document.createElement 'div'
+            @linc.className = "tree-item linc"
 
             @lin = document.createElement 'span'
             @lin.className = 'tree-line line-' + String @value.visibleIndex
@@ -66,7 +79,7 @@ class ViewItem extends ProxyItem
             @lin.addEventListener 'focus',     @onFocus
             @lin.addEventListener 'blur',      @onBlur
             @lin.tabIndex = -1
-            linc.appendChild @lin
+            @linc.appendChild @lin
 
             @idx = document.createElement 'div'
             @idx.className = "tree-item idx"
@@ -139,7 +152,7 @@ class ViewItem extends ProxyItem
             @num.appendChild dsc
             @num.appendChild chd
             
-            @col('lin').appendChild linc
+            @col('lin').appendChild @linc
             @col('idx').appendChild @idx
             @col('key').appendChild @elm         
             @col('val').appendChild @val
@@ -173,11 +186,11 @@ class ViewItem extends ProxyItem
                 @val.firstElementChild.innerHTML = @getValue() ? 'null'
                     
     removeElement: ->
-        @lin.remove()
-        @elm.remove()
-        @idx.remove()
-        @val.remove()
-        @num.remove()
+        @col('lin').removeChild @linc
+        @col('idx').removeChild @idx
+        @col('key').removeChild @elm         
+        @col('val').removeChild @val
+        @col('num').removeChild @num
     
     delChild: (child) ->
         child.removeElement()

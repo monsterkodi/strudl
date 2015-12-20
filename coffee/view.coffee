@@ -142,6 +142,10 @@ class View extends Proxy
                     item.createElement() 
                     @items.push item
                 @root.children.push item
+
+            while (@items.length-1) > (@botIndex-@topIndex)
+                _.last(@items).removeElement()
+                @items.pop()
                 
             @updateSize()
             @updateScroll()
