@@ -124,6 +124,10 @@ class View extends Proxy
         
         if not @items?
             @items = []
+        
+        while (@items.length-1) > (@botIndex-@topIndex)
+            _.last(@items).removeElement()
+            @items.pop()
             
         if numLines
             @root.children = []
@@ -143,10 +147,6 @@ class View extends Proxy
                     @items.push item
                 @root.children.push item
 
-            while (@items.length-1) > (@botIndex-@topIndex)
-                _.last(@items).removeElement()
-                @items.pop()
-                
             @updateSize()
             @updateScroll()
                     
