@@ -24,8 +24,8 @@ gulp.task 'coffee', ->
     gulp.src ['coffee/**/*.coffee'], base: 'coffee'
         .pipe plumber()
         # .pipe debug title: 'coffee'
-        .pipe salt()
-        .pipe gulp.dest 'coffee'
+        # .pipe salt()
+        # .pipe gulp.dest 'coffee'
         # .pipe source.init()
         .pipe pepper
             stringify: (info) -> '"'+info.class + info.type + info.method + ' ► "'

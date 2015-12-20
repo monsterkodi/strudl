@@ -24,6 +24,34 @@ class ViewItem extends ProxyItem
     000       000      000       000 0 000
     00000000  0000000  00000000  000   000
     ###
+
+    updateElement: (@key, @value, prt) ->
+        @parent = prt
+        @visibleIndex = 0
+            
+        @type = @value.type
+                    
+        @children = []    if @isParent()
+        @keyIndex = {}    if @isObject()
+        @expanded = false if @isExpandable()
+        
+        @lin.className = 'tree-line line-' + String @value.visibleIndex
+        @idx.innerHTML = "#{@value.visibleIndex} "
+        @idx.id = "#{@indexInParent()}"
+        
+        spc = @elm.children[0]
+        spc.style.minWidth = "#{@depth()*30}.px"
+        if @isExpandable()
+            spc.classList.add @isExpanded() and "expanded" or "collapsed"
+        else
+            spc.classList.remove "expanded"
+            spc.classList.remove "collapsed"
+        
+        key = @elm.children[1]
+        key.innerHTML = @key
+        key.className = "tree-value key " + @typeName().toLowerCase()
+
+        @update()
     
     createElement: ->
         
@@ -102,15 +130,14 @@ class ViewItem extends ProxyItem
             @num = document.createElement 'div'
             @num.className = "tree-item num"
                 
-            if @isParent()
-                dsc = document.createElement 'span'
-                dsc.className = "tree-value dsc"
-            
-                chd = document.createElement 'span'
-                chd.className = "tree-value chd"
-                            
-                @num.appendChild dsc
-                @num.appendChild chd
+            dsc = document.createElement 'span'
+            dsc.className = "tree-value dsc"
+        
+            chd = document.createElement 'span'
+            chd.className = "tree-value chd"
+                        
+            @num.appendChild dsc
+            @num.appendChild chd
             
             @col('lin').appendChild linc
             @col('idx').appendChild @idx
@@ -135,6 +162,9 @@ class ViewItem extends ProxyItem
         if @isParent()
             (@getElem 'dsc', @num).innerHTML = "#{@dataItem().numDescendants-1}"
             (@getElem 'chd', @num).innerHTML = "#{@dataItem().children.length}"
+        else  
+            (@getElem 'dsc', @num).innerHTML = ""  
+            (@getElem 'chd', @num).innerHTML = ""
 
         switch @type
             when Item.objectType

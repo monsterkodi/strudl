@@ -85,6 +85,13 @@ class View extends Proxy
     000   000  000        000   000  000   000     000     000     
      0000000   000        0000000    000   000     000     00000000
     ###
+
+    updateItem: (item, key, value, parent) -> 
+        item.updateElement key, value, parent
+        item.id = @nextID()
+        item.unfetched = true if item.isExpandable()
+        @itemMap[value.id] = item
+        item
         
     update: ->
         
@@ -114,20 +121,27 @@ class View extends Proxy
             @topIndex = Math.max(0, @topIndex)
             @botIndex = Math.min(@topIndex + viewLines - 1, numLines-1)
             @scroll = @topIndex * @lineHeight
-            
-        for child in @tree.children
-            child.innerHTML = "" # proper destruction needed?
+        
+        if not @items?
+            @items = []
             
         if numLines
             @root.children = []
             @root.keyIndex = {}
-                                                                
+                    
             for i in [@topIndex..@botIndex]
                 baseItem = @base.visibleItems[i]
                 @root.keyIndex[baseItem.key] = numLines
-                item = @createItem baseItem.key, baseItem, @root
+                
+                relIndex = i-@topIndex
+                if relIndex < @items.length
+                    item = @items[relIndex]
+                    @updateItem item, baseItem.key, baseItem, @root
+                else
+                    item = @createItem baseItem.key, baseItem, @root
+                    item.createElement() 
+                    @items.push item
                 @root.children.push item
-                item.createElement()     
                 
             @updateSize()
             @updateScroll()
