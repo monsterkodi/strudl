@@ -64,6 +64,8 @@ class ViewItem extends ProxyItem
 
         key.className = "tree-value key " + @typeName().toLowerCase()
 
+        @val.className = "tree-item val " + @typeName().toLowerCase()
+
         @update()
     
     createElement: ->
@@ -184,6 +186,8 @@ class ViewItem extends ProxyItem
                 @val.firstElementChild.innerHTML = @getValue()['name'] or ''
             when Item.valueType
                 @val.firstElementChild.innerHTML = @getValue() ? 'null'
+            else
+                @val.firstElementChild.innerHTML = ''
                     
     removeElement: ->
         @col('lin').removeChild @linc
