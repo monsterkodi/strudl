@@ -20,3 +20,4 @@ bin/log
 bin/run
 bin/publish
 bin/release
+package.noon
